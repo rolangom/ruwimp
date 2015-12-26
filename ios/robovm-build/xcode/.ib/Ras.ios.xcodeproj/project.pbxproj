@@ -1,0 +1,378 @@
+{
+	"archiveVersion" = "1";
+	"classes" =
+		{
+		};
+	"objectVersion" = "46";
+	"objects" =
+		{
+			"100000000000000000000002" =
+				{
+					"isa" = "PBXGroup";
+					"children" =
+						("608B030DBEA04B6E82B88853", "9BBC1D16170B40B7A819BEAB");
+					"sourceTree" = "<group>";
+				};
+			"100000000000000000000006" =
+				{
+					"isa" = "PBXNativeTarget";
+					"buildPhases" =
+						("100000000000000000000007");
+					"buildRules" =
+						();
+					"dependencies" =
+						();
+					"name" = "test";
+					"productName" = "test";
+					"productType" = "com.apple.product-type.application";
+				};
+			"100000000000000000000001" =
+				{
+					"isa" = "PBXProject";
+					"attributes" =
+						{
+							"LastUpgradeCheck" = "0620";
+						};
+					"buildConfigurationList" = "100000000000000000000003";
+					"compatibilityVersion" = "Xcode 3.2";
+					"developmentRegion" = "English";
+					"hasScannedForEncodings" = "0";
+					"knownRegions" =
+						("en");
+					"mainGroup" = "100000000000000000000002";
+					"projectDirPath" = "";
+					"projectRoot" = "";
+					"targets" =
+						("100000000000000000000006");
+				};
+			"100000000000000000000007" =
+				{
+					"isa" = "PBXSourcesBuildPhase";
+					"buildActionMask" = "2147483647";
+					"files" =
+						();
+					"runOnlyForDeploymentPostprocessing" = "0";
+				};
+			"100000000000000000000004" =
+				{
+					"isa" = "XCBuildConfiguration";
+					"buildSettings" =
+						{
+							"INFOPLIST_FILE" = "/Users/rolangom/Projects/libgdx/Ras/ios/Info.plist.xml";
+							"SDKROOT" = "iphoneos";
+							"TARGETED_DEVICE_FAMILY" = "1,2";
+							"GCC_PRECOMPILE_PREFIX_HEADER" = "YES";
+							"GCC_PREFIX_HEADER" = "/Users/rolangom/Projects/libgdx/Ras/ios/robovm-build/xcode/.ib/Prefix.pch";
+						};
+					"name" = "Debug";
+				};
+			"100000000000000000000005" =
+				{
+					"isa" = "XCBuildConfiguration";
+					"buildSettings" =
+						{
+							"INFOPLIST_FILE" = "/Users/rolangom/Projects/libgdx/Ras/ios/Info.plist.xml";
+							"SDKROOT" = "iphoneos";
+							"TARGETED_DEVICE_FAMILY" = "1,2";
+							"GCC_PRECOMPILE_PREFIX_HEADER" = "YES";
+							"GCC_PREFIX_HEADER" = "/Users/rolangom/Projects/libgdx/Ras/ios/robovm-build/xcode/.ib/Prefix.pch";
+						};
+					"name" = "Release";
+				};
+			"100000000000000000000003" =
+				{
+					"isa" = "XCConfigurationList";
+					"buildConfigurations" =
+						("100000000000000000000004", "100000000000000000000005");
+					"defaultConfigurationIsVisible" = "0";
+					"defaultConfigurationName" = "Release";
+				};
+			"608B030DBEA04B6E82B88853" =
+				{
+					"isa" = "PBXGroup";
+					"children" =
+						("4274CC420C7B4B30B65AAE8A", "346D7C42A57C4289AF9B811B", "619583F4FFED44908F35968B",
+ "7116A0D3F43E433787DE5FE1", "C2FEC313BB2545DAA257871A", "86D39F04941D4E929D69FB22",
+ "DE4E1571A9D3489C988B992E", "40C4B12CDD894A89AFFA4F67", "7588D023B182433582E87C4A",
+ "38C20910192C4C5A932DDE04", "56001EEA4F3D40FDAAF6CC03", "3773A35D9615416B867F4F05",
+ "0795FE119BC6471EA71D34B8", "185FA0FC5ECE4DB89CD535EC", "E0EA0713CC564773800E90E8"
+);
+					"name" = "Resources";
+					"sourceTree" = "<absolute>";
+					"path" = "/Users/rolangom/Projects/libgdx/Ras/ios/data";
+				};
+			"C2FEC313BB2545DAA257871A" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Default-375w-667h@2x.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "Default-375w-667h@2x.png";
+				};
+			"86D39F04941D4E929D69FB22" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Default-414w-736h@3x.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "Default-414w-736h@3x.png";
+				};
+			"DE4E1571A9D3489C988B992E" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Default-568h@2x.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "Default-568h@2x.png";
+				};
+			"40C4B12CDD894A89AFFA4F67" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Default.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "Default.png";
+				};
+			"7588D023B182433582E87C4A" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Default@2x.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "Default@2x.png";
+				};
+			"38C20910192C4C5A932DDE04" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Default@2x~ipad.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "Default@2x~ipad.png";
+				};
+			"56001EEA4F3D40FDAAF6CC03" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Default~ipad.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "Default~ipad.png";
+				};
+			"3773A35D9615416B867F4F05" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Icon-72.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "Icon-72.png";
+				};
+			"0795FE119BC6471EA71D34B8" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Icon-72@2x.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "Icon-72@2x.png";
+				};
+			"185FA0FC5ECE4DB89CD535EC" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Icon.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "Icon.png";
+				};
+			"E0EA0713CC564773800E90E8" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Icon@2x.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "Icon@2x.png";
+				};
+			"EECFA0C127A34006AB71AD4A" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "Info.plist";
+					"explicitFileType" = "text.plist.info";
+					"sourceTree" = "<group>";
+					"path" = "Info.plist.xml";
+				};
+			"9BBC1D16170B40B7A819BEAB" =
+				{
+					"isa" = "PBXGroup";
+					"children" =
+						("EECFA0C127A34006AB71AD4A");
+					"name" = "Supporting Files";
+					"sourceTree" = "<absolute>";
+					"path" = "/Users/rolangom/Projects/libgdx/Ras/ios";
+				};
+			"0B05FB843D2E4E488537C65A" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "player_01_anims.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "player_01_anims.png";
+				};
+			"4274CC420C7B4B30B65AAE8A" =
+				{
+					"isa" = "PBXGroup";
+					"children" =
+						("0B05FB843D2E4E488537C65A", "80831707710D41089B23A9BB");
+					"name" = "atlas";
+					"sourceTree" = "<group>";
+					"path" = "atlas";
+				};
+			"80831707710D41089B23A9BB" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "worldAtlas.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "worldAtlas.png";
+				};
+			"7116A0D3F43E433787DE5FE1" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "badlogic.jpg";
+					"lastKnownFileType" = "image.jpeg";
+					"sourceTree" = "<group>";
+					"path" = "badlogic.jpg";
+				};
+			"D1B92A9FC37C46D6BAF69B9A" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "AldotheApache.ttf";
+					"lastKnownFileType" = "file";
+					"sourceTree" = "<group>";
+					"path" = "AldotheApache.ttf";
+				};
+			"346D7C42A57C4289AF9B811B" =
+				{
+					"isa" = "PBXGroup";
+					"children" =
+						("D1B92A9FC37C46D6BAF69B9A");
+					"name" = "fonts";
+					"sourceTree" = "<group>";
+					"path" = "fonts";
+				};
+			"06E8C5AC0FD24CD7ABF62E01" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "chain.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "chain.png";
+				};
+			"619583F4FFED44908F35968B" =
+				{
+					"isa" = "PBXGroup";
+					"children" =
+						("06E8C5AC0FD24CD7ABF62E01", "5B63883F7F6C4F069C04CCB4", "A169B54F6C9641B482306F0B",
+ "096D08F4B7B1497984899F79", "875FA8044B814DFE84DCA3F2", "C2DB9AE2A1A641FA9ACE7F48",
+ "F7205D7322D748FF8861D575", "8D863B02F1464AA493D94DB5", "65589803ABCF43DDBB461E29",
+ "2D76BAC60692497FAF1D96A5", "7EE40F56A9C9406CABD603DA", "5FCC4CA816294C138B48514C",
+ "008B6ADBD8554E2C97C53FE8");
+					"name" = "imgs";
+					"sourceTree" = "<group>";
+					"path" = "imgs";
+				};
+			"5B63883F7F6C4F069C04CCB4" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "city0.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "city0.png";
+				};
+			"A169B54F6C9641B482306F0B" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "city1.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "city1.png";
+				};
+			"096D08F4B7B1497984899F79" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "mountains0.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "mountains0.png";
+				};
+			"875FA8044B814DFE84DCA3F2" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "mountains1.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "mountains1.png";
+				};
+			"C2DB9AE2A1A641FA9ACE7F48" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "plat.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "plat.png";
+				};
+			"F7205D7322D748FF8861D575" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "platBlue.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "platBlue.png";
+				};
+			"8D863B02F1464AA493D94DB5" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "platRed.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "platRed.png";
+				};
+			"65589803ABCF43DDBB461E29" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "platWoDa.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "platWoDa.png";
+				};
+			"2D76BAC60692497FAF1D96A5" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "platWoLi.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "platWoLi.png";
+				};
+			"7EE40F56A9C9406CABD603DA" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "trees0.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "trees0.png";
+				};
+			"5FCC4CA816294C138B48514C" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "trees1.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "trees1.png";
+				};
+			"008B6ADBD8554E2C97C53FE8" =
+				{
+					"isa" = "PBXFileReference";
+					"name" = "trees2a.png";
+					"lastKnownFileType" = "image.png";
+					"sourceTree" = "<group>";
+					"path" = "trees2a.png";
+				};
+		};
+	"rootObject" = "100000000000000000000001";
+}

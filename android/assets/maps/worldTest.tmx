@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="50" height="15" tilewidth="32" tileheight="32" nextobjectid="16">
+ <tileset firstgid="1" name="plat" tilewidth="32" tileheight="32" tilecount="1">
+  <terraintypes>
+   <terrain name="plat" tile="-1"/>
+  </terraintypes>
+  <tile id="0">
+   <image width="32" height="32" source="../../../../../phaser/Rumper/bin/assets/imgs/plat.png"/>
+  </tile>
+ </tileset>
+ <objectgroup name="box2d" visible="0">
+  <object id="1" name="plat1" x="115" y="129" width="192" height="32" rotation="-11">
+   <properties>
+    <property name="dimen" value="0"/>
+    <property name="size" value="1"/>
+   </properties>
+  </object>
+  <object id="3" name="plat2" x="272.647" y="103.723" width="192" height="32" rotation="11">
+   <properties>
+    <property name="dimen" value="0"/>
+    <property name="size" value="1"/>
+   </properties>
+  </object>
+  <object id="4" name="plat3" x="559" y="329" width="290" height="32"/>
+  <object id="10" gid="1" x="417.442" y="326.697" width="319.442" height="32" rotation="-16.0792"/>
+ </objectgroup>
+ <objectgroup name="stage1">
+  <object id="11" gid="1" x="26.2702" y="72.1985" width="254" height="32" rotation="-337.972"/>
+  <object id="13" gid="1" x="233.333" y="199.333" width="254" height="32" rotation="-337.972"/>
+  <object id="14" gid="1" x="442.286" y="367.465" width="254" height="32" rotation="-379.762"/>
+  <object id="15" gid="1" x="757" y="330.667" width="254" height="32" rotation="-379.762"/>
+ </objectgroup>
+</map>

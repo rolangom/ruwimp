@@ -1,0 +1,81 @@
+worldAtlas.png
+format: RGBA4444
+filter: MipMapLinearNearest,Nearest
+repeat: none
+arrowUp
+  rotate: false
+  xy: 2, 2
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+cloud0
+  rotate: false
+  xy: 104, 2
+  size: 156, 56
+  orig: 156, 56
+  offset: 0, 0
+  index: -1
+cloud1
+  rotate: false
+  xy: 262, 2
+  size: 104, 69
+  orig: 104, 69
+  offset: 0, 0
+  index: -1
+cloud2
+  rotate: false
+  xy: 2, 104
+  size: 165, 46
+  orig: 165, 46
+  offset: 0, 0
+  index: -1
+dashboard_bg
+  rotate: false
+  xy: 169, 104
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+game_over
+  rotate: false
+  xy: 203, 104
+  size: 180, 111
+  orig: 180, 111
+  offset: 0, 0
+  index: -1
+leaderboard_btn
+  rotate: false
+  xy: 385, 104
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+logo
+  rotate: false
+  xy: 2, 217
+  size: 362, 127
+  orig: 362, 127
+  offset: 0, 0
+  index: -1
+play_btn
+  rotate: false
+  xy: 366, 217
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+sky_bg
+  rotate: false
+  xy: 432, 217
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+white_square
+  rotate: false
+  xy: 442, 217
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1

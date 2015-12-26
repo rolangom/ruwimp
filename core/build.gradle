@@ -1,0 +1,32 @@
+apply plugin: "java"
+apply plugin: "scala"
+
+sourceCompatibility = 1.6
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+sourceSets.main.java.srcDirs = [ "src/main/java" ]
+sourceSets.main.scala.srcDirs = [ "src/main/scala" ]
+
+
+eclipse.project {
+    name = appName + "-core"
+}
+
+compileScala {
+    scalaCompileOptions.fork = true
+    scalaCompileOptions.forkOptions.jvmArgs = ['-XX:MaxPermSize=512m']
+    scalaCompileOptions.additionalParameters = [
+            "-feature",
+            "-language:reflectiveCalls", // used for config structural typing
+            "-language:postfixOps"
+    ]
+}
+
+tasks.withType(ScalaCompile) {
+    scalaCompileOptions.useAnt = false
+}
+
+//dependencies {
+//    scalaTools "org.scala-lang:scala-compiler:2.11.7"
+//    compile "org.scala-lang:scala-library:2.11.7"
+//}
