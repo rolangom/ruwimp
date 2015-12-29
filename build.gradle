@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.2.3'
-        classpath 'org.robovm:robovm-gradle-plugin:1.9.0'
+        classpath 'org.robovm:robovm-gradle-plugin:1.12.0'
     }
 }
 
@@ -16,10 +16,9 @@ allprojects {
     version = '1.0'
     ext {
         appName = 'JumpAndSwitch'
-        gdxVersion = '1.7.1'
-        roboVMVersion = '1.9.0'
+        gdxVersion = '1.7.2'
+        roboVMVersion = '1.12.0'
         scalaVersion = '2.11.7'
-        gdxUtilsVersion = '0.13.1'
     }
 
     repositories {
