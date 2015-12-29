@@ -48,4 +48,25 @@ object Const {
   val RunnerY = Height * .85f
 
   val GroundLinearVelocity = .25f
+
+
+  val GROUND_UI_ATLAS_PATH = "atlas/groundUi.txt"
+
+  val BGS_PATH = "atlas/worldAtlas.txt"
+
+  val CLOUD_IMG = "cloud%d"
+
+  val CITY_BGS = "imgs/city%d.png"
+
+  val TREES_BGS = "imgs/trees%d.png"
+
+  val STREET = "street"
+
+  val PLAT_BLUE_PATH = "imgs/platBlue.png"
+
+  val PLAT_RED_PATH = "imgs/platRed.png"
+
+  val CHAIN_PATH = "imgs/chain.png"
+
+  val PLAYER_1 = "runner"
 }

@@ -8,8 +8,8 @@ import com.tagor.ras.models.{ItemToInst, Block, BlockType}
   */
 class BlockPooler {
 
-  private lazy val pool = new ObjectMap[BlockType, Pool[Block]]()
-  private lazy val itiPool = Pools.get(classOf[ItemToInst])
+  private val pool = new ObjectMap[BlockType, Pool[Block]]()
+  private val itiPool = Pools.get(classOf[ItemToInst])
 
   private def get(btype: BlockType): Block = {
     if (!pool.containsKey(btype)) {

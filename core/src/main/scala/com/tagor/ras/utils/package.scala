@@ -14,6 +14,9 @@ package object utils {
     Gdx.app.postRunnable(rPool.obtain().init(f))
   }
 
+  def runnable(f: () => Unit): Runnable =
+    rPool.obtain().init(f)
+
   private class RasRunnable
     extends Runnable
     with Pool.Poolable {

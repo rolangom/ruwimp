@@ -2,14 +2,14 @@ package com.tagor.ras.utils
 
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d._
-import com.tagor.ras.models.BlockType
+import com.tagor.ras.models.{Block, BlockType}
 import com.tagor.ras.utils.Const._
 /**
  * Created by rolangom on 6/8/15.
  */
 object WorldFactory {
 
-  lazy val world = new World(new Vector2(0, -15), false)
+  lazy val world = new World(new Vector2(0, -15), true)
 
   def newBlock(btype: BlockType): Body =
     createBody(btype, 0f, 0f)
@@ -172,5 +172,23 @@ object WorldFactory {
       }
     }
     body.resetMassData()
+  }
+
+  def blockIfLanded(fixtureA: Fixture, fixtureB: Fixture): Option[Block] = {
+    (fixtureA.getUserData, fixtureB.getUserData) match {
+      case (Const.FootStrType, _) =>
+        Some(fixtureB.getBody.getUserData.asInstanceOf[Block])
+      case (_, Const.FootStrType) =>
+        Some(fixtureA.getBody.getUserData.asInstanceOf[Block])
+      case _ => None
+    }
+  }
+
+  def isPlayerAndGround(fixtureA: Fixture, fixtureB: Fixture): Boolean = {
+    (fixtureA.getUserData, fixtureB.getUserData) match {
+      case (_, Const.FootStrType) | // Const.GroundStrType
+           (Const.FootStrType, _) => true // Const.GroundStrType
+      case _ => false
+    }
   }
 }

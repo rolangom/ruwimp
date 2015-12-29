@@ -66,11 +66,11 @@ class GameStage(batch: Batch)
 
   private def start(): Unit = {
     val cam = getCamera
-    newCamPos.set(getViewport.getWorldWidth / 2, cam.position.y, cam.position.z)
+    newCamPos.set(cam.viewportWidth / 2, cam.position.y, cam.position.z)
     cam.position.set(newCamPos)
     cam.update()
-    Player.activate()
     spawner.start()
+    Player.activate()
 
     RxMgr.intervalObs
       .sample(1 seconds)
@@ -82,6 +82,7 @@ class GameStage(batch: Batch)
   private def end(): Unit = {
     spawner.end()
     Player.reset()
+    ScoreMgr.saveAndReset()
   }
 
   override def draw() = {
@@ -107,13 +108,18 @@ class GameStage(batch: Batch)
   }
 
   override def beginContact(contact: Contact) = {
-//    (contact.getFixtureA.getUserData, contact.getFixtureB.getUserData) match {
-//      case
-//    }
+    WorldFactory.blockIfLanded(
+      contact.getFixtureA,
+      contact.getFixtureB).foreach { b =>
+        Player.landedAt(b.getZIndex)
+        if (b.setAsLanded())
+          ScoreMgr.increase()
+      }
   }
 
   override def endContact(contact: Contact) = {
-
+    if (WorldFactory.isPlayerAndGround(contact.getFixtureA, contact.getFixtureB))
+      Player.onAir()
   }
 
   override def postSolve(contact: Contact, impulse: ContactImpulse) = { }

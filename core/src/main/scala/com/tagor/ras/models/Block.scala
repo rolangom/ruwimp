@@ -6,10 +6,11 @@ import com.badlogic.gdx.graphics.{Texture, Color}
 import com.badlogic.gdx.graphics.g2d.{Sprite, Batch}
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.Body
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Pool.Poolable
 import com.tagor.ras.utils.Const.PPM
-import com.tagor.ras.utils.{RasRunnable, Const, RxMgr}
+import com.tagor.ras.utils.{Const, RxMgr}
 
 /**
  * Created by rolangom on 7/8/15.
@@ -17,9 +18,9 @@ import com.tagor.ras.utils.{RasRunnable, Const, RxMgr}
 class Block(pbody: Body, val btype: BlockType)
   extends B2dActor(pbody) with Poolable {
 
+  var isLanded = false
   var isLast = false
   val sprite = new Sprite()
-  lazy val runnable = new RasRunnable
   def isDimenUp = btype.isDimenUp
 
   private def init(): Unit = {
@@ -105,6 +106,15 @@ class Block(pbody: Body, val btype: BlockType)
     setVisible(false)
     remove() // Remove Actor from stage
     isLast = false
+    isLanded = false
+  }
+
+  def setAsLanded(): Boolean = {
+    if (!isLanded) {
+      isLanded = true
+      return true
+    }
+    false
   }
 
   override def act(delta: Float): Unit = {
@@ -118,7 +128,9 @@ class Block(pbody: Body, val btype: BlockType)
 
   override def draw(batch: Batch, parentAlpha: Float): Unit = {
     super.draw(batch, parentAlpha)
+    batch.disableBlending()
     sprite.draw(batch, parentAlpha)
+    batch.enableBlending()
   }
 }
 

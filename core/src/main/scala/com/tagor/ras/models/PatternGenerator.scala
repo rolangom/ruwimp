@@ -1,10 +1,7 @@
 package com.tagor.ras.models
 
-import com.badlogic.gdx.math.{MathUtils, Vector2}
+import com.badlogic.gdx.math.MathUtils
 import com.tagor.ras.utils.{RxMgr, BlockPooler, BlockConst}
-import rx.lang.scala.{Subscription, Observable}
-
-import scala.collection.mutable.ListBuffer
 
 /**
   * Created by rolangom on 12/18/15.

@@ -38,10 +38,14 @@ class Player
   extends B2dActor(
     WorldFactory.newRunner()) {
 
-  var currentSpeed = Const.RunnerLinearVelocity
-  var isDimenUp = true
+  private var currentSpeed = Const.RunnerLinearVelocity
+  private var isDimenUp = true
+  private var groundContacts: Int = 0
+  private var stateTime: Float = 0f
+  private var jumps: Int = 0
+  private val MaxJumps = 2
 
-  val vtmp = new Vector2()
+  private val vtmp = new Vector2()
 
 //  RxMgr.onGameRunning
 //    .observeOn(GdxScheduler())
@@ -50,7 +54,7 @@ class Player
   RxMgr.onPlayerAction
     .subscribe(i => handleInput(i))
 
-  private def init() = {
+  private def init(): Unit = {
     val bodyPos = body.getPosition
     setBounds(
       bodyPos.x * PPM - Const.RunnerWidth / 2,
@@ -69,7 +73,7 @@ class Player
     println("Hi!")
   }
 
-  private def handleInput(input:Int):Unit = {
+  private def handleInput(input:Int): Unit = {
     input match {
       case RxPlayerConst.GoUp => goUp()
       case RxPlayerConst.GoDown => goDown()
@@ -85,12 +89,13 @@ class Player
     else reset()
   }
 
-  def activate() = {
+  def activate(): Unit = {
     body.setActive(true)
     body.setTransform(
       Const.RunnerX / PPM,
       Const.RunnerY / PPM, 0f)
     setVisible(true)
+    RxMgr.onPlayerAction.onNext(RxPlayerConst.GoUp)
     goUp()
     body.setLinearVelocity(0f, 0f)
     RxMgr.onActorAdded.onNext(this)
@@ -108,17 +113,25 @@ class Player
     changeDir(false)
   }
 
-  private def changeDir(newDir: Boolean) = {
+  private def changeDir(newDir: Boolean): Unit = {
     isDimenUp = newDir
     WorldFactory.configBodyBitsOnAir(body)
     scaleIt()
   }
 
   def jump(): Unit = {
-    println("player jump")
-    body.applyLinearImpulse(
-      Const.RunnerJumpingLinearImpulse,
-      body.getWorldCenter, true)
+    println(s"player jump; groundContacts= $groundContacts, jumps= $jumps")
+    if (isOnGround || jumps < MaxJumps) {
+      stateTime = 0
+      body.setLinearVelocity(body.getLinearVelocity.x, 0f)
+      body.applyLinearImpulse(
+        Const.RunnerJumpingLinearImpulse,
+        body.getWorldCenter, true)
+      // play sound
+      jumps += 1
+      if (!isOnGround)
+        addAction(Actions.rotateBy(-360, Const.TransitTime))
+    }
   }
 
   def toggle(): Unit = {
@@ -126,7 +139,7 @@ class Player
     else goUp()
   }
 
-  private def scaleIt():Unit = {
+  private def scaleIt(): Unit = {
     val ns = scaleVal
     WorldFactory.scaleFixtures(body, isDimenUp)
     addAction(Actions.sequence(
@@ -134,7 +147,24 @@ class Player
       Actions.run(configBitsRunnable)))
   }
 
-  val configBitsRunnable = new Runnable {
+  def onAir(): Unit = {
+    println("player onAir")
+    groundContacts -= 1
+    stateTime = 0
+    jumps = 1
+  }
+
+  def landedAt(zIndex: Int): Unit = {
+    println("player landed")
+    groundContacts += 1
+    stateTime = 0f
+    setZIndex(zIndex)
+    jumps = 0
+  }
+
+  def isOnGround: Boolean = groundContacts > 0
+
+  private val configBitsRunnable = new Runnable {
     override def run(): Unit = {
       println(s"configBitsRunnable isDimenUp = $isDimenUp")
       WorldFactory.configBodyBits(body, isDimenUp)
@@ -145,15 +175,17 @@ class Player
     body.setLinearVelocity(RxPlayerConst.MaxSpeed, body.getLinearVelocity.y)
   }
 
-  private def scaleVal =
+  private def scaleVal: Float =
     if (isDimenUp) Const.UpScale else Const.DownScale
 
-  def reset() = {
+  def reset(): Unit = {
+    body.setTransform(0f, 0f, 0f)
     body.setLinearVelocity(0f, 0f)
     body.setActive(false)
     setVisible(false)
     currentSpeed = Const.RunnerLinearVelocity
     remove() // Remove Actor from stage
+    groundContacts = 0
   }
 
   override def act(delta: Float): Unit = {

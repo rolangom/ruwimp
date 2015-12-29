@@ -16,6 +16,8 @@ object RxMgr {
   lazy val onActorAdded = Subject[Actor]()
   lazy val onPlayerAction = Subject[Int]()
   lazy val onItiAdded = Subject[ItemToInst]()
+  lazy val newScore = Subject[Int]()
+  lazy val newLevel = Subject[Int]()
 
   var intervalObs: Observable[Long] = _
 
