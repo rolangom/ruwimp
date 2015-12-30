@@ -21,15 +21,15 @@ class GameStage(batch: Batch)
     new OrthographicCamera), batch)
   with ContactListener {
 
-  val b2dr = new Box2DDebugRenderer
-  val b2dCam = new OrthographicCamera
-  val spawner = new Spawner(getCamera.asInstanceOf[OrthographicCamera])
+  private val b2dr = new Box2DDebugRenderer
+  private val b2dCam = new OrthographicCamera
+  private val spawner = new Spawner(getCamera.asInstanceOf[OrthographicCamera])
 
-  val MinCamSpeed = 1
-  val MaxCamSpeed = 5
-  var cSpeed = MinCamSpeed
-  val CamTargetX = Const.Width * .65f
-  val newCamPos = new Vector3()
+  private val MinCamSpeed = 1
+  private val MaxCamSpeed = 5
+  private var cSpeed = MinCamSpeed
+  private val CamTargetX = Const.Width * .65f
+  private val newCamPos = new Vector3()
 
   b2dCam.setToOrtho(false,
     getViewport.getWorldWidth / Const.PPM,
@@ -85,14 +85,14 @@ class GameStage(batch: Batch)
     ScoreMgr.saveAndReset()
   }
 
-  override def draw() = {
+  override def draw(): Unit = {
     super.draw()
     // TODO: ONLY WHILE IN DEBUG (Remove)
     // draw box2d world
     b2dr.render(WorldFactory.world, b2dCam.combined)
   }
 
-  override def act(delta : Float) = {
+  override def act(delta : Float): Unit = {
     super.act(delta)
     // TODO: ONLY WHILE IN DEBUG (Remove)
     val cam = getCamera
@@ -107,7 +107,7 @@ class GameStage(batch: Batch)
     cam.position.interpolate(newCamPos, cSpeed * delta, Interpolation.linear)
   }
 
-  override def beginContact(contact: Contact) = {
+  override def beginContact(contact: Contact): Unit = {
     WorldFactory.blockIfLanded(
       contact.getFixtureA,
       contact.getFixtureB).foreach { b =>
@@ -117,12 +117,12 @@ class GameStage(batch: Batch)
       }
   }
 
-  override def endContact(contact: Contact) = {
+  override def endContact(contact: Contact): Unit = {
     if (WorldFactory.isPlayerAndGround(contact.getFixtureA, contact.getFixtureB))
       Player.onAir()
   }
 
-  override def postSolve(contact: Contact, impulse: ContactImpulse) = { }
+  override def postSolve(contact: Contact, impulse: ContactImpulse): Unit = { }
 
-  override def preSolve(contact: Contact, oldManifold: Manifold) = { }
+  override def preSolve(contact: Contact, oldManifold: Manifold): Unit = { }
 }

@@ -23,25 +23,25 @@ class GameScreen extends Screen {
   var accumulator = 0f
   val TIME_STEP = 0.01f// 1f / (if (Gdx.app.getType == ApplicationType.iOS) 60f else 300f)
 
-  override def show() = {
+  override def show(): Unit = {
 
   }
 
-  override def hide() = { }
+  override def hide(): Unit = { }
 
-  override def resize(width: Int, height: Int) = {
+  override def resize(width: Int, height: Int): Unit = {
     gameStage.getViewport.update(width, height)
     uiStage.getViewport.update(width, height)
   }
 
-  override def dispose() = {
+  override def dispose(): Unit = {
     gameStage dispose()
     uiStage dispose()
   }
 
-  override def render(delta: Float) = {
+  override def render(delta: Float): Unit = {
     val gl = Gdx.gl
-    gl.glClearColor(0, 0, 0, 0)
+    gl.glClearColor(.5f, .5f, .5f, .5f)
     gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
     renderFixed(delta)
@@ -51,17 +51,17 @@ class GameScreen extends Screen {
     uiStage.draw()
   }
 
-  private def renderFixed(delta : Float) {
+  private def renderFixed(delta : Float): Unit = {
     val frameTime = Math.min(delta, 0.25f)
     accumulator += frameTime
     while (accumulator >= TIME_STEP) {
-      world.step(TIME_STEP, 8, 2)
+      world.step(TIME_STEP, 6, 3)
       accumulator -= TIME_STEP
       gameStage.act(TIME_STEP)
     }
   }
 
-  override def pause() = { }
+  override def pause(): Unit = { }
 
-  override def resume() = { }
+  override def resume(): Unit = { }
 }

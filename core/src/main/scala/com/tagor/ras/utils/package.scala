@@ -10,9 +10,8 @@ package object utils {
 
   private val rPool = Pools.get(classOf[RasRunnable])
 
-  def post(f: () => Unit): Unit = {
+  def post(f: () => Unit): Unit =
     Gdx.app.postRunnable(rPool.obtain().init(f))
-  }
 
   def runnable(f: () => Unit): Runnable =
     rPool.obtain().init(f)

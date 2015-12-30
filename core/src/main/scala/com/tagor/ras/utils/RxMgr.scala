@@ -1,11 +1,8 @@
 package com.tagor.ras.utils
 
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.utils.Pools
 import com.tagor.ras.models.ItemToInst
 import rx.lang.scala.{Observable, Subject}
-import rx.lang.scala.subjects.BehaviorSubject
 import scala.concurrent.duration.DurationInt
 
 /**
@@ -22,9 +19,9 @@ object RxMgr {
   var intervalObs: Observable[Long] = _
 
   onGameRunning.filter(b => b)
-    .subscribe(_ => startIntervalObs())
+    .subscribe(_ => startInterval())
 
-  private def startIntervalObs(): Unit = {
+  private def startInterval(): Unit = {
     intervalObs = Observable.interval(125 milliseconds)
       .takeUntil(onGameRunning)
       .publish.refCount

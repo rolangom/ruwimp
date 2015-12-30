@@ -9,21 +9,20 @@ import com.tagor.ras.utils.{RxMgr, BlockPooler, BlockConst}
 class PatternGenerator(pooler: BlockPooler) {
 
   private def randQty: Int = MathUtils.random(2, 4)
+  private val vspan = BlockConst.Sizes(BlockConst.SizeM) * BlockConst.Size
 
   def initDefaultsIti(x: Float,
                       y: Float,
                       count: Int = randQty): Unit = {
     var i = 0
-    val ang = MathUtils.random(10f, 40f)
+    val ang = 20 // MathUtils.random(10f, 40f)
     val subs = RxMgr.onItiAdded
     while (i < count) {
       val b1 = pooler.getIti.init(BlockConst.DimenUp, BlockConst.SizeL,
-        x + BlockConst.Width(BlockConst.DimenUp, BlockConst.SizeL) * i, y, ang)
+        x + BlockConst.Width(BlockConst.DimenUp, BlockConst.SizeL) * i + vspan, y, ang)
       val b2 = pooler.getIti.init(BlockConst.DimenDown, BlockConst.SizeL,
-        x + BlockConst.Width(BlockConst.DimenDown, BlockConst.SizeL) * i, y, -ang,
+        x + BlockConst.Width(BlockConst.DimenDown, BlockConst.SizeL) * i + vspan, y, -ang,
         isLast = i == count - 1)
-
-      println(s"b2 is last? ${b2.isLast}")
 
       subs.onNext(b1)
       subs.onNext(b2)

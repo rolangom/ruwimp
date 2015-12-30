@@ -107,9 +107,8 @@ class UiStage(batch: Batch)
         run(runToInvisible(levelLbl))))
   }
 
-  private def runToInvisible(actor: Actor): Runnable = {
+  private def runToInvisible(actor: Actor): Runnable =
     com.tagor.ras.utils.runnable { () => actor.setVisible(false) }
-  }
 
   private def rotateDirImg(isUp: Boolean): Unit = {
     dirImg.addAction(
@@ -140,7 +139,7 @@ class UiStage(batch: Batch)
     new Label("00", labelStyle)
   }
 
-  private def createGameTable():Table = {
+  private def createGameTable(): Table = {
     val table = new Table()
     table.setFillParent(true)
     table.align(Align.top)
