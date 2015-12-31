@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Pool.Poolable
+import com.tagor.ras.utils
 import com.tagor.ras.utils.Const.PPM
 import com.tagor.ras.utils.{Const, RxMgr}
 
@@ -78,12 +79,15 @@ class Block(pbody: Body, val btype: BlockType)
       MathUtils.degreesToRadians * getRotation)
 
     RxMgr.onActorAdded.onNext(this)
-    setVisible(true)
-    if (isDimenUp)
-      toFront()
-    else {
-      toBack()
-      body.setLinearVelocity(Const.GroundLinearVelocity, 0f)
+
+    utils.post { () =>
+      setVisible(true)
+      if (isDimenUp)
+        toFront()
+      else {
+        toBack()
+        body.setLinearVelocity(Const.GroundLinearVelocity, 0f)
+      }
     }
     this
   }
