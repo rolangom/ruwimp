@@ -43,12 +43,10 @@ class GameStage(batch: Batch)
 
   RxMgr.onActorAdded
     .doOnNext(a => println(s"actor added ${a.getClass.getName}"))
-    .observeOn(GdxScheduler())
-    .subscribe(a => addActor(a))
+    .subscribe(a => post(() => addActor(a)))
 
   RxMgr.onGameRunning
-    .observeOn(GdxScheduler())
-    .subscribe(r => handleGame(r))
+    .subscribe(r => post(() => handleGame(r)))
 
   private def init(): Unit = {
     val viewport = getViewport
