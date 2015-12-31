@@ -47,10 +47,6 @@ class Player
 
   private val vtmp = new Vector2()
 
-//  RxMgr.onGameRunning
-//    .observeOn(GdxScheduler())
-//    .subscribe(r => handleGame(r))
-
   RxMgr.onPlayerAction
     .subscribe(i => handleInput(i))
 
@@ -135,8 +131,10 @@ class Player
   }
 
   def toggle(): Unit = {
-    if (isDimenUp) goDown()
-    else goUp()
+    RxMgr.onPlayerAction.onNext {
+      if (isDimenUp) RxPlayerConst.GoDown
+      else RxPlayerConst.GoUp
+    }
   }
 
   private def scaleIt(): Unit = {
