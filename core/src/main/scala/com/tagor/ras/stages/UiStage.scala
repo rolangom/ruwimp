@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.{Color, OrthographicCamera}
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.scenes.scene2d.{Actor, Stage}
+import com.badlogic.gdx.scenes.scene2d.{Action, Actor, Stage}
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, Label, Table}
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -113,7 +113,7 @@ class UiStage(batch: Batch)
   private def rotateDirImg(isUp: Boolean): Unit = {
     dirImg.addAction(
       parallel(
-        if (isUp) rotateUp else rotateDown,
+        rotateTo(if (isUp) 0 else -180, Const.TransitTime),
         sequence(
           scaleTo(Const.DownScale, Const.DownScale, Const.TransitTime / 2),
           scaleTo(Const.UpScale, Const.UpScale, Const.TransitTime / 2)),
@@ -123,9 +123,6 @@ class UiStage(batch: Batch)
       )
     )
   }
-
-  private def rotateUp = rotateTo(0, Const.TransitTime)
-  private def rotateDown = rotateTo(-180, Const.TransitTime)
 
   private def initLbl: Label = {
     val generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AldotheApache.ttf"))
