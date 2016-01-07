@@ -59,9 +59,6 @@ class Block(pbody: Body, val btype: BlockType)
            y: Float,
            angle: Float,
            isLast: Boolean = false): Block = {
-//    println(s"block x $x, y $y angle $angle")
-//    body.setTransform(x / PPM, y / PPM,
-//      MathUtils.degreesToRadians * angle)
     setPosition(x - getOriginX, y - getOriginY)
     setRotation(angle)
     sprite.setPosition(getX, getY)
@@ -80,8 +77,8 @@ class Block(pbody: Body, val btype: BlockType)
 
     RxMgr.onActorAdded.onNext(this)
 
+    setVisible(true)
     utils.post { () =>
-      setVisible(true)
       if (isDimenUp)
         toFront()
       else {
@@ -135,6 +132,23 @@ class Block(pbody: Body, val btype: BlockType)
     batch.disableBlending()
     sprite.draw(batch, parentAlpha)
     batch.enableBlending()
+  }
+
+  def minX: Float = optX(_ - _)
+  def maxX: Float = optX(_ + _)
+  def minY: Float = optY(_ - _)
+  def maxY: Float = optY(_ + _)
+
+  private def optX(f: (Float, Float) => Float): Float = {
+    val cx = body.getPosition.x * PPM
+    val hw = (getWidth * getScaleX) / 2 * MathUtils.cosDeg(getRotation)
+    f(cx, hw)
+  }
+
+  private def optY(f: (Float, Float) => Float): Float = {
+    val cy = body.getPosition.y * PPM
+    val hh = (getHeight * getScaleY) / 2 * MathUtils.sinDeg(getRotation)
+    f(cy, hh)
   }
 }
 

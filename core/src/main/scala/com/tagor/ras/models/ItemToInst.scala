@@ -67,4 +67,8 @@ class ItemToInst extends Pool.Poolable {
     angle = 0f
     isLast = false
   }
+
+  override def toString: String =
+    s"iti = size: $size, dimen: $dimen, x: $x, y: $y, ang: $angle, isLast: $isLast"
+
 }

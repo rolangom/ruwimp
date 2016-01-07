@@ -31,7 +31,7 @@ class Spawner(camera: OrthographicCamera) {
     utils.post { () =>
       initDefaults(vblocks, camPos.x, camPos.y, 1)
         .lastOption
-        .foreach(b => spawn(b.getRight + b.getWidth / 2, b.getY))
+        .foreach(b => spawn(b.maxX, b.maxY))
     }
     RxMgr.intervalObs
       .sample(250 milliseconds)
@@ -64,7 +64,17 @@ class Spawner(camera: OrthographicCamera) {
   private def spawn(x: Float, y: Float): Unit = {
     Future {
       println("lets spawn")
-      patGen.initDefaultsIti(x, y)
+//      patGen.genLinearSeq(x, y)
+//      patGen.genSeqX(x, y)
+//      patGen.genSeqV(x, y)
+//      patGen.genSeqInvV(x, y)
+//      patGen.genSeqVandInvV(x, y)
+//      patGen.genSeqInvVandV(x, y)
+//      patGen.genSeqLT(x, y)
+//      patGen.genSeqGT(x, y)
+//      patGen.genDiamond(x, y)
+      patGen.genGtAndLt(x, y)
+
     }
   }
 
@@ -72,7 +82,7 @@ class Spawner(camera: OrthographicCamera) {
                            x: Float, y:Float,
                            count: Int = MathUtils.random(2, 4)): Array[Block] = {
     var i = 0
-    val ang = 15// MathUtils.random(10f, 40f)
+    val ang = 15 // MathUtils.random(10f, 40f)
     while (i < count) {
       val b1 = pooler.get(BlockConst.DimenUp, BlockConst.SizeL)
       val b2 = pooler.get(BlockConst.DimenDown, BlockConst.SizeL)
@@ -108,7 +118,7 @@ class Spawner(camera: OrthographicCamera) {
       .foreach { b =>
         println("checkLastVisible true -2")
         b.notAsLast()
-        utils.post(() => spawn(b.getRight + b.getWidth / 2, b.getY))
+        utils.post(() => spawn(b.maxX, b.maxY))
       }
   }
 
