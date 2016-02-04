@@ -23,10 +23,17 @@ class Spawner(camera: OrthographicCamera) {
   private lazy val vspan = BlockConst.Sizes(BlockConst.SizeM) * BlockConst.Size
 
   RxMgr.onItiAdded
-//    .observeOn(GdxScheduler())
     .subscribe(i => utils.post(() => initBlock(i)))
 
+  def init(): Unit = {
+    println("spanwer init")
+    vblocks.foreach(_.init())
+    pblocks.foreach(_.init())
+    pooler.init()
+  }
+
   def start(): Unit = {
+    println("spanwer start")
     val camPos = camera.position
     utils.post { () =>
       initDefaults(vblocks, camPos.x, camPos.y, 1)
@@ -34,7 +41,7 @@ class Spawner(camera: OrthographicCamera) {
         .foreach(b => spawn(b.maxX, b.maxY))
     }
     RxMgr.intervalObs
-      .sample(250 milliseconds)
+//      .sample(250 milliseconds)
       .subscribe(_ => checkShortInterval())
   }
 
@@ -49,7 +56,7 @@ class Spawner(camera: OrthographicCamera) {
   }
 
   private def initBlock(iti: ItemToInst): Unit = {
-    println("block inited")
+//    println("block inited")
     pblocks += pooler.get(iti).init(iti)
     pooler.free(iti)
   }
@@ -73,8 +80,10 @@ class Spawner(camera: OrthographicCamera) {
 //      patGen.genSeqLT(x, y)
 //      patGen.genSeqGT(x, y)
 //      patGen.genDiamond(x, y)
-      patGen.genGtAndLt(x, y)
-
+//      patGen.genGtAndLt(x, y)
+//      patGen.genParallelSeq(x, y)
+//      patGen.genParPairSeqV(x, y)
+      patGen.genRandSeq(x, y)
     }
   }
 
@@ -112,11 +121,11 @@ class Spawner(camera: OrthographicCamera) {
   }
 
   private def checkLastVisible(): Unit = {
-    println("lets checkLastVisible -2")
+//    println("lets checkLastVisible -2")
     vblocks.lastOption
       .filter { b => b.isLast && camRight >= b.getX }
       .foreach { b =>
-        println("checkLastVisible true -2")
+//        println("checkLastVisible true -2")
         b.notAsLast()
         utils.post(() => spawn(b.maxX, b.maxY))
       }
