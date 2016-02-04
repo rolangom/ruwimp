@@ -91,8 +91,8 @@
 				{
 					"isa" = "PBXGroup";
 					"children" =
-						("4274CC420C7B4B30B65AAE8A", "346D7C42A57C4289AF9B811B", "619583F4FFED44908F35968B",
- "7116A0D3F43E433787DE5FE1", "C2FEC313BB2545DAA257871A", "86D39F04941D4E929D69FB22",
+						("251AF5CD603C40C2AC93257E", "873CBACD79594234A1FF4551", "A2973DFD3EFB414F81FB0000",
+ "7CBCFCA7ABF642A98160208E", "C2FEC313BB2545DAA257871A", "86D39F04941D4E929D69FB22",
  "DE4E1571A9D3489C988B992E", "40C4B12CDD894A89AFFA4F67", "7588D023B182433582E87C4A",
  "38C20910192C4C5A932DDE04", "56001EEA4F3D40FDAAF6CC03", "3773A35D9615416B867F4F05",
  "0795FE119BC6471EA71D34B8", "185FA0FC5ECE4DB89CD535EC", "E0EA0713CC564773800E90E8"
@@ -206,7 +206,7 @@
 					"sourceTree" = "<absolute>";
 					"path" = "/Users/rolangom/Projects/libgdx/Ras/ios";
 				};
-			"0B05FB843D2E4E488537C65A" =
+			"7179CCB2250D47F8905EE99F" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "player_01_anims.png";
@@ -214,16 +214,16 @@
 					"sourceTree" = "<group>";
 					"path" = "player_01_anims.png";
 				};
-			"4274CC420C7B4B30B65AAE8A" =
+			"251AF5CD603C40C2AC93257E" =
 				{
 					"isa" = "PBXGroup";
 					"children" =
-						("0B05FB843D2E4E488537C65A", "80831707710D41089B23A9BB");
+						("7179CCB2250D47F8905EE99F", "53F61E08704D491BAA0821B7");
 					"name" = "atlas";
 					"sourceTree" = "<group>";
 					"path" = "atlas";
 				};
-			"80831707710D41089B23A9BB" =
+			"53F61E08704D491BAA0821B7" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "worldAtlas.png";
@@ -231,7 +231,7 @@
 					"sourceTree" = "<group>";
 					"path" = "worldAtlas.png";
 				};
-			"7116A0D3F43E433787DE5FE1" =
+			"7CBCFCA7ABF642A98160208E" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "badlogic.jpg";
@@ -239,7 +239,7 @@
 					"sourceTree" = "<group>";
 					"path" = "badlogic.jpg";
 				};
-			"D1B92A9FC37C46D6BAF69B9A" =
+			"F5C0FD0F2F3F4FC284A2B4E4" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "AldotheApache.ttf";
@@ -247,16 +247,16 @@
 					"sourceTree" = "<group>";
 					"path" = "AldotheApache.ttf";
 				};
-			"346D7C42A57C4289AF9B811B" =
+			"873CBACD79594234A1FF4551" =
 				{
 					"isa" = "PBXGroup";
 					"children" =
-						("D1B92A9FC37C46D6BAF69B9A");
+						("F5C0FD0F2F3F4FC284A2B4E4");
 					"name" = "fonts";
 					"sourceTree" = "<group>";
 					"path" = "fonts";
 				};
-			"06E8C5AC0FD24CD7ABF62E01" =
+			"3E7F6A411527451C9539B3E7" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "chain.png";
@@ -264,20 +264,20 @@
 					"sourceTree" = "<group>";
 					"path" = "chain.png";
 				};
-			"619583F4FFED44908F35968B" =
+			"A2973DFD3EFB414F81FB0000" =
 				{
 					"isa" = "PBXGroup";
 					"children" =
-						("06E8C5AC0FD24CD7ABF62E01", "5B63883F7F6C4F069C04CCB4", "A169B54F6C9641B482306F0B",
- "096D08F4B7B1497984899F79", "875FA8044B814DFE84DCA3F2", "C2DB9AE2A1A641FA9ACE7F48",
- "F7205D7322D748FF8861D575", "8D863B02F1464AA493D94DB5", "65589803ABCF43DDBB461E29",
- "2D76BAC60692497FAF1D96A5", "7EE40F56A9C9406CABD603DA", "5FCC4CA816294C138B48514C",
- "008B6ADBD8554E2C97C53FE8");
+						("3E7F6A411527451C9539B3E7", "D116631992F9414FA90DCFEF", "5C23255FFB674DDBB8C1519C",
+ "62B52B777D124A138CAC5E2F", "76B9A92C7BA148789D909D0D", "C52531A194094E229D4A9CC0",
+ "55945F8204FB411DA1EA02B4", "FD0C9E75AC564122A5D6BD68", "D95170E5F74C4A1DA0FDD983",
+ "04335EEAF2824E5FB2E0834B", "568CCCBB7134475486774776", "A580521B73BD4558BAF42736",
+ "6A440FDF62DD41E797E2B7BA");
 					"name" = "imgs";
 					"sourceTree" = "<group>";
 					"path" = "imgs";
 				};
-			"5B63883F7F6C4F069C04CCB4" =
+			"D116631992F9414FA90DCFEF" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "city0.png";
@@ -285,7 +285,7 @@
 					"sourceTree" = "<group>";
 					"path" = "city0.png";
 				};
-			"A169B54F6C9641B482306F0B" =
+			"5C23255FFB674DDBB8C1519C" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "city1.png";
@@ -293,7 +293,7 @@
 					"sourceTree" = "<group>";
 					"path" = "city1.png";
 				};
-			"096D08F4B7B1497984899F79" =
+			"62B52B777D124A138CAC5E2F" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "mountains0.png";
@@ -301,7 +301,7 @@
 					"sourceTree" = "<group>";
 					"path" = "mountains0.png";
 				};
-			"875FA8044B814DFE84DCA3F2" =
+			"76B9A92C7BA148789D909D0D" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "mountains1.png";
@@ -309,7 +309,7 @@
 					"sourceTree" = "<group>";
 					"path" = "mountains1.png";
 				};
-			"C2DB9AE2A1A641FA9ACE7F48" =
+			"C52531A194094E229D4A9CC0" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "plat.png";
@@ -317,7 +317,7 @@
 					"sourceTree" = "<group>";
 					"path" = "plat.png";
 				};
-			"F7205D7322D748FF8861D575" =
+			"55945F8204FB411DA1EA02B4" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "platBlue.png";
@@ -325,7 +325,7 @@
 					"sourceTree" = "<group>";
 					"path" = "platBlue.png";
 				};
-			"8D863B02F1464AA493D94DB5" =
+			"FD0C9E75AC564122A5D6BD68" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "platRed.png";
@@ -333,7 +333,7 @@
 					"sourceTree" = "<group>";
 					"path" = "platRed.png";
 				};
-			"65589803ABCF43DDBB461E29" =
+			"D95170E5F74C4A1DA0FDD983" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "platWoDa.png";
@@ -341,7 +341,7 @@
 					"sourceTree" = "<group>";
 					"path" = "platWoDa.png";
 				};
-			"2D76BAC60692497FAF1D96A5" =
+			"04335EEAF2824E5FB2E0834B" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "platWoLi.png";
@@ -349,7 +349,7 @@
 					"sourceTree" = "<group>";
 					"path" = "platWoLi.png";
 				};
-			"7EE40F56A9C9406CABD603DA" =
+			"568CCCBB7134475486774776" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "trees0.png";
@@ -357,7 +357,7 @@
 					"sourceTree" = "<group>";
 					"path" = "trees0.png";
 				};
-			"5FCC4CA816294C138B48514C" =
+			"A580521B73BD4558BAF42736" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "trees1.png";
@@ -365,7 +365,7 @@
 					"sourceTree" = "<group>";
 					"path" = "trees1.png";
 				};
-			"008B6ADBD8554E2C97C53FE8" =
+			"6A440FDF62DD41E797E2B7BA" =
 				{
 					"isa" = "PBXFileReference";
 					"name" = "trees2a.png";
