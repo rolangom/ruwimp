@@ -16,6 +16,7 @@ class BlockType(val dimen: Int, val size: Int) {
   def category: Short = if (isDimenUp) Const.CategoryGroundUp else Const.CategoryGroundDown
   def mask: Short = if(isDimenUp) Const.MaskGroundUp else Const.MaskGroundDown
 
+  override def toString = s"bt(d$dimen,s$size)"
 }
 
 case class UpBlockType(override val size: Int)

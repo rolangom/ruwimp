@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.tagor.ras.models._
 import com.tagor.ras.utils._
-import rx.scala.concurrency.GdxScheduler
 
 import scala.concurrent.duration.DurationInt
 
@@ -21,15 +20,22 @@ class GameStage(batch: Batch)
     new OrthographicCamera), batch)
   with ContactListener {
 
+  RxMgr.onActorAdded
+//    .doOnNext(a => println(s"actor added ${a.getClass.getName}"))
+    .subscribe(a => post(() => addActor(a)))
+
   private val b2dr = new Box2DDebugRenderer
   private val b2dCam = new OrthographicCamera
   private val spawner = new Spawner(getCamera.asInstanceOf[OrthographicCamera])
 
-  private val MinCamSpeed = 1
-  private val MaxCamSpeed = 5
+  private val MinCamSpeed = 1f
+  private val MaxCamSpeed = 3f
   private var cSpeed = MinCamSpeed
   private val CamTargetX = Const.Width * .65f
   private val newCamPos = new Vector3()
+  private val background = new Background(getCamera)
+  private var currAct: Float => Unit = emptyAct
+  private val player = new Player
 
   b2dCam.setToOrtho(false,
     getViewport.getWorldWidth / Const.PPM,
@@ -39,23 +45,28 @@ class GameStage(batch: Batch)
       getViewport.getWorldWidth,
       getViewport.getWorldHeight)
 
-  Player.hello()
-
-  RxMgr.onActorAdded
-    .doOnNext(a => println(s"actor added ${a.getClass.getName}"))
-    .subscribe(a => post(() => addActor(a)))
+  player.hello()
 
   RxMgr.onGameRunning
     .subscribe(r => post(() => handleGame(r)))
 
-  private def init(): Unit = {
-    val viewport = getViewport
-    val camPos = getCamera.position.set(
-      viewport.getWorldWidth / 2f,
-      viewport.getWorldHeight / 2f, 1f)
-    newCamPos.set(0f, camPos.y, camPos.z)
+  RxMgr.newTheme
+    .subscribe(t => init())
+  RxMgr.newLevel
+    .subscribe(l => goFaster())
+
+  def init(): Unit = {
+    spawner.init()
+    background.init()
+    player.init()
   }
-  init()
+//  init()
+
+  def goFaster(): Unit = {
+    player.goFaster()
+    if (cSpeed < MaxCamSpeed)
+      cSpeed += .5f
+  }
 
   private def handleGame(isRunning: Boolean): Unit = {
     if (isRunning) start()
@@ -68,7 +79,9 @@ class GameStage(batch: Batch)
     cam.position.set(newCamPos)
     cam.update()
     spawner.start()
-    Player.activate()
+    background.start()
+    player.activate()
+    currAct = gameAct
 
     RxMgr.intervalObs
       .sample(1 seconds)
@@ -78,10 +91,28 @@ class GameStage(batch: Batch)
   }
 
   private def end(): Unit = {
+    currAct = emptyAct
     spawner.end()
-    Player.reset()
+    player.reset()
+    cSpeed = MinCamSpeed
     ScoreMgr.saveAndReset()
   }
+
+  private def gameAct(delta: Float): Unit = {
+    // TODO: ONLY WHILE IN DEBUG (Remove)
+    val cam = getCamera
+    b2dCam.position.set(
+      cam.position.x / Const.PPM,
+      cam.position.y / Const.PPM,
+      cam.position.z)
+    b2dCam.update()
+
+    newCamPos.x = player.getX() + CamTargetX
+    //    newCamPos.y = MathUtils.clamp(player.getY(), 0f, 1400f);
+    cam.position.interpolate(newCamPos, cSpeed * delta, Interpolation.linear)
+  }
+
+  private def emptyAct(delta: Float): Unit = { }
 
   override def draw(): Unit = {
     super.draw()
@@ -92,24 +123,14 @@ class GameStage(batch: Batch)
 
   override def act(delta : Float): Unit = {
     super.act(delta)
-    // TODO: ONLY WHILE IN DEBUG (Remove)
-    val cam = getCamera
-    b2dCam.position.set(
-      cam.position.x / Const.PPM,
-      cam.position.y / Const.PPM,
-      cam.position.z)
-    b2dCam.update()
-
-    newCamPos.x = Player.getX() + CamTargetX
-//    newCamPos.y = MathUtils.clamp(player.getY(), 0f, 1400f);
-    cam.position.interpolate(newCamPos, cSpeed * delta, Interpolation.linear)
+    currAct(delta)
   }
 
   override def beginContact(contact: Contact): Unit = {
     WorldFactory.blockIfLanded(
       contact.getFixtureA,
       contact.getFixtureB).foreach { b =>
-        Player.landedAt(b.getZIndex)
+        player.landedAt(b.getZIndex)
         if (b.setAsLanded())
           ScoreMgr.increase()
       }
@@ -117,10 +138,15 @@ class GameStage(batch: Batch)
 
   override def endContact(contact: Contact): Unit = {
     if (WorldFactory.isPlayerAndGround(contact.getFixtureA, contact.getFixtureB))
-      Player.onAir()
+      player.onAir()
   }
 
   override def postSolve(contact: Contact, impulse: ContactImpulse): Unit = { }
 
   override def preSolve(contact: Contact, oldManifold: Manifold): Unit = { }
+
+  def disposeLight(): Unit = {
+    ResMgr.remove(ResMgr.getThemeTextureStr(BlockConst.BLOCK_INDEX))
+    ResMgr.remove(ResMgr.getThemeTextureStr(BlockConst.JOINT_INDEX))
+  }
 }

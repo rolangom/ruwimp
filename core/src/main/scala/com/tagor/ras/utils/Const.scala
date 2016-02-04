@@ -16,7 +16,7 @@ object Const {
   val UpScale: Float = 1f
   val DownScale: Float = .85f
 
-  val TransitTime = .250f
+  val TransitTime = .150f
 
   val CategoryGroundUp: Short = 0x0001
   val CategoryPlayerUp: Short = 0x0002
@@ -48,6 +48,9 @@ object Const {
   val RunnerY = Height * .85f
 
   val GroundLinearVelocity = .25f
+
+  val ThemeImg = 0
+  val ThemeColor = 1
 
 
   val GROUND_UI_ATLAS_PATH = "atlas/groundUi.txt"

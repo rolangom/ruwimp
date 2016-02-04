@@ -1,8 +1,7 @@
 package com.tagor.ras.models
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture.TextureWrap
-import com.badlogic.gdx.graphics.{Texture, Color}
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.{Sprite, Batch}
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.Body
@@ -11,7 +10,7 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Pool.Poolable
 import com.tagor.ras.utils
 import com.tagor.ras.utils.Const.PPM
-import com.tagor.ras.utils.{Const, RxMgr}
+import com.tagor.ras.utils._
 
 /**
  * Created by rolangom on 7/8/15.
@@ -24,17 +23,14 @@ class Block(pbody: Body, val btype: BlockType)
   val sprite = new Sprite()
   def isDimenUp = btype.isDimenUp
 
-  private def init(): Unit = {
+  def init(): Unit = {
     val bpos = body.getPosition
     setBounds(
       bpos.x * PPM - btype.halfw,
       bpos.y * PPM - btype.halfh,
       btype.width,
       btype.height)
-    sprite.setTexture(new Texture(Gdx.files.internal("imgs/plat.png")))
-    sprite.getTexture.setWrap(
-      TextureWrap.MirroredRepeat,
-      TextureWrap.ClampToEdge)
+    initSpriteTexture()
 
     sprite.setBounds(getX, getY, getWidth, getHeight)
     sprite.setU2(getWidth / sprite.getTexture.getWidth)
@@ -45,15 +41,23 @@ class Block(pbody: Body, val btype: BlockType)
 
     sprite.setScale(btype.scale)
 
-//    body.setActive(false)
     setVisible(false)
     setDebug(true)
-    setColor(if (isDimenUp) Color.RED else Color.BLUE)
   }
   init()
 
+  private def initSpriteTexture(): Unit = {
+    sprite.setTexture(ResMgr.getThemeTexture(BlockConst.BLOCK_INDEX))
+    sprite.getTexture.setWrap(
+      TextureWrap.MirroredRepeat,
+      TextureWrap.ClampToEdge)
+    setColor(ThemeMgr.getBlockColor(btype.dimen))
+  }
+
   def init(iti: ItemToInst): Block =
     init(iti.x, iti.y, iti.angle, iti.isLast)
+
+  private def isTextureDisposed: Boolean = sprite.getTexture.getTextureObjectHandle == 0
 
   def init(x: Float,
            y: Float,
@@ -61,6 +65,8 @@ class Block(pbody: Body, val btype: BlockType)
            isLast: Boolean = false): Block = {
     setPosition(x - getOriginX, y - getOriginY)
     setRotation(angle)
+    if(isTextureDisposed)
+      initSpriteTexture()
     sprite.setPosition(getX, getY)
     sprite.setRotation(angle)
     sprite.setColor(getColor)
@@ -87,6 +93,12 @@ class Block(pbody: Body, val btype: BlockType)
       }
     }
     this
+  }
+
+  private def setVisibleSmoothly(): Unit = {
+    addAction(Actions.alpha(0f))
+    setVisible(true)
+    addAction(Actions.fadeIn(1f))
   }
 
   def asLast(): Unit = {
@@ -149,6 +161,11 @@ class Block(pbody: Body, val btype: BlockType)
     val cy = body.getPosition.y * PPM
     val hh = (getHeight * getScaleY) / 2 * MathUtils.sinDeg(getRotation)
     f(cy, hh)
+  }
+
+  override def finalize(): Unit = {
+    super.finalize()
+    WorldFactory.world.destroyBody(body)
   }
 }
 

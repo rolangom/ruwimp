@@ -1,6 +1,7 @@
 package com.tagor.ras.utils
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Pixmap.Format
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
@@ -14,13 +15,13 @@ import scala.collection.mutable
 /**
   * Created by rolangom on 12/27/15.
   */
-object ResMgr {
+object ResMgr extends Disposable {
 
-  private val textures = mutable.Map[String, Disposable]()
+  private val disposables = mutable.Map[String, Disposable]()
 
   def getAtlas(atlasKey: String): TextureAtlas = {
-    if (!textures.contains(atlasKey)) textures.put(atlasKey, new TextureAtlas(atlasKey))
-    textures(atlasKey).asInstanceOf[TextureAtlas]
+    if (!disposables.contains(atlasKey)) disposables.put(atlasKey, new TextureAtlas(atlasKey))
+    disposables(atlasKey).asInstanceOf[TextureAtlas]
   }
 
   def getRegion(atlasKey: String, regionKey: String): TextureRegion = {
@@ -54,25 +55,36 @@ object ResMgr {
   }
 
   def getTexture(textureKey: String): Texture = {
-    if (!textures.contains(textureKey)) textures.put(textureKey, new Texture(Gdx.files.internal(textureKey),
+    if (!disposables.contains(textureKey)) disposables.put(textureKey, new Texture(Gdx.files.internal(textureKey),
       Format.RGBA4444, true))
-    textures(textureKey).asInstanceOf[Texture]
+    disposables(textureKey).asInstanceOf[Texture]
   }
 
-  def removeTexture(textureKey: String) {
-    if (textures.contains(textureKey)) {
-      textures(textureKey).dispose()
-      textures.remove(textureKey)
+  def getSound(key: String): Sound = {
+    if (!disposables.contains(key))
+      disposables.put(key, Gdx.audio.newSound(Gdx.files.internal(key)))
+    disposables(key).asInstanceOf[Sound]
+  }
+
+  def remove(key: String): Unit = {
+    if (disposables.contains(key)) {
+      disposables(key).dispose()
+      disposables.remove(key)
     }
   }
 
-//  def getThemeTexture(key: Int): Texture = {
-//    getTexture(BlockConst.THEMES_IMGS(ThemeManager.currentTheme)(key))
-//  }
+  def getThemeTexture(key: Int): Texture =
+    getTexture(getThemeTextureStr(key))
 
-  def dispose() {
-    textures.foreach{
-      case (k, v) => v.dispose()
+  def getThemeTextureStr(key: Int): String =
+    BlockConst.THEMES_IMGS(ThemeMgr.currentTheme)(key)
+
+  override def dispose(): Unit = {
+    disposables.foreach {
+      case (k, v) => {
+        disposables.remove(k)
+        v.dispose()
+      }
     }
   }
 

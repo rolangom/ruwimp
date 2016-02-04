@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.{Gdx, Screen}
 import com.tagor.ras.stages.{UiStage, GameStage}
-import com.tagor.ras.utils.WorldFactory
+import com.tagor.ras.utils.{ResMgr, RxMgr, WorldFactory}
 
 /**
  * Created by rolangom on 6/8/15.
@@ -22,12 +22,15 @@ class GameScreen extends Screen {
 
   var accumulator = 0f
   val TIME_STEP = 0.01f// 1f / (if (Gdx.app.getType == ApplicationType.iOS) 60f else 300f)
+  var isResumed = false
 
   override def show(): Unit = {
-
+    resume()
   }
 
-  override def hide(): Unit = { }
+  override def hide(): Unit = {
+    dispose()
+  }
 
   override def resize(width: Int, height: Int): Unit = {
     gameStage.getViewport.update(width, height)
@@ -37,11 +40,13 @@ class GameScreen extends Screen {
   override def dispose(): Unit = {
     gameStage dispose()
     uiStage dispose()
+    ResMgr.dispose()
   }
 
   override def render(delta: Float): Unit = {
     val gl = Gdx.gl
-    gl.glClearColor(.5f, .5f, .5f, .5f)
+//    gl.glClearColor(.5f, .5f, .5f, .5f)
+    gl.glClearColor(0f, 0f, 0f, 1f)
     gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
     renderFixed(delta)
@@ -61,7 +66,17 @@ class GameScreen extends Screen {
     }
   }
 
-  override def pause(): Unit = { }
+  override def pause(): Unit = {
+    isResumed = false
+    uiStage.dispose()
+    ResMgr.dispose()
+  }
 
-  override def resume(): Unit = { }
+  override def resume(): Unit = {
+    if (!isResumed) {
+      gameStage.init()
+      uiStage.init()
+      isResumed = true
+    }
+  }
 }

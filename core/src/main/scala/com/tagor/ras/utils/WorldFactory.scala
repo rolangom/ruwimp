@@ -44,8 +44,7 @@ object WorldFactory {
 
   def createTopBody(x: Float,
                     y: Float,
-                    w: Float,
-                    h: Float): Body = {
+                    w: Float): Body = {
     val bdef = new BodyDef
     val fdef = new FixtureDef
     val shape = new EdgeShape
@@ -176,9 +175,9 @@ object WorldFactory {
 
   def blockIfLanded(fixtureA: Fixture, fixtureB: Fixture): Option[Block] = {
     (fixtureA.getUserData, fixtureB.getUserData) match {
-      case (Const.FootStrType, _) =>
+      case (Const.FootStrType, Const.GroundStrType) =>
         Some(fixtureB.getBody.getUserData.asInstanceOf[Block])
-      case (_, Const.FootStrType) =>
+      case (Const.GroundStrType, Const.FootStrType) =>
         Some(fixtureA.getBody.getUserData.asInstanceOf[Block])
       case _ => None
     }
