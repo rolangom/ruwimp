@@ -1,21 +1,21 @@
 package com.tagor.ras.stages
 
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions._
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.{Input, Gdx}
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.{Color, OrthographicCamera}
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.scenes.scene2d.{Action, Actor, Stage}
+import com.badlogic.gdx.scenes.scene2d.{InputEvent, Actor, Stage}
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, Label, Table}
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.tagor.ras.models.RxPlayerConst
-import com.tagor.ras.utils.{ResMgr, RxMgr, Const}
-import rx.scala.concurrency.GdxScheduler
-
-import scala.concurrent.duration.DurationInt
+import com.tagor.ras.models.tables.{DashboardTable, StartTable, GameTable}
+import com.tagor.ras.utils._
 
 /**
   * Created by rolangom on 12/12/15.
@@ -23,174 +23,144 @@ import scala.concurrent.duration.DurationInt
 class UiStage(batch: Batch)
   extends Stage(new FitViewport(
     Const.Width, Const.Height,
-    new OrthographicCamera), batch) {
+    new OrthographicCamera), batch){
 
-  private var isRunning = false
+  private lazy val uiClickListener = new ClickListener() {
+    override def touchDown(event: InputEvent,
+                           x: Float, y: Float,
+                           pointer: Int,
+                           button: Int): Boolean = {
+      event.getTarget.getUserObject match {
+        case Const.PlayStr =>
+          RxMgr.onGameState.onNext(Const.GameStatePlay)
+          true
+        case Const.PlayAgainStr =>
+          playAgain()
+          true
+        case _ => false
+      }
+    }
+  }
 
-  private var levelLbl: Label = _
-  private var scoreLbl: Label = _
-  private var fpsLbl: Label = _
+  private lazy val gtable = new GameTable
+  private lazy val stable = new StartTable(uiClickListener)
+  private lazy val dtable = new DashboardTable(uiClickListener)
 
-  private var gameTbl: Table = _
-  private var startTbl: Table = _
-  private var dashboardTbl: Table = _
-
-  private var dirImg: Image = _
-
+  private var currAct: Float => Unit = emptyAct
   private lazy val (screenSideR, screenSideL) = getScreenSideRects
 
-  RxMgr.onGameRunning
-    .subscribe(r => isRunning = r)
+  private var cTouchDown: (Int, Int, Int, Int) => Boolean = super.touchDown
+  private var cKeyDown: (Int) => Boolean = super.keyDown
 
-  RxMgr.newScore
-    .subscribe(s => scoreLbl.setText(s.toString))
+  RxMgr.onGameState
+      .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
+      .map(_ == Const.GameStatePlay)
+    .subscribe(r => handleGame(r))
 
-  RxMgr.newLevel
-    .subscribe(l => showLevel(l))
+  def init(): Unit = {
+    clear()
 
-  RxMgr.onPlayerAction
-    .filter(i => i == RxPlayerConst.GoUp || i == RxPlayerConst.GoDown)
-    .map(i => if (i == RxPlayerConst.GoUp) true else false)
-    .subscribe(i => rotateDirImg(i))
+    stable.init()
+    gtable.init()
+    dtable.init()
 
-  private def init(): Unit = {
-    gameTbl = new Table()
-    gameTbl.setFillParent(true)
-//    gameTbl.setDebug(true)
-    gameTbl.align(Align.top)
-//    gameTbl.setVisible(false)
-
-    val generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AldotheApache.ttf"))
-    val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
-    parameter.size = 48
-    parameter.shadowOffsetX = 2
-    parameter.shadowOffsetY = 2
-    val lblFont = generator.generateFont(parameter)
-    val labelStyle = new Label.LabelStyle(lblFont, Color.WHITE)
-
-    scoreLbl = new Label("00", labelStyle)
-    fpsLbl = new Label("00", labelStyle)
-
-    parameter.size = 32
-    parameter.shadowOffsetX = 1
-    parameter.shadowOffsetY = 1
-    val lvlFnt = generator.generateFont(parameter)
-    val lvlStyle = new LabelStyle(lvlFnt, Color.YELLOW)
-
-    levelLbl = new Label("Level 0", lvlStyle)
-    levelLbl.setVisible(false)
-
-    dirImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "arrowUp"))
-    dirImg.setOrigin(Align.center)
-
-    gameTbl.add(scoreLbl)
-    gameTbl.row()
-    gameTbl.add(levelLbl)
-    gameTbl.row()
-    gameTbl.add(dirImg).expand().align(Align.left)
-    gameTbl.row()
-    gameTbl.add(fpsLbl)
-
-    generator.dispose()
-    addActor(gameTbl)
+    addActor(stable)
+    stable.show()
   }
-  init()
 
-  private def showLevel(level: Int) {
-    levelLbl.setText(s"Level $level")
-    levelLbl.setVisible(true)
-    levelLbl.addAction(
+  private def showGameTable(): Unit = {
+    stable.hide()
+    addGameTbl()
+  }
+
+  private def playAgain(): Unit = {
+    dtable.hide()
+    addAction(
       sequence(
-        fadeIn(.25f),
-        delay(3),
-        fadeOut(.5f),
-        run(runToInvisible(levelLbl))))
-  }
-
-  private def runToInvisible(actor: Actor): Runnable =
-    com.tagor.ras.utils.runnable { () => actor.setVisible(false) }
-
-  private def rotateDirImg(isUp: Boolean): Unit = {
-    dirImg.addAction(
-      parallel(
-        rotateTo(if (isUp) 0 else -180, Const.TransitTime),
-        sequence(
-          scaleTo(Const.DownScale, Const.DownScale, Const.TransitTime / 2),
-          scaleTo(Const.UpScale, Const.UpScale, Const.TransitTime / 2)),
-        sequence(
-          alpha(Const.DownScale, Const.TransitTime / 2),
-          alpha(Const.UpScale, Const.TransitTime / 2))
+        delay(.5f),
+        run(runnable { () =>
+          RxMgr.onGameState.onNext(Const.GameStatePlay)
+        })
       )
     )
   }
 
-  private def initLbl: Label = {
-    val generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AldotheApache.ttf"))
-    val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
-    parameter.size = 48
-    parameter.shadowOffsetX = 2
-    parameter.shadowOffsetY = 2
-    val lblFont = generator.generateFont(parameter)
-    val labelStyle = new Label.LabelStyle(lblFont, Color.WHITE)
-    generator.dispose()
-    new Label("00", labelStyle)
+  private def addGameTbl(): Unit = {
+    addActor(gtable)
+    gtable.showDelayed()
   }
 
-  private def createGameTable(): Table = {
-    val table = new Table()
-    table.setFillParent(true)
-    table.align(Align.top)
-    addActor(table)
-    table
+  private def addDashboardTbl(): Unit = {
+    addActor(dtable)
+    dtable.show()
   }
 
-  private def getScreenSideRects =
-    (new Rectangle(Gdx.graphics.getWidth / 2,
-      scoreLbl.getHeight,
+  private def handleGame(isRunning: Boolean): Unit = {
+    currAct = if (isRunning) stageAct else emptyAct
+    configGameInput(isRunning)
+
+    if (isRunning)
+      showGameTable()
+    else
+      post(() => showDashboadTbl())
+  }
+
+  private def showDashboadTbl(): Unit = {
+    gtable.hide()
+    addDashboardTbl()
+  }
+
+  private def getScreenSideRects = {
+    val scoreHeight = 48
+    (new Rectangle(Gdx.graphics.getWidth / 2, scoreHeight,
       Gdx.graphics.getWidth / 2,
-      Gdx.graphics.getHeight - scoreLbl.getHeight),
-    new Rectangle(0, scoreLbl.getHeight,
+      Gdx.graphics.getHeight - scoreHeight),
+     new Rectangle(0, scoreHeight,
       Gdx.graphics.getWidth / 2,
-      Gdx.graphics.getHeight - scoreLbl.getHeight))
+      Gdx.graphics.getHeight - scoreHeight))
+  }
 
   override def keyDown(keyCode: Int): Boolean = {
-    if (isRunning){
-      RxMgr.onPlayerAction.onNext(keyCode)
-      return true
-    } else {
-      if(keyCode == Input.Keys.SPACE) {
-        RxMgr.onGameRunning.onNext(true)
-        return true
-      }
-    }
-    super.keyDown(keyCode)
+    cKeyDown(keyCode)
   }
 
-  //  val funcKeyDownRunning:(Int => Boolean) = (keyCode:Int) => {
-  //    onPlayerActSubj.onNext(keyCode)
-  //    true
-  //  }
-  //
-  //  val funcKeyDown
+  private def configGameInput(running: Boolean): Unit = {
+    cTouchDown = if (running) runningTouchDown else super.touchDown
+    cKeyDown = if (running) runningKeyDown else super.keyDown
+  }
 
   override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
-    if (isRunning){
-      if (screenSideR.contains(screenX, screenY)) {
-        RxMgr.onPlayerAction.onNext(RxPlayerConst.Jump)
-        return true
-      } else if (screenSideL.contains(screenX, screenY)) {
-        RxMgr.onPlayerAction.onNext(RxPlayerConst.Toggle)
-        return true
-      }
-    } else {
-      RxMgr.onGameRunning.onNext(true)
+    cTouchDown(screenX, screenY, pointer, button)
+  }
+
+  private def runningKeyDown(keyCode: Int): Boolean = {
+    RxMgr.onPlayerAction.onNext(keyCode)
+    true
+  }
+
+  private def runningTouchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
+    if (screenSideR.contains(screenX, screenY)) {
+      RxMgr.onPlayerAction.onNext(RxPlayerConst.Jump)
+      return true
+    } else if (screenSideL.contains(screenX, screenY)) {
+      RxMgr.onPlayerAction.onNext(RxPlayerConst.Toggle)
       return true
     }
-    super.touchDown(screenX, screenY, pointer, button)
+    false
+  }
+
+  private def emptyAct(delta: Float): Unit = { }
+
+  private def stageAct(delta: Float): Unit = {
+    gtable.setFpsText(s"FPS: ${Gdx.graphics.getFramesPerSecond}, body count: ${WorldFactory.world.getBodyCount}")
   }
 
   override def act(delta: Float): Unit = {
     super.act(delta)
-    fpsLbl.setText(s"FPS: ${Gdx.graphics.getFramesPerSecond}")
+    currAct(delta)
+  }
+
+  override def dispose(): Unit = {
+    super.dispose()
   }
 }

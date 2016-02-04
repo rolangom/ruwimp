@@ -9,7 +9,7 @@ import scala.concurrent.duration.DurationInt
   * Created by rolangom on 12/12/15.
   */
 object RxMgr {
-  lazy val onGameRunning = Subject[Boolean]()
+  lazy val onGameState = Subject[Int]()
   lazy val onActorAdded = Subject[Actor]()
   lazy val onPlayerAction = Subject[Int]()
   lazy val onItiAdded = Subject[ItemToInst]()
@@ -19,12 +19,13 @@ object RxMgr {
 
   var intervalObs: Observable[Long] = _
 
-  onGameRunning.filter(b => b)
+  onGameState
+    .filter(_ == Const.GameStatePlay)
     .subscribe(_ => startInterval())
 
   private def startInterval(): Unit = {
     intervalObs = Observable.interval(125 milliseconds)
-      .takeUntil(onGameRunning)
+      .takeUntil(onGameState)
       .publish.refCount
   }
 

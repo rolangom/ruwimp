@@ -47,7 +47,9 @@ class GameStage(batch: Batch)
 
   player.hello()
 
-  RxMgr.onGameRunning
+  RxMgr.onGameState
+      .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
+      .map(_ == Const.GameStatePlay)
     .subscribe(r => post(() => handleGame(r)))
 
   RxMgr.newTheme
@@ -85,9 +87,8 @@ class GameStage(batch: Batch)
 
     RxMgr.intervalObs
       .sample(1 seconds)
-      .filter(_ => Player.getTop < 0 || Player.getRight < getCamera.position.x - getViewport.getWorldWidth * .5f)
-      .doOnEach(_ => println("Player is out"))
-      .subscribe(_ => RxMgr.onGameRunning.onNext(false))
+      .filter(_ => player.getTop < 0 || player.getRight < getCamera.position.x - getViewport.getWorldWidth * .5f)
+      .subscribe(_ => RxMgr.onGameState.onNext(Const.GameStateOver))
   }
 
   private def end(): Unit = {
