@@ -2,9 +2,10 @@ package com.tagor.ras.stages
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.math.{Interpolation, Vector3}
+import com.badlogic.gdx.math.{MathUtils, Interpolation, Vector3}
 import com.badlogic.gdx.physics.box2d._
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.tagor.ras.models._
 import com.tagor.ras.utils._
@@ -36,6 +37,8 @@ class GameStage(batch: Batch)
   private val background = new Background(getCamera)
   private var currAct: Float => Unit = emptyAct
   private val player = new Player
+
+  def playerVelX = player.velX
 
   b2dCam.setToOrtho(false,
     getViewport.getWorldWidth / Const.PPM,
@@ -71,24 +74,40 @@ class GameStage(batch: Batch)
   }
 
   private def handleGame(isRunning: Boolean): Unit = {
-    if (isRunning) start()
+    if (isRunning) startDelayed// start()
     else end()
   }
 
+  private def startDelayed(): Unit = {
+    addAction(
+      Actions.delay(1f,
+        Actions.run(
+          runnable(() => start())
+        )
+      )
+    )
+  }
+
   private def start(): Unit = {
+    preStart()
+    spawner.start()
+    background.start()
+    addAction(Actions.delay(1f, Actions.run(com.tagor.ras.utils.runnable(() => {
+      player.activate()
+      currAct = gameAct
+
+      RxMgr.intervalObs
+        .sample(1 seconds)
+        .filter(_ => player.getTop < 0 || player.getRight < getCamera.position.x - getViewport.getWorldWidth * .5f)
+        .subscribe(_ => RxMgr.onGameState.onNext(Const.GameStateOver))
+    }))))
+  }
+
+  private def preStart(): Unit = {
     val cam = getCamera
     newCamPos.set(cam.viewportWidth / 2, cam.position.y, cam.position.z)
     cam.position.set(newCamPos)
     cam.update()
-    spawner.start()
-    background.start()
-    player.activate()
-    currAct = gameAct
-
-    RxMgr.intervalObs
-      .sample(1 seconds)
-      .filter(_ => player.getTop < 0 || player.getRight < getCamera.position.x - getViewport.getWorldWidth * .5f)
-      .subscribe(_ => RxMgr.onGameState.onNext(Const.GameStateOver))
   }
 
   private def end(): Unit = {
@@ -109,7 +128,7 @@ class GameStage(batch: Batch)
     b2dCam.update()
 
     newCamPos.x = player.getX() + CamTargetX
-    //    newCamPos.y = MathUtils.clamp(player.getY(), 0f, 1400f);
+//    newCamPos.y = MathUtils.clamp(player.getY(), 0f, 1400f)
     cam.position.interpolate(newCamPos, cSpeed * delta, Interpolation.linear)
   }
 

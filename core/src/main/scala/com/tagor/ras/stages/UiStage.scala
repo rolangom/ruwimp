@@ -1,17 +1,12 @@
 package com.tagor.ras.stages
 
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions._
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import com.badlogic.gdx.{Input, Gdx}
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.graphics.{Color, OrthographicCamera}
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.scenes.scene2d.{InputEvent, Actor, Stage}
-import com.badlogic.gdx.scenes.scene2d.ui.{Image, Label, Table}
-import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.scenes.scene2d.{InputEvent, Stage}
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.tagor.ras.models.RxPlayerConst
 import com.tagor.ras.models.tables.{DashboardTable, StartTable, GameTable}
@@ -86,13 +81,21 @@ class UiStage(batch: Batch)
   }
 
   private def addGameTbl(): Unit = {
-    addActor(gtable)
-    gtable.showDelayed()
+    addActionDelayed(1f, () => {
+      addActor(gtable)
+      gtable.show()
+    })
+  }
+
+  private def addActionDelayed(t: Float, action: () => Unit): Unit = {
+    addAction(delay(t, run(runnable(action))))
   }
 
   private def addDashboardTbl(): Unit = {
-    addActor(dtable)
-    dtable.show()
+    addActionDelayed(.5f, () => {
+      addActor(dtable)
+      dtable.show()
+    })
   }
 
   private def handleGame(isRunning: Boolean): Unit = {

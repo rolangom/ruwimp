@@ -30,13 +30,15 @@ class StartTable(clickListener: ClickListener) extends Table {
     row()
     add(lBoardBtnImg).align(Align.center)
     add(playBtnImg).align(Align.center)
+    setVisible(false)
   }
 
   def show(): Unit = {
     addAction(
       sequence(
         alpha(0),
-        fadeIn(.75f)
+        Actions.visible(true),
+        fadeIn(1f)
       )
     )
   }
@@ -45,6 +47,7 @@ class StartTable(clickListener: ClickListener) extends Table {
     addAction(
       sequence(
         fadeOut(.5f),
+        Actions.visible(false),
         Actions.removeActor()
       )
     )

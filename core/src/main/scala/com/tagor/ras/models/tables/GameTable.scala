@@ -71,6 +71,7 @@ class GameTable extends Table {
     add(dirImg).expand().align(Align.left)
     row()
     add(fpsLbl)
+    setVisible(false)
   }
 
   private def showLevel(level: Int): Unit = {
@@ -104,6 +105,7 @@ class GameTable extends Table {
     addAction(
       sequence(
         fadeOut(.5f),
+        Actions.visible(false),
         Actions.removeActor()
       )
     )
@@ -113,9 +115,20 @@ class GameTable extends Table {
     addAction(
       sequence(
         alpha(0f),
+        Actions.visible(true),
         delay(.5f),
-        fadeIn(.5f),
-        delay(.5f)
+        fadeIn(.5f)
+      )
+    )
+  }
+
+
+  def show(): Unit = {
+    addAction(
+      sequence(
+        alpha(0f),
+        Actions.visible(true),
+        fadeIn(.5f)
       )
     )
   }

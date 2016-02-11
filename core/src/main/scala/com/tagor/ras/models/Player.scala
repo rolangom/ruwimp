@@ -1,16 +1,16 @@
 package com.tagor.ras.models
 
-import com.badlogic.gdx.{Gdx, Input}
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.{TextureRegion, Animation, Batch}
 import com.badlogic.gdx.math.{MathUtils, Vector2}
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Align
-import com.tagor.ras.utils
+import Actions._
+import com.tagor.ras.utils._
 import com.tagor.ras.utils.{ResMgr, RxMgr, Const, WorldFactory}
 import com.tagor.ras.utils.Const.PPM
-import rx.scala.concurrency.GdxScheduler
 
 /**
   * Created by rolangom on 12/11/15.
@@ -93,6 +93,8 @@ class Player
   def hello() = {
     println("Hi!")
   }
+
+  def velX = body.getLinearVelocity.x
 
   def goFaster(): Unit = {
     if (currentSpeed < RxPlayerConst.MaxSpeed)

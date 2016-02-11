@@ -70,12 +70,14 @@ class DashboardTable(clickListener: ClickListener) extends Table {
     row()
     add(playBtnImg).align(Align.left).colspan(2)
     add(lBoardBtnImg).align(Align.right)
+    setVisible(false)
   }
 
   def show(): Unit = {
     addAction(
       sequence(
         alpha(0),
+        Actions.visible(true),
         fadeIn(.5f)
       )
     )
@@ -88,6 +90,7 @@ class DashboardTable(clickListener: ClickListener) extends Table {
     addAction(
       sequence(
         fadeOut(.5f),
+        Actions.visible(false),
         Actions.removeActor()
       )
     )
