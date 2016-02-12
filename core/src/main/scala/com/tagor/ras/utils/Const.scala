@@ -59,6 +59,7 @@ object Const {
 
   val PlayStr = new String("play")
   val PlayAgainStr = new String("playAgain")
+  val LeaderBoard = new String("LeaderBoard")
 
   val GROUND_UI_ATLAS_PATH = "atlas/groundUi.txt"
 

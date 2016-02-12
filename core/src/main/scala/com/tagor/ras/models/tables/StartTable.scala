@@ -22,9 +22,13 @@ class StartTable(clickListener: ClickListener) extends Table {
     logoImg.setOrigin(Align.center)
 
     val playBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
+    playBtnImg.setOrigin(Align.center)
     playBtnImg.setUserObject(Const.PlayStr)
     playBtnImg.addListener(clickListener)
     val lBoardBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
+    lBoardBtnImg.setOrigin(Align.center)
+    lBoardBtnImg.setUserObject(Const.LeaderBoard)
+    lBoardBtnImg.addListener(clickListener)
 
     add(logoImg).colspan(2).spaceBottom(32).spaceTop(64)
     row()

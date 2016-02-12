@@ -54,9 +54,13 @@ class DashboardTable(clickListener: ClickListener) extends Table {
     gameoverImg.setOrigin(Align.center)
 
     val playBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
+    playBtnImg.setOrigin(Align.center)
     playBtnImg.setUserObject(Const.PlayAgainStr)
     playBtnImg.addListener(clickListener)
     val lBoardBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
+    lBoardBtnImg.setOrigin(Align.center)
+    lBoardBtnImg.setUserObject(Const.LeaderBoard)
+    lBoardBtnImg.addListener(clickListener)
 
     add(gameoverImg).colspan(3).spaceBottom(32).spaceTop(32)
     row()

@@ -3,10 +3,10 @@ package com.tagor.ras.stages
 import com.badlogic.gdx.scenes.scene2d.actions.Actions._
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.{Color, OrthographicCamera}
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.scenes.scene2d.{InputEvent, Stage}
+import com.badlogic.gdx.scenes.scene2d.{Actor, InputEvent, Stage}
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.tagor.ras.models.RxPlayerConst
 import com.tagor.ras.models.tables.{DashboardTable, StartTable, GameTable}
@@ -25,16 +25,33 @@ class UiStage(batch: Batch)
                            x: Float, y: Float,
                            pointer: Int,
                            button: Int): Boolean = {
-      event.getTarget.getUserObject match {
+      val (act, touched) = event.getTarget.getUserObject match {
         case Const.PlayStr =>
-          RxMgr.onGameState.onNext(Const.GameStatePlay)
-          true
+          (() => RxMgr.onGameState.onNext(Const.GameStatePlay), true)
         case Const.PlayAgainStr =>
-          playAgain()
-          true
-        case _ => false
+          (() => playAgain(), true)
+        case _ => (() => {}, false)
       }
+      clickEffect(event.getTarget, act)
+      touched
     }
+  }
+
+  private def clickEffect(actor: Actor, f: () => Unit): Unit = {
+    actor.addAction(
+      parallel(
+        sequence(
+          color(Color.GRAY, .15f),
+          color(Color.WHITE, .15f)
+        ),
+        sequence(
+          scaleBy(-.25f, -.25f, .15f),
+          scaleTo(1f, 1f, .15f),
+          delay(.15f),
+          run(runnable(f))
+        )
+      )
+    )
   }
 
   private lazy val gtable = new GameTable
