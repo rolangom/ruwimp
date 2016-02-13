@@ -3,21 +3,26 @@ package com.tagor.ras.models.tables
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions._
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, Label, Table}
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.scenes.scene2d.utils.{TiledDrawable, ClickListener}
 import com.badlogic.gdx.utils.Align
 import com.tagor.ras.utils.{Const, ResMgr, ScoreMgr}
+import com.tagor.ras.utils._
 
 /**
   * Created by rolangom on 2/2/16.
   */
 class DashboardTable(clickListener: ClickListener) extends Table {
 
-  var scoreDashbLbl: Label = _
-  var bestDashbLbl: Label = _
-  var newDashbLbl: Label = _
+  private var scoreDashbLbl: Label = _
+  private var bestDashbLbl: Label = _
+  private var newDashbLbl: Label = _
+
+  private var playBtnImg: Image = _
+  private var lBoardBtnImg: Image = _
 
   def init(): Unit = {
     reset()
@@ -53,14 +58,20 @@ class DashboardTable(clickListener: ClickListener) extends Table {
     val gameoverImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "game_over"))
     gameoverImg.setOrigin(Align.center)
 
-    val playBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
+    playBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
     playBtnImg.setOrigin(Align.center)
     playBtnImg.setUserObject(Const.PlayAgainStr)
     playBtnImg.addListener(clickListener)
-    val lBoardBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
+    playBtnImg.setTouchable(Touchable.enabled)
+
+    lBoardBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
     lBoardBtnImg.setOrigin(Align.center)
     lBoardBtnImg.setUserObject(Const.LeaderBoard)
     lBoardBtnImg.addListener(clickListener)
+    lBoardBtnImg.setTouchable(Touchable.enabled)
+
+    setBackground(new TiledDrawable(ResMgr.getRegion(Const.BGS_PATH, "white_square"))
+      .tint(Color.valueOf("000000E7")))
 
     add(gameoverImg).colspan(3).spaceBottom(32).spaceTop(32)
     row()
@@ -82,7 +93,10 @@ class DashboardTable(clickListener: ClickListener) extends Table {
       sequence(
         alpha(0),
         Actions.visible(true),
-        fadeIn(.5f)
+        fadeIn(.5f),
+        run(runnable(
+          () => enableTouchable(true, playBtnImg, lBoardBtnImg)
+        ))
       )
     )
     scoreDashbLbl.setText(ScoreMgr.lastScore.toString)
@@ -93,6 +107,18 @@ class DashboardTable(clickListener: ClickListener) extends Table {
   def hide(): Unit = {
     addAction(
       sequence(
+        fadeOut(.5f),
+        Actions.visible(false),
+        Actions.removeActor()
+      )
+    )
+  }
+
+  def hideAndFunc(f: () => Unit): Unit = {
+    addAction(
+      sequence(
+        run(runnable(f)),
+        delay(.15f),
         fadeOut(.5f),
         Actions.visible(false),
         Actions.removeActor()

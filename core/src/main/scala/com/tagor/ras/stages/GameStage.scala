@@ -22,7 +22,6 @@ class GameStage(batch: Batch)
   with ContactListener {
 
   RxMgr.onActorAdded
-//    .doOnNext(a => println(s"actor added ${a.getClass.getName}"))
     .subscribe(a => post(() => addActor(a)))
 
   private val b2dr = new Box2DDebugRenderer
@@ -51,8 +50,8 @@ class GameStage(batch: Batch)
   player.hello()
 
   RxMgr.onGameState
-      .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
-      .map(_ == Const.GameStatePlay)
+    .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
+    .map(_ == Const.GameStatePlay)
     .subscribe(r => post(() => handleGame(r)))
 
   RxMgr.newTheme
@@ -65,7 +64,6 @@ class GameStage(batch: Batch)
     background.init()
     player.init()
   }
-//  init()
 
   def goFaster(): Unit = {
     player.goFaster()
@@ -74,13 +72,14 @@ class GameStage(batch: Batch)
   }
 
   private def handleGame(isRunning: Boolean): Unit = {
-    if (isRunning) startDelayed// start()
+    if (isRunning) startDelayed()
     else end()
   }
 
   private def startDelayed(): Unit = {
+    preStart()
     addAction(
-      Actions.delay(1f,
+      Actions.delay(1.5f,
         Actions.run(
           runnable(() => start())
         )
@@ -89,10 +88,6 @@ class GameStage(batch: Batch)
   }
 
   private def start(): Unit = {
-    preStart()
-    spawner.start()
-    background.start()
-    addAction(Actions.delay(1f, Actions.run(com.tagor.ras.utils.runnable(() => {
       player.activate()
       currAct = gameAct
 
@@ -100,10 +95,11 @@ class GameStage(batch: Batch)
         .sample(1 seconds)
         .filter(_ => player.getTop < 0 || player.getRight < getCamera.position.x - getViewport.getWorldWidth * .5f)
         .subscribe(_ => RxMgr.onGameState.onNext(Const.GameStateOver))
-    }))))
   }
 
   private def preStart(): Unit = {
+    spawner.start()
+    background.start()
     val cam = getCamera
     newCamPos.set(cam.viewportWidth / 2, cam.position.y, cam.position.z)
     cam.position.set(newCamPos)

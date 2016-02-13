@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.{Color, OrthographicCamera}
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.scenes.scene2d.{Actor, InputEvent, Stage}
+import com.badlogic.gdx.scenes.scene2d.{Touchable, Actor, InputEvent, Stage}
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.tagor.ras.models.RxPlayerConst
 import com.tagor.ras.models.tables.{DashboardTable, StartTable, GameTable}
@@ -30,8 +30,10 @@ class UiStage(batch: Batch)
           (() => RxMgr.onGameState.onNext(Const.GameStatePlay), true)
         case Const.PlayAgainStr =>
           (() => playAgain(), true)
-        case _ => (() => {}, false)
+        case _ => (() => (), false)
       }
+      if (touched)
+        event.getTarget.setTouchable(Touchable.disabled)
       clickEffect(event.getTarget, act)
       touched
     }
@@ -86,15 +88,9 @@ class UiStage(batch: Batch)
   }
 
   private def playAgain(): Unit = {
-    dtable.hide()
-    addAction(
-      sequence(
-        delay(.5f),
-        run(runnable { () =>
-          RxMgr.onGameState.onNext(Const.GameStatePlay)
-        })
-      )
-    )
+    dtable.hideAndFunc {
+      () => RxMgr.onGameState.onNext(Const.GameStatePlay)
+    }
   }
 
   private def addGameTbl(): Unit = {

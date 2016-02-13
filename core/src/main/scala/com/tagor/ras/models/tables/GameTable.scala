@@ -93,8 +93,9 @@ class GameTable extends Table {
           scaleTo(Const.DownScale, Const.DownScale, Const.TransitTime / 2),
           scaleTo(Const.UpScale, Const.UpScale, Const.TransitTime / 2)),
         sequence(
-          alpha(Const.DownScale, Const.TransitTime / 2),
-          alpha(Const.UpScale, Const.TransitTime / 2))
+          Actions.color(Color.LIGHT_GRAY, Const.TransitTime / 2),
+          Actions.color(Color.WHITE, Const.TransitTime / 2)
+        )
       )
     )
   }

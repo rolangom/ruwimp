@@ -4,7 +4,7 @@ import com.badlogic.gdx.Application.ApplicationType
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.{Gdx, Screen}
-import com.tagor.ras.stages.{UiStage, GameStage}
+import com.tagor.ras.stages.{BgStage, UiStage, GameStage}
 import com.tagor.ras.utils.{ResMgr, RxMgr, WorldFactory}
 
 /**
@@ -16,6 +16,7 @@ class GameScreen extends Screen {
   val batch = new SpriteBatch
   val gameStage = new GameStage(batch)
   val uiStage = new UiStage(batch)
+  val bgStage = new BgStage(batch)
 
   world.setContactListener(gameStage)
   Gdx.input.setInputProcessor(uiStage)
@@ -38,16 +39,19 @@ class GameScreen extends Screen {
   }
 
   override def dispose(): Unit = {
+    bgStage dispose()
     gameStage dispose()
     uiStage dispose()
-    ResMgr.dispose()
+    ResMgr dispose()
   }
 
   override def render(delta: Float): Unit = {
     val gl = Gdx.gl
-//    gl.glClearColor(.5f, .5f, .5f, .5f)
     gl.glClearColor(0f, 0f, 0f, 1f)
     gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+
+    bgStage.act(delta)
+    bgStage.draw()
 
     renderFixed(delta)
     gameStage.draw()
@@ -74,6 +78,7 @@ class GameScreen extends Screen {
 
   override def resume(): Unit = {
     if (!isResumed) {
+      bgStage.init()
       gameStage.init()
       uiStage.init()
       isResumed = true
