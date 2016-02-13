@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.g2d.{TextureRegion, Animation, Batch}
 import com.badlogic.gdx.math.{MathUtils, Vector2}
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Align
-import Actions._
-import com.tagor.ras.utils._
 import com.tagor.ras.utils.{ResMgr, RxMgr, Const, WorldFactory}
 import com.tagor.ras.utils.Const.PPM
 
@@ -34,8 +32,6 @@ object RxPlayerConst {
 
 }
 
-//object Player extends Player
-
 class Player
   extends B2dActor(
     WorldFactory.newRunner()) {
@@ -51,11 +47,10 @@ class Player
 
   private val vtmp = new Vector2()
 
-  private var cregion: TextureRegion = _
   private var runningAnim: Animation = _
   private var jumpingAnim: Animation = _
   private var fallingAnim: Animation = _
-  private var chAnim: () => Unit = () => ()
+  private var chAnim: () => TextureRegion = handleAnimOnAir
 
   private var footStepSound: Sound = _
   private var jumpSound: Sound = _
@@ -185,7 +180,8 @@ class Player
     groundContacts -= 1
     stateTime = 0
     jumps = 1
-    chAnim = () => handleAnimOnAir()
+    if (groundContacts <= 0)
+      chAnim = () => handleAnimOnAir()
     footStepSound.stop()
   }
 
@@ -195,7 +191,6 @@ class Player
     stateTime = 0f
     setZIndex(if (zIndex < 0) 0 else zIndex)
     jumps = 0
-    handleAnimOnGround()
     chAnim = () => handleAnimOnGround()
 
     footStepSound.play()
@@ -236,22 +231,18 @@ class Player
     setPosition(vtmp.x, vtmp.y)
     running()
     stateTime += delta
-    chAnim()
   }
 
-  private def handleAnimOnGround(): Unit = {
-    cregion = runningAnim.getKeyFrame(stateTime)
-  }
+  private def handleAnimOnGround(): TextureRegion = runningAnim.getKeyFrame(stateTime)
 
-  private def handleAnimOnAir(): Unit = {
-    cregion = if (body.getLinearVelocity.y < 0)
+  private def handleAnimOnAir(): TextureRegion =
+    if (body.getLinearVelocity.y < 0)
       fallingAnim.getKeyFrame(stateTime)
     else jumpingAnim.getKeyFrame(stateTime)
-  }
 
   override def draw(batch: Batch, parentAlpha: Float): Unit = {
     super.draw(batch, parentAlpha)
-    batch.draw(cregion, getX, getY, getOriginX, getOriginY, getWidth, getHeight,
+    batch.draw(chAnim(), getX, getY, getOriginX, getOriginY, getWidth, getHeight,
       getScaleX, getScaleY, getRotation)
   }
 }
