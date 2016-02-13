@@ -74,14 +74,15 @@ class Background(camera: Camera) extends Actor {
       cloud1Sprite.getRegionWidth,
       cloud1Sprite.getRegionHeight)
     cloud1Sprite.setPosition(
-      MathUtils.random(0, Const.Width * .25f),
-      MathUtils.random(Const.Height * .45f, Const.Height - cloud1Sprite.getHeight))
+      MathUtils.random(0f, Const.Width * .5f - cloud1Sprite.getWidth),
+      MathUtils.random(Const.Height * .4f, Const.Height - cloud1Sprite.getHeight))
 
     cloud2Sprite.setSize(
       cloud2Sprite.getRegionWidth,
       cloud2Sprite.getRegionHeight)
     cloud2Sprite.setPosition(
-      cloud1Sprite.getX + cloud1Sprite.getWidth + MathUtils.random(0, Const.Width / 2),
+      MathUtils.random(Const.Width * .5f, Const.Width - cloud2Sprite.getWidth),
+//      cloud1Sprite.getX + cloud1Sprite.getWidth + MathUtils.random(0, Const.Width / 2),
       MathUtils.random(Const.Height * .45f, Const.Height - cloud2Sprite.getHeight))
 
     cloud1Sprite.setFlip(MathUtils.randomBoolean(), false)
