@@ -1,6 +1,6 @@
 package com.tagor.ras.models
 
-import com.badlogic.gdx.graphics.Texture.TextureWrap
+import com.badlogic.gdx.graphics.Texture.{TextureFilter, TextureWrap}
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.{Sprite, Batch}
 import com.badlogic.gdx.math.MathUtils
@@ -22,6 +22,8 @@ class Block(pbody: Body, val btype: BlockType)
   var isLanded = false
   var isLast = false
   val sprite = new Sprite()
+  val jointLeftSprite = new Sprite()
+  val jointRightSprite = new Sprite()
   def isDimenUp = btype.isDimenUp
 
   def init(): Unit = {
@@ -37,10 +39,20 @@ class Block(pbody: Body, val btype: BlockType)
     sprite.setU2(getWidth / sprite.getTexture.getWidth)
     sprite.setOriginCenter()
 
-    setOrigin(Align.center)
-    setScale(btype.scale)
+    jointLeftSprite.setBounds(getX(), 0, jointLeftSprite.getTexture.getWidth, Const.Height - getY())
+    jointLeftSprite.setV2(getHeight / jointLeftSprite.getTexture.getHeight)
+    jointLeftSprite.setOrigin(0, 0)
 
-    sprite.setScale(btype.scale)
+    jointRightSprite.setBounds(getRight, 0, jointRightSprite.getTexture.getWidth, Const.Height - getY())
+    jointRightSprite.setV2(getHeight / jointRightSprite.getTexture.getHeight)
+    jointRightSprite.setOrigin(0, 0)
+
+    setOrigin(Align.center)
+    val scale = btype.scale
+    setScale(scale)
+    sprite.setScale(scale)
+    jointLeftSprite.setScale(scale)
+    jointRightSprite.setScale(scale)
 
     setVisible(false)
     setDebug(true)
@@ -48,10 +60,23 @@ class Block(pbody: Body, val btype: BlockType)
   init()
 
   private def initSpriteTexture(): Unit = {
-    sprite.setTexture(ResMgr.getThemeTexture(BlockConst.BLOCK_INDEX))
-    sprite.getTexture.setWrap(
+    val blockTexture = ResMgr.getThemeTexture(BlockConst.BLOCK_INDEX)
+    sprite.setTexture(blockTexture)
+    blockTexture.setWrap(
       TextureWrap.MirroredRepeat,
       TextureWrap.ClampToEdge)
+    blockTexture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest)
+    sprite.setRegion(Int.box(0), 0, blockTexture.getWidth, blockTexture.getHeight)
+
+    val chainTexture = ResMgr.getThemeTexture(BlockConst.JOINT_INDEX)
+    jointLeftSprite.setTexture(chainTexture)
+    jointRightSprite.setTexture(chainTexture)
+    jointLeftSprite.setRegion(Int.box(0), 0, chainTexture.getWidth, chainTexture.getHeight)
+    jointRightSprite.setRegion(Int.box(0), 0, chainTexture.getWidth, chainTexture.getHeight)
+
+    chainTexture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest)
+    chainTexture.setWrap(TextureWrap.ClampToEdge, TextureWrap.Repeat)
+
     setColor(ThemeMgr.getBlockColor(btype.dimen))
   }
 
@@ -82,6 +107,7 @@ class Block(pbody: Body, val btype: BlockType)
       (getY + getOriginY) / PPM,
       MathUtils.degreesToRadians * getRotation)
 
+    configJointPos()
     RxMgr.onActorAdded.onNext(this)
 
     setVisible(true)
@@ -101,7 +127,7 @@ class Block(pbody: Body, val btype: BlockType)
   private def setVisibleSmoothly(): Unit = {
     addAction(Actions.alpha(0f))
     setVisible(true)
-    addAction(Actions.fadeIn(1f))
+    addAction(Actions.fadeIn(.5f))
   }
 
   def asLast(): Unit = {
@@ -125,6 +151,32 @@ class Block(pbody: Body, val btype: BlockType)
     isLanded = false
   }
 
+
+  private def configJointPos(): Unit = {
+    val cornerX = MathUtils.cosDeg(getRotation) * (getWidth * getScaleX / 2)
+    val cornerY = MathUtils.sinDeg(getRotation) * (getWidth * getScaleY / 2)
+
+    val bodyPos = body.getPosition
+
+    val leftPosX = bodyPos.x * PPM - cornerX
+    val rightPosX = bodyPos.x * PPM + cornerX - jointRightSprite.getTexture.getWidth
+
+    val leftPosY = bodyPos.y * PPM  - cornerY
+    val rightPosY = bodyPos.y * PPM + cornerY
+
+    jointLeftSprite.setBounds(leftPosX, leftPosY, jointLeftSprite.getTexture.getWidth, Const.Height - leftPosY)
+    jointRightSprite.setBounds(rightPosX, rightPosY, jointRightSprite.getTexture.getWidth, Const.Height - rightPosY)
+
+    // to ensure the height is reaching the top of the screen
+    if (getScaleY < 1) {
+      val amountReq = 1.1f - getScaleY
+      jointLeftSprite.setSize(jointLeftSprite.getWidth, jointLeftSprite.getHeight + (jointLeftSprite.getHeight * amountReq))
+      jointRightSprite.setSize(jointRightSprite.getWidth, jointRightSprite.getHeight + (jointRightSprite.getHeight * amountReq))
+    }
+    jointLeftSprite.setV2(jointLeftSprite.getHeight / jointLeftSprite.getTexture.getHeight)
+    jointRightSprite.setV2(jointRightSprite.getHeight / jointRightSprite.getTexture.getHeight)
+  }
+
   def setAsLanded(): Boolean = {
     if (!isLanded) {
       isLanded = true
@@ -137,16 +189,23 @@ class Block(pbody: Body, val btype: BlockType)
     super.act(delta)
     if (!isDimenUp) {
       val pos = body.getPosition
+      val prevX = getX
       setX(pos.x * PPM - getOriginX)
       sprite.setX(getX)
+      val deltaX = getX - prevX
+      jointLeftSprite.translateX(deltaX)
+      jointRightSprite.translateX(deltaX)
     }
   }
 
   override def draw(batch: Batch, parentAlpha: Float): Unit = {
     super.draw(batch, parentAlpha)
     batch.disableBlending()
-    sprite.draw(batch, parentAlpha)
+    sprite.draw(batch)
     batch.enableBlending()
+
+    jointLeftSprite.draw(batch)
+    jointRightSprite.draw(batch)
   }
 
   def minX: Float = optX(_ - _)
@@ -171,9 +230,3 @@ class Block(pbody: Body, val btype: BlockType)
     WorldFactory.world.destroyBody(body)
   }
 }
-
-case class UpBlock(override val body: Body, size: Int)
-  extends Block(body, UpBlockType(size))
-
-case class DownBlock(override val body: Body, size: Int)
-  extends Block(body, DownBlockType(size))
