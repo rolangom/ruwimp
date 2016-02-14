@@ -1,5 +1,6 @@
 package com.tagor.ras.stages
 
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.{MathUtils, Interpolation, Vector3}
@@ -36,6 +37,7 @@ class GameStage(batch: Batch)
   private val background = new Background(getCamera)
   private var currAct: Float => Unit = emptyAct
   private val player = new Player
+  private var gameOverSound: Sound = _
 
   def playerVelX = player.velX
 
@@ -63,6 +65,7 @@ class GameStage(batch: Batch)
     spawner.init()
     background.init()
     player.init()
+    gameOverSound = ResMgr.getSound("audio/jingles_PIZZA01.mp3")
   }
 
   def goFaster(): Unit = {
@@ -107,6 +110,7 @@ class GameStage(batch: Batch)
   }
 
   private def end(): Unit = {
+    gameOverSound.play()
     currAct = emptyAct
     spawner.end()
     player.reset()
