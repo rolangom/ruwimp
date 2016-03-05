@@ -40,14 +40,14 @@ object Const {
   val FootStrType = "foot"
   val TopStrType = "top"
 
-  val RunnerJumpingLinearImpulse = new Vector2(0, 7f)
+  val RunnerJumpingLinearImpulse = new Vector2(0, 8.5f)
   val RunnerGravityScale = 2f
   val RunnerGravityScaleOnair = RunnerGravityScale / 2
-  val RunnerLinearVelocity = 4f
-  val RunnerX = Width * .55f
+  val RunnerLinearVelocity = 4.5f
+  val RunnerX = Width * .35f
   val RunnerY = Height * .85f
 
-  val GroundLinearVelocity = .25f
+  val GroundLinearVelocity = .15f
 
   val ThemeImg = 0
   val ThemeColor = 1
@@ -56,10 +56,15 @@ object Const {
   val GameStatePlay = 1
   val GameStateOver = 2
   val GameStatePlayAgain = 3
+  val GameStatePause = 4
+  val GameStateResume = 5
 
   val PlayStr = new String("play")
   val PlayAgainStr = new String("playAgain")
-  val LeaderBoard = new String("LeaderBoard")
+  val LeaderBoardStr = new String("LeaderBoard")
+  val PausedStr = new String("LeaderBoard")
+  val ResumeStr = new String("Resume")
+  val GoHomeStr = new String("GoHome")
 
   val GROUND_UI_ATLAS_PATH = "atlas/groundUi.txt"
 

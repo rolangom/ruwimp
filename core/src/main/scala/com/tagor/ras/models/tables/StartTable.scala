@@ -6,13 +6,14 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions._
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, Table}
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
+import com.tagor.ras.models.Showable
 import com.tagor.ras.utils.{Const, ResMgr}
 import com.tagor.ras.utils._
 
 /**
   * Created by rolangom on 2/2/16.
   */
-class StartTable(clickListener: ClickListener) extends Table {
+class StartTable(clickListener: ClickListener) extends Table with Showable {
 
   private var playBtnImg: Image = _
   private var lBoardBtnImg: Image = _
@@ -34,7 +35,7 @@ class StartTable(clickListener: ClickListener) extends Table {
 
     lBoardBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
     lBoardBtnImg.setOrigin(Align.center)
-    lBoardBtnImg.setUserObject(Const.LeaderBoard)
+    lBoardBtnImg.setUserObject(Const.LeaderBoardStr)
     lBoardBtnImg.addListener(clickListener)
     lBoardBtnImg.setTouchable(Touchable.enabled)
 
@@ -45,7 +46,7 @@ class StartTable(clickListener: ClickListener) extends Table {
     setVisible(false)
   }
 
-  def show(): Unit = {
+  override def show(): Unit = {
     addAction(
       sequence(
         alpha(0),
@@ -58,7 +59,7 @@ class StartTable(clickListener: ClickListener) extends Table {
     )
   }
 
-  def hide(): Unit = {
+  override def hide(): Unit = {
     addAction(
       sequence(
         fadeOut(.5f),

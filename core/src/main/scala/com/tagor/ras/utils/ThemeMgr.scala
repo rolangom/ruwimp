@@ -17,6 +17,7 @@ object ThemeMgr {
   def currentColorSet = _currentColorSet
 
   RxMgr.onGameState
+      .drop(1)
     .filter(_ == Const.GameStatePlay)
     .subscribe(r => next())
 

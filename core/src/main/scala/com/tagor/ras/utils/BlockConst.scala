@@ -67,7 +67,7 @@ object BlockConst {
   val THEMES = Array(THEME_CITY, THEME_MOUNT)
 
   val BLOCK_PATH = "imgs/plat.png"
-
+  val WOOD_PATH = "imgs/platWoLi.png"
   val CHAIN_PATH = "imgs/chain.png"
 
   val CITY_BG1 = "imgs/city0.png"
@@ -76,7 +76,7 @@ object BlockConst {
   val MOUNTS_BG2 = "imgs/mountains1.png"
 
   val CITY_IMGS = Array[String](BLOCK_PATH, CHAIN_PATH, CITY_BG1, CITY_BG2)
-  val MOUNTS_IMGS = Array[String](BLOCK_PATH, CHAIN_PATH, MOUNTS_BG1, MOUNTS_BG2)
+  val MOUNTS_IMGS = Array[String](WOOD_PATH, CHAIN_PATH, MOUNTS_BG1, MOUNTS_BG2)
 
   val THEMES_IMGS = Array[Array[String]](CITY_IMGS, MOUNTS_IMGS)
 

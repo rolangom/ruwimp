@@ -9,7 +9,7 @@ import com.tagor.ras.utils.Const._
  */
 object WorldFactory {
 
-  lazy val world = new World(new Vector2(0, -15), true)
+  lazy val world = new World(new Vector2(0, -17), true)
 
   def newBlock(btype: BlockType): Body =
     createBody(btype, 0f, 0f)
@@ -47,20 +47,22 @@ object WorldFactory {
                     w: Float): Body = {
     val bdef = new BodyDef
     val fdef = new FixtureDef
-    val shape = new EdgeShape
+    val shape = new PolygonShape
 
     bdef.position.set(x / PPM, y / PPM)
     bdef.fixedRotation = true
-    bdef.`type` = BodyDef.BodyType.StaticBody
+    bdef.`type` = BodyDef.BodyType.KinematicBody
 
     val body = world createBody bdef
-    shape.set(bdef.position, bdef.position.add(w / PPM, 0f))
+    shape.setAsBox(w / 2 / PPM, 1 / PPM)
     fdef.shape = shape
     fdef.filter.categoryBits = CategoryTop
     fdef.filter.maskBits = MaskTop
     fdef.restitution = 0f
     fdef.friction = 0f
-    body.createFixture(fdef).setUserData(TopStrType)
+    fdef.density = 1f
+    body.createFixture(fdef)
+      .setUserData(TopStrType)
 
     shape.dispose()
     body

@@ -32,6 +32,6 @@ class BgStage(batch: Batch)
   }
 
   private def invalidate(): Unit = {
-    bga.setColor(Color.valueOf(ThemeMgr.getBgColorStr(BlockConst.BG0_COLOR_INDEX)))
+    bga.setColor(Color.valueOf(ThemeMgr.getBgColorStr(BlockConst.BG2_COLOR_INDEX)))
   }
 }

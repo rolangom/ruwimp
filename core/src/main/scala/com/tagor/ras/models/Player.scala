@@ -1,12 +1,12 @@
 package com.tagor.ras.models
 
-import com.badlogic.gdx.Input
+import com.badlogic.gdx.{Audio, Input}
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
 import com.badlogic.gdx.graphics.g2d.{TextureRegion, Animation, Batch}
 import com.badlogic.gdx.math.{MathUtils, Vector2}
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.{Disposable, Align}
 import com.tagor.ras.utils.{ResMgr, RxMgr, Const, WorldFactory}
 import com.tagor.ras.utils.Const.PPM
 
@@ -36,8 +36,6 @@ class Player
   extends B2dActor(
     WorldFactory.newRunner()) {
 
-  private val MinSpeed = 4
-  private val MaxSpeed = 8
   private var currentSpeed = Const.RunnerLinearVelocity
   private var isDimenUp = true
   private var groundContacts: Int = 0
@@ -71,13 +69,17 @@ class Player
     setScale(Const.UpScale)
     body.setActive(false)
     setVisible(false)
-    setDebug(true)
+//    setDebug(true)
 
+    initDisposables()
+    stateTime = 0f
+  }
+
+  private def initDisposables(): Unit = {
     val atlas = ResMgr.getAtlas("atlas/player_01_anims.txt")
     runningAnim = new Animation(0.02f, atlas.findRegions("running_"), PlayMode.LOOP)
     jumpingAnim = new Animation(0.02f, atlas.findRegions("jumping_"), PlayMode.NORMAL)
     fallingAnim = new Animation(0.1f, atlas.findRegions("falling_"), PlayMode.NORMAL)
-    stateTime = 0f
 
     footStepSound = ResMgr.getSound("audio/footstep09.mp3")
     jumpSound = ResMgr.getSound("audio/phaseJump1.mp3")
@@ -112,17 +114,38 @@ class Player
     else reset()
   }
 
-  def activate(): Unit = {
-    body.setActive(true)
+  def preStart(): Unit = {
     body.setTransform(
       Const.RunnerX / PPM,
       Const.RunnerY / PPM, 0f)
-    setVisible(true)
     RxMgr.onPlayerAction.onNext(RxPlayerConst.GoUp)
-    goUp()
-    body.setLinearVelocity(0f, 0f)
+//    goUp()
     handleAnimOnAir()
+    body.setLinearVelocity(0f, 0f)
+  }
+
+  def activate(): Unit = {
+    body.setActive(true)
+    setVisible(true)
     RxMgr.onActorAdded.onNext(this)
+  }
+
+  def resume(): Unit = {
+    initDisposables()
+  }
+
+  def pause(): Unit = {
+    onAir()
+    Array[Sound](
+      footStepSound, jumpSound, goingUpSound, goingDownSound
+    ).foreach(_.stop())
+    ResMgr.remove(
+      "atlas/player_01_anims.txt",
+      "audio/footstep09.mp3",
+      "audio/phaseJump1.mp3",
+      "audio/highUp.mp3",
+      "audio/highDown.mp3"
+    )
   }
 
   def goUp(): Unit = {
@@ -147,6 +170,7 @@ class Player
 
   def jump(): Unit = {
     println(s"player jump; groundContacts= $groundContacts, jumps= $jumps")
+    val isOnGround = this.isOnGround
     if (isOnGround || jumps < MaxJumps) {
       stateTime = 0
       body.setLinearVelocity(body.getLinearVelocity.x, 0f)
@@ -180,13 +204,14 @@ class Player
     groundContacts -= 1
     stateTime = 0
     jumps = 1
-    if (groundContacts <= 0)
+    if (groundContacts <= 0) {
       chAnim = () => handleAnimOnAir()
-    footStepSound.stop()
+      footStepSound.stop()
+    }
   }
 
   def landedAt(zIndex: Int): Unit = {
-    println("player landed")
+    println(s"player landed; x= $getX")
     groundContacts += 1
     stateTime = 0f
     setZIndex(if (zIndex < 0) 0 else zIndex)
@@ -194,7 +219,7 @@ class Player
     chAnim = () => handleAnimOnGround()
 
     footStepSound.play()
-    footStepSound.loop((if (isDimenUp) Const.UpScale else Const.DownScale) - .3f, 1.35f, 0)
+    footStepSound.loop((if (isDimenUp) Const.UpScale else Const.DownScale) - .5f, 1.45f, 0)
   }
 
   def isOnGround: Boolean = groundContacts > 0
@@ -245,4 +270,6 @@ class Player
     batch.draw(chAnim(), getX, getY, getOriginX, getOriginY, getWidth, getHeight,
       getScaleX, getScaleY, getRotation)
   }
+
+
 }

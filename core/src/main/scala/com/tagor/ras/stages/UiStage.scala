@@ -6,11 +6,12 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.{Color, OrthographicCamera}
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.scenes.scene2d.{Touchable, Actor, InputEvent, Stage}
+import com.badlogic.gdx.scenes.scene2d._
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.tagor.ras.models.RxPlayerConst
-import com.tagor.ras.models.tables.{DashboardTable, StartTable, GameTable}
+import com.tagor.ras.models.tables.{PausedTable, DashboardTable, StartTable, GameTable}
 import com.tagor.ras.utils._
+import rx.lang.scala.Subscription
 
 /**
   * Created by rolangom on 12/12/15.
@@ -34,24 +35,22 @@ class UiStage(batch: Batch)
       }
       if (touched)
         event.getTarget.setTouchable(Touchable.disabled)
-      clickEffect(event.getTarget, act)
+      event.getTarget.addAction(clickEffect(act))
       touched
     }
   }
 
-  private def clickEffect(actor: Actor, f: () => Unit): Unit = {
-    actor.addAction(
-      parallel(
-        sequence(
-          color(Color.GRAY, .15f),
-          color(Color.WHITE, .15f)
-        ),
-        sequence(
-          scaleBy(-.25f, -.25f, .15f),
-          scaleTo(1f, 1f, .15f),
-          delay(.15f),
-          run(runnable(f))
-        )
+  private def clickEffect(f: () => Unit): Action = {
+    parallel(
+      sequence(
+        color(Color.GRAY, .15f),
+        color(Color.WHITE, .15f)
+      ),
+      sequence(
+        scaleBy(-.25f, -.25f, .15f),
+        scaleTo(1f, 1f, .15f),
+        delay(.15f),
+        run(runnable(f))
       )
     )
   }
@@ -59,6 +58,7 @@ class UiStage(batch: Batch)
   private lazy val gtable = new GameTable
   private lazy val stable = new StartTable(uiClickListener)
   private lazy val dtable = new DashboardTable(uiClickListener)
+  private lazy val ptable = new PausedTable(uiClickListener)
 
   private var currAct: Float => Unit = emptyAct
   private lazy val (screenSideR, screenSideL) = getScreenSideRects
@@ -66,10 +66,7 @@ class UiStage(batch: Batch)
   private var cTouchDown: (Int, Int, Int, Int) => Boolean = super.touchDown
   private var cKeyDown: (Int) => Boolean = super.keyDown
 
-  RxMgr.onGameState
-      .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
-      .map(_ == Const.GameStatePlay)
-    .subscribe(r => handleGame(r))
+  var subs: Subscription = _
 
   def init(): Unit = {
     clear()
@@ -77,9 +74,20 @@ class UiStage(batch: Batch)
     stable.init()
     gtable.init()
     dtable.init()
+    ptable.init()
 
     addActor(stable)
     stable.show()
+
+    subs =
+      RxMgr.onGameState
+        .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
+        .map(_ == Const.GameStatePlay)
+        .subscribe(r => handleGame(r))
+  }
+
+  private def resumeGame(): Unit = {
+    RxMgr.onGameState.onNext(Const.GameStateResume)
   }
 
   private def showGameTable(): Unit = {
@@ -162,13 +170,26 @@ class UiStage(batch: Batch)
       RxMgr.onPlayerAction.onNext(RxPlayerConst.Toggle)
       return true
     }
+//    super.touchDown(screenX, screenY, pointer, button)
     false
+  }
+
+  def pause(): Unit = {
+    ptable.show()
+  }
+
+  def resume(): Unit ={
+    ptable.show()
   }
 
   private def emptyAct(delta: Float): Unit = { }
 
   private def stageAct(delta: Float): Unit = {
     gtable.setFpsText(s"FPS: ${Gdx.graphics.getFramesPerSecond}, body count: ${WorldFactory.world.getBodyCount}")
+  }
+
+  override def draw(): Unit = {
+    super.draw()
   }
 
   override def act(delta: Float): Unit = {
@@ -178,5 +199,6 @@ class UiStage(batch: Batch)
 
   override def dispose(): Unit = {
     super.dispose()
+    subs.unsubscribe()
   }
 }

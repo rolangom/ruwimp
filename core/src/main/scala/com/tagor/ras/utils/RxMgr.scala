@@ -2,6 +2,7 @@ package com.tagor.ras.utils
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.tagor.ras.models.ItemToInst
+import rx.lang.scala.schedulers.ComputationScheduler
 import rx.lang.scala.{Observable, Subject}
 import scala.concurrent.duration.DurationInt
 
@@ -17,14 +18,22 @@ object RxMgr {
   lazy val newLevel = Subject[Int]()
   lazy val newTheme = Subject[Int]()
 
-  var intervalObs: Observable[Long] = _
+  private var _intervalObs: Observable[Long] = _
+  private var _isGmRunning = false
+
+  def intervalObs = _intervalObs
+  def isGmRunning = _isGmRunning
 
   onGameState
-    .filter(_ == Const.GameStatePlay)
+    .subscribeOn(ComputationScheduler())
+    .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
+    .map(_ == Const.GameStatePlay)
+    .doOnNext(s => _isGmRunning = s)
+    .filter(s => s)
     .subscribe(_ => startInterval())
 
   private def startInterval(): Unit = {
-    intervalObs = Observable.interval(125 milliseconds)
+    _intervalObs = Observable.interval(125 milliseconds)
       .takeUntil(onGameState)
       .publish.refCount
   }

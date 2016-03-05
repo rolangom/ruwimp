@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.MathUtils
 import com.tagor.ras.utils
 import com.tagor.ras.utils.{RxMgr, BlockPooler, BlockConst}
+import rx.lang.scala.schedulers.ComputationScheduler
 import rx.scala.concurrency.GdxScheduler
 
 import scala.collection.mutable.ArrayBuffer
@@ -25,11 +26,17 @@ class Spawner(camera: OrthographicCamera) {
   RxMgr.onItiAdded
     .subscribe(i => utils.post(() => initBlock(i)))
 
-  def init(): Unit = {
-    println("spanwer init")
-    vblocks.foreach(_.init())
-    pblocks.foreach(_.init())
-    pooler.init()
+  def resume(): Unit = {
+    println("spanwer resume")
+    vblocks.foreach(_.resumeActivated())
+    pblocks.foreach(_.resumeInited())
+//    pooler.resume()
+  }
+
+  def pause(): Unit = {
+    vblocks.foreach(_.pause())
+    pblocks.foreach(_.pause())
+    Block.pause()
   }
 
   def start(): Unit = {
@@ -41,6 +48,7 @@ class Spawner(camera: OrthographicCamera) {
         .foreach(b => spawn(b.maxX, b.maxY))
     }
     RxMgr.intervalObs
+      .subscribeOn(ComputationScheduler())
 //      .sample(250 milliseconds)
       .subscribe(_ => checkShortInterval())
   }
@@ -93,8 +101,8 @@ class Spawner(camera: OrthographicCamera) {
     var i = 0
     val ang = 15 // MathUtils.random(10f, 40f)
     while (i < count) {
-      val b1 = pooler.get(BlockConst.DimenUp, BlockConst.SizeL)
-      val b2 = pooler.get(BlockConst.DimenDown, BlockConst.SizeL)
+      val b1 = pooler.get(BlockConst.DimenUp, BlockConst.SizeXL)
+      val b2 = pooler.get(BlockConst.DimenDown, BlockConst.SizeXL)
 
       b1.init(x + b1.btype.width * i, y, ang).activate()
       b2.init(x + b2.btype.width * i, y, -ang).activate()

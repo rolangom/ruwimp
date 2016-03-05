@@ -9,13 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions._
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, Label, Table}
 import com.badlogic.gdx.scenes.scene2d.utils.{TiledDrawable, ClickListener}
 import com.badlogic.gdx.utils.Align
+import com.tagor.ras.models.Showable
 import com.tagor.ras.utils.{Const, ResMgr, ScoreMgr}
 import com.tagor.ras.utils._
 
 /**
   * Created by rolangom on 2/2/16.
   */
-class DashboardTable(clickListener: ClickListener) extends Table {
+class DashboardTable(clickListener: ClickListener) extends Table with Showable {
 
   private var scoreDashbLbl: Label = _
   private var bestDashbLbl: Label = _
@@ -28,7 +29,7 @@ class DashboardTable(clickListener: ClickListener) extends Table {
     reset()
 
     setFillParent(true)
-    setDebug(true)
+//    setDebug(true)
     align(Align.center)
 
     val generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AldotheApache.ttf"))
@@ -46,7 +47,7 @@ class DashboardTable(clickListener: ClickListener) extends Table {
     font = generator.generateFont(parameter)
     labelStyle = new Label.LabelStyle(font, Color.WHITE)
 
-    scoreDashbLbl = new Label(ScoreMgr.lastScore.toString, labelStyle)
+    scoreDashbLbl = new Label(ScoreMgr.score.toString, labelStyle)
     bestDashbLbl = new Label(ScoreMgr.bestScore.toString, labelStyle)
 
     parameter.size = 32
@@ -66,7 +67,7 @@ class DashboardTable(clickListener: ClickListener) extends Table {
 
     lBoardBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
     lBoardBtnImg.setOrigin(Align.center)
-    lBoardBtnImg.setUserObject(Const.LeaderBoard)
+    lBoardBtnImg.setUserObject(Const.LeaderBoardStr)
     lBoardBtnImg.addListener(clickListener)
     lBoardBtnImg.setTouchable(Touchable.enabled)
 
@@ -88,7 +89,7 @@ class DashboardTable(clickListener: ClickListener) extends Table {
     setVisible(false)
   }
 
-  def show(): Unit = {
+  override def show(): Unit = {
     addAction(
       sequence(
         alpha(0),
@@ -99,12 +100,12 @@ class DashboardTable(clickListener: ClickListener) extends Table {
         ))
       )
     )
-    scoreDashbLbl.setText(ScoreMgr.lastScore.toString)
+    scoreDashbLbl.setText(ScoreMgr.score.toString)
     bestDashbLbl.setText(ScoreMgr.bestScore.toString)
     newDashbLbl.setVisible(ScoreMgr.isNewBestScore)
   }
 
-  def hide(): Unit = {
+  override def hide(): Unit = {
     addAction(
       sequence(
         fadeOut(.5f),
@@ -114,7 +115,7 @@ class DashboardTable(clickListener: ClickListener) extends Table {
     )
   }
 
-  def hideAndFunc(f: () => Unit): Unit = {
+  override def hideAndFunc(f: () => Unit): Unit = {
     addAction(
       sequence(
         run(runnable(f)),

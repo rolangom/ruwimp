@@ -73,11 +73,19 @@ object ResMgr extends Disposable {
     }
   }
 
+  def remove(keys: String*): Unit = {
+    keys.foreach(remove)
+  }
+
   def getThemeTexture(key: Int): Texture =
     getTexture(getThemeTextureStr(key))
 
   def getThemeTextureStr(key: Int): String =
     BlockConst.THEMES_IMGS(ThemeMgr.currentTheme)(key)
+
+  def removeThemeTextureStr(key: Int): Unit = {
+    remove(getThemeTextureStr(key))
+  }
 
   override def dispose(): Unit = {
     disposables.foreach {

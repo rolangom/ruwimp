@@ -10,6 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.viewport.StretchViewport
 import com.tagor.ras.models._
 import com.tagor.ras.utils._
+import rx.lang.scala.schedulers.ComputationScheduler
+import rx.lang.scala.subscriptions.CompositeSubscription
 
 import scala.concurrent.duration.DurationInt
 
@@ -22,11 +24,8 @@ class GameStage(batch: Batch)
     new OrthographicCamera), batch)
   with ContactListener {
 
-  RxMgr.onActorAdded
-    .subscribe(a => post(() => addActor(a)))
-
-  private val b2dr = new Box2DDebugRenderer
-  private val b2dCam = new OrthographicCamera
+//  private val b2dr = new Box2DDebugRenderer
+//  private val b2dCam = new OrthographicCamera
   private val spawner = new Spawner(getCamera.asInstanceOf[OrthographicCamera])
 
   private val MinCamSpeed = 1f
@@ -41,9 +40,9 @@ class GameStage(batch: Batch)
 
   def playerVelX = player.velX
 
-  b2dCam.setToOrtho(false,
-    getViewport.getWorldWidth / Const.PPM,
-    getViewport.getWorldHeight / Const.PPM)
+//  b2dCam.setToOrtho(false,
+//    getViewport.getWorldWidth / Const.PPM,
+//    getViewport.getWorldHeight / Const.PPM)
   getCamera.asInstanceOf[OrthographicCamera]
     .setToOrtho(false,
       getViewport.getWorldWidth,
@@ -51,20 +50,29 @@ class GameStage(batch: Batch)
 
   player.hello()
 
-  RxMgr.onGameState
-    .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
-    .map(_ == Const.GameStatePlay)
-    .subscribe(r => post(() => handleGame(r)))
+  var subs: CompositeSubscription = _
 
-  RxMgr.newTheme
-    .subscribe(t => init())
-  RxMgr.newLevel
-    .subscribe(l => goFaster())
+  private def initSubs(): Unit = {
+    if (subs == null || subs.isUnsubscribed) {
+      subs = CompositeSubscription(
+        RxMgr.onActorAdded
+          .subscribe(a => post(() => addActor(a))),
+        RxMgr.onGameState
+          .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
+          .map(_ == Const.GameStatePlay)
+          .doOnUnsubscribe(() => println("RGT -> GameStage -> onGameState unsubscribed"))
+          .subscribe(r => post(() => handleGame(r))),
+        RxMgr.newLevel
+          .subscribe(l => goFaster())
+      )
+    }
+  }
 
   def init(): Unit = {
-    spawner.init()
+    initSubs()
     background.init()
     player.init()
+    RxMgr.onActorAdded.onNext(background)
     gameOverSound = ResMgr.getSound("audio/jingles_PIZZA01.mp3")
   }
 
@@ -82,31 +90,35 @@ class GameStage(batch: Batch)
   private def startDelayed(): Unit = {
     preStart()
     addAction(
-      Actions.delay(1.5f,
-        Actions.run(
-          runnable(() => start())
-        )
-      )
+      Actions.delay(2f, Actions.run(runnable(() => start())))
     )
   }
 
   private def start(): Unit = {
-      player.activate()
-      currAct = gameAct
+    player.activate()
+    currAct = gameAct
 
+    val cam = getCamera
+    val halfViewportWidth = getViewport.getWorldWidth * .5f
+
+    subs +=
       RxMgr.intervalObs
+        .subscribeOn(ComputationScheduler())
         .sample(1 seconds)
-        .filter(_ => player.getTop < 0 || player.getRight < getCamera.position.x - getViewport.getWorldWidth * .5f)
+        .filter(_ => player.getTop < 0 || player.getRight < cam.position.x - halfViewportWidth)
         .subscribe(_ => RxMgr.onGameState.onNext(Const.GameStateOver))
   }
 
   private def preStart(): Unit = {
-    spawner.start()
-    background.start()
+    println("RGT -> GameStage preStart")
+    ScoreMgr.reset()
     val cam = getCamera
     newCamPos.set(cam.viewportWidth / 2, cam.position.y, cam.position.z)
     cam.position.set(newCamPos)
     cam.update()
+    player.preStart()
+    background.start()
+    spawner.start()
   }
 
   private def end(): Unit = {
@@ -115,17 +127,17 @@ class GameStage(batch: Batch)
     spawner.end()
     player.reset()
     cSpeed = MinCamSpeed
-    ScoreMgr.saveAndReset()
+    ScoreMgr.save()
   }
 
   private def gameAct(delta: Float): Unit = {
     // TODO: ONLY WHILE IN DEBUG (Remove)
     val cam = getCamera
-    b2dCam.position.set(
-      cam.position.x / Const.PPM,
-      cam.position.y / Const.PPM,
-      cam.position.z)
-    b2dCam.update()
+//    b2dCam.position.set(
+//      cam.position.x / Const.PPM,
+//      cam.position.y / Const.PPM,
+//      cam.position.z)
+//    b2dCam.update()
 
     newCamPos.x = player.getX() + CamTargetX
 //    newCamPos.y = MathUtils.clamp(player.getY(), 0f, 1400f)
@@ -134,12 +146,12 @@ class GameStage(batch: Batch)
 
   private def emptyAct(delta: Float): Unit = { }
 
-  override def draw(): Unit = {
-    super.draw()
-    // TODO: ONLY WHILE IN DEBUG (Remove)
-    // draw box2d world
-    b2dr.render(WorldFactory.world, b2dCam.combined)
-  }
+//  override def draw(): Unit = {
+//    super.draw()
+//    // TODO: ONLY WHILE IN DEBUG (Remove)
+//    // draw box2d world
+//    b2dr.render(WorldFactory.world, b2dCam.combined)
+//  }
 
   override def act(delta : Float): Unit = {
     super.act(delta)
@@ -147,6 +159,7 @@ class GameStage(batch: Batch)
   }
 
   override def beginContact(contact: Contact): Unit = {
+//    println("beginContact")
     WorldFactory.blockIfLanded(
       contact.getFixtureA,
       contact.getFixtureB).foreach { b =>
@@ -164,6 +177,28 @@ class GameStage(batch: Batch)
   override def postSolve(contact: Contact, impulse: ContactImpulse): Unit = { }
 
   override def preSolve(contact: Contact, oldManifold: Manifold): Unit = { }
+
+  def resume(): Unit = {
+    initSubs()
+    background.resume()
+    spawner.resume()
+    player.resume()
+    gameOverSound = ResMgr.getSound("audio/jingles_PIZZA01.mp3")
+    if (RxMgr.isGmRunning) {
+      addAction(Actions.delay(
+        2f, Actions.run(runnable(() => start()))))
+      currAct = gameAct
+    }
+  }
+
+  def pause(): Unit = {
+    player.pause()
+    spawner.pause()
+    background.pause()
+    subs.unsubscribe()
+    currAct = emptyAct
+    ResMgr.remove("audio/jingles_PIZZA01.mp3")
+  }
 
   def disposeLight(): Unit = {
     ResMgr.remove(ResMgr.getThemeTextureStr(BlockConst.BLOCK_INDEX))

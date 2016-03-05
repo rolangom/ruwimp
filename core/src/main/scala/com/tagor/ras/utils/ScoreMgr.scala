@@ -12,7 +12,6 @@ object ScoreMgr {
 
   private val prefs = Gdx.app.getPreferences("RumperGamePrefs")
 
-  private var _lastScore = 0
   private var _score: Int = 0
   private var _level: Int = 0
   private var isFixedLvlInc = false
@@ -20,7 +19,6 @@ object ScoreMgr {
   private val PlusScore = 35
 
   def score = _score
-  def lastScore = _lastScore
   def bestScore = prefs.getInteger("score", 0)
 
   def increase(): Unit = {
@@ -58,7 +56,6 @@ object ScoreMgr {
   }
 
   def reset(): Unit = {
-    _lastScore = _score
     _score = 0
     _level = 0
     isFixedLvlInc = false
@@ -66,7 +63,7 @@ object ScoreMgr {
     RxMgr.newLevel.onNext(_level)
   }
 
-  def isNewBestScore: Boolean = _lastScore > bestScore
+  def isNewBestScore: Boolean = _score > bestScore
 
   def save(): Unit = {
     val currScore = prefs.getInteger("score", 0)

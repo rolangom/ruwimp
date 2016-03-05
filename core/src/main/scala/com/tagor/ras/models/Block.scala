@@ -16,14 +16,21 @@ import com.tagor.ras.utils._
 /**
  * Created by rolangom on 7/8/15.
  */
+
+object Block {
+  def pause(): Unit = {
+    ResMgr.removeThemeTextureStr(BlockConst.BLOCK_INDEX)
+  }
+}
+
 class Block(pbody: Body, val btype: BlockType)
   extends B2dActor(pbody) with Poolable {
 
   var isLanded = false
   var isLast = false
-  val sprite = new Sprite()
-  val jointLeftSprite = new Sprite()
-  val jointRightSprite = new Sprite()
+  private val sprite = new Sprite()
+  private val jointLeftSprite = new Sprite()
+  private val jointRightSprite = new Sprite()
   def isDimenUp = btype.isDimenUp
 
   def init(): Unit = {
@@ -33,31 +40,29 @@ class Block(pbody: Body, val btype: BlockType)
       bpos.y * PPM - btype.halfh,
       btype.width,
       btype.height)
-    initSpriteTexture()
-
-    sprite.setBounds(getX, getY, getWidth, getHeight)
-    sprite.setU2(getWidth / sprite.getTexture.getWidth)
-    sprite.setOriginCenter()
-
-    jointLeftSprite.setBounds(getX(), 0, jointLeftSprite.getTexture.getWidth, Const.Height - getY())
-    jointLeftSprite.setV2(getHeight / jointLeftSprite.getTexture.getHeight)
-    jointLeftSprite.setOrigin(0, 0)
-
-    jointRightSprite.setBounds(getRight, 0, jointRightSprite.getTexture.getWidth, Const.Height - getY())
-    jointRightSprite.setV2(getHeight / jointRightSprite.getTexture.getHeight)
-    jointRightSprite.setOrigin(0, 0)
+//    initSpriteTexture()
 
     setOrigin(Align.center)
-    val scale = btype.scale
-    setScale(scale)
-    sprite.setScale(scale)
-    jointLeftSprite.setScale(scale)
-    jointRightSprite.setScale(scale)
 
     setVisible(false)
-    setDebug(true)
+//    setDebug(true)
   }
   init()
+
+  def pause(): Unit = {
+    body.setActive(false)
+    remove()
+  }
+
+  def resumeInited(): Unit = {
+    if(isTextureDisposed)
+      initSpriteTexture()
+  }
+
+  def resumeActivated(): Unit = {
+    resumeInited()
+    activate()
+  }
 
   private def initSpriteTexture(): Unit = {
     val blockTexture = ResMgr.getThemeTexture(BlockConst.BLOCK_INDEX)
@@ -77,13 +82,32 @@ class Block(pbody: Body, val btype: BlockType)
     chainTexture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest)
     chainTexture.setWrap(TextureWrap.ClampToEdge, TextureWrap.Repeat)
 
+    sprite.setBounds(getX, getY, getWidth, getHeight)
+    sprite.setU2(getWidth / sprite.getTexture.getWidth)
+    sprite.setOriginCenter()
+
+    jointLeftSprite.setBounds(getX(), 0, jointLeftSprite.getTexture.getWidth, Const.Height - getY())
+    jointLeftSprite.setV2(getHeight / jointLeftSprite.getTexture.getHeight)
+    jointLeftSprite.setOrigin(0, 0)
+
+    jointRightSprite.setBounds(getRight, 0, jointRightSprite.getTexture.getWidth, Const.Height - getY())
+    jointRightSprite.setV2(getHeight / jointRightSprite.getTexture.getHeight)
+    jointRightSprite.setOrigin(0, 0)
+
+    val scale = btype.scale
+    setScale(scale)
+    sprite.setScale(scale)
+    jointLeftSprite.setScale(scale)
+    jointRightSprite.setScale(scale)
+
     setColor(ThemeMgr.getBlockColor(btype.dimen))
   }
 
   def init(iti: ItemToInst): Block =
     init(iti.x, iti.y, iti.angle, iti.isLast)
 
-  private def isTextureDisposed: Boolean = sprite.getTexture.getTextureObjectHandle == 0
+  private def isTextureDisposed: Boolean =
+    sprite.getTexture == null || sprite.getTexture.getTextureObjectHandle == 0
 
   def init(x: Float,
            y: Float,
@@ -111,17 +135,23 @@ class Block(pbody: Body, val btype: BlockType)
     RxMgr.onActorAdded.onNext(this)
 
     setVisible(true)
-    utils.post { () =>
-      if (isDimenUp)
-        toFront()
-      else {
-        toBack()
-//        body.setLinearVelocity(Const.GroundLinearVelocity, 0f)
-        body.setLinearVelocity(
-          getStage.asInstanceOf[GameStage].playerVelX * .05f, 0f)
-      }
-    }
+    utils.post(() => postActivate())
     this
+  }
+
+  private def postActivate(): Unit = {
+    if (isDimenUp)
+      toFront()
+    else {
+      toBack()
+      body.setLinearVelocity(Const.GroundLinearVelocity, 0f)
+//      try {
+//        body.setLinearVelocity(
+//          getStage.asInstanceOf[GameStage].playerVelX * .05f, 0f)
+//      } catch {
+//        case e: NullPointerException =>
+//      }
+    }
   }
 
   private def setVisibleSmoothly(): Unit = {
@@ -150,7 +180,6 @@ class Block(pbody: Body, val btype: BlockType)
     isLast = false
     isLanded = false
   }
-
 
   private def configJointPos(): Unit = {
     val cornerX = MathUtils.cosDeg(getRotation) * (getWidth * getScaleX / 2)

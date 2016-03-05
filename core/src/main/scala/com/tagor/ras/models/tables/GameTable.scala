@@ -8,15 +8,16 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions._
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, Label, Table}
 import com.badlogic.gdx.utils.Align
-import com.tagor.ras.models.RxPlayerConst
+import com.tagor.ras.models.{Showable, RxPlayerConst}
 import com.tagor.ras.utils.{RxMgr, Const, ResMgr}
 
 /**
   * Created by rolangom on 2/2/16.
   */
-class GameTable extends Table {
+class GameTable extends Table with Showable {
 
   private var dirImg: Image = _
+  private var jumpImg: Image = _
   private var scoreLbl: Label = _
   private var fpsLbl: Label = _
   private var levelLbl: Label = _
@@ -37,7 +38,7 @@ class GameTable extends Table {
     reset()
 
     setFillParent(true)
-    setDebug(true)
+//    setDebug(true)
     align(Align.top)
 
     val generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AldotheApache.ttf"))
@@ -64,14 +65,20 @@ class GameTable extends Table {
     dirImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "arrowUp"))
     dirImg.setOrigin(Align.center)
 
+    jumpImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
+    jumpImg.setOrigin(Align.center)
+    jumpImg.setRotation(-90f)
+
     add(scoreLbl)
     row()
     add(levelLbl)
     row()
     add(dirImg).expand().align(Align.left)
     row()
-    add(fpsLbl)
+    add(fpsLbl).colspan(2).align(Align.center)
     setVisible(false)
+
+
   }
 
   private def showLevel(level: Int): Unit = {
@@ -102,7 +109,7 @@ class GameTable extends Table {
 
   def setFpsText(s: String): Unit = fpsLbl.setText(s)
 
-  def hide(): Unit = {
+  override def hide(): Unit = {
     addAction(
       sequence(
         fadeOut(.5f),
@@ -124,7 +131,7 @@ class GameTable extends Table {
   }
 
 
-  def show(): Unit = {
+  override def show(): Unit = {
     addAction(
       sequence(
         alpha(0f),

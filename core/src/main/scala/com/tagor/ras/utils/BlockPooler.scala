@@ -35,19 +35,4 @@ class BlockPooler {
   def getIti: ItemToInst = itiPool.obtain()
 
   def free(iti: ItemToInst):Unit = itiPool.free(iti)
-
-  def init(): Unit = {
-    pool.foreach {
-      case (t, p) =>
-        var i = p.getFree
-        while (i > 0) {
-          val b = p.obtain()
-          b.init()
-          p.free(b)
-          print(s"$i,")
-          i -= 1
-        }
-    }
-  }
-
 }
