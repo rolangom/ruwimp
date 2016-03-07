@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions._
 import com.badlogic.gdx.scenes.scene2d.ui.{Label, Image, Table}
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.scenes.scene2d.utils.{TiledDrawable, ClickListener}
 import com.badlogic.gdx.utils.Align
 import com.tagor.ras.models.Showable
 import com.tagor.ras.utils._
@@ -33,8 +33,8 @@ class PausedTable(clickListener: ClickListener) extends Table with Showable {
     parameter.shadowOffsetY = 2
     var font = generator.generateFont(parameter)
     var labelStyle = new Label.LabelStyle(font, Color.YELLOW)
-
     val pauseLbl = new Label("Paused", labelStyle)
+    generator.dispose()
 
     resumeImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
     resumeImg.setOrigin(Align.center)
@@ -48,6 +48,12 @@ class PausedTable(clickListener: ClickListener) extends Table with Showable {
     goHomeImg.addListener(clickListener)
     goHomeImg.setTouchable(Touchable.enabled)
 
+    val bg = new TiledDrawable(ResMgr.getRegion(Const.BGS_PATH, "white_square"))
+      .tint(Color.valueOf("000000E7"))
+    bg.setMinWidth(Const.Width)
+    bg.setMinHeight(Const.Height)
+    setBackground(bg)
+
     add(pauseLbl).colspan(2).spaceBottom(32).spaceTop(64)
     row()
     add(goHomeImg).align(Align.center)
@@ -60,9 +66,9 @@ class PausedTable(clickListener: ClickListener) extends Table with Showable {
       sequence(
         alpha(0),
         Actions.visible(true),
-        fadeIn(1f),
+        fadeIn(.5f),
         run(runnable(
-          () => enableTouchable(true, resumeImg, resumeImg)
+          () => enableTouchable(true, resumeImg, goHomeImg)
         ))
       )
     )

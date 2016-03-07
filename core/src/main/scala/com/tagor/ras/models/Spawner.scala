@@ -33,6 +33,10 @@ class Spawner(camera: OrthographicCamera) {
 //    pooler.resume()
   }
 
+  def resumeGame(): Unit = {
+    subscribeInterval()
+  }
+
   def pause(): Unit = {
     vblocks.foreach(_.pause())
     pblocks.foreach(_.pause())
@@ -47,9 +51,13 @@ class Spawner(camera: OrthographicCamera) {
         .lastOption
         .foreach(b => spawn(b.maxX, b.maxY))
     }
+    subscribeInterval()
+  }
+
+  private def subscribeInterval(): Unit = {
     RxMgr.intervalObs
       .subscribeOn(ComputationScheduler())
-//      .sample(250 milliseconds)
+      //      .sample(250 milliseconds)
       .subscribe(_ => checkShortInterval())
   }
 

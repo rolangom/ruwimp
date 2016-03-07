@@ -38,8 +38,6 @@ class GameScreen extends Screen {
   }
 
   override def show(): Unit = {
-//    resume()
-
     gameStage.init()
     uiStage.init()
     invalidate()
@@ -95,12 +93,11 @@ class GameScreen extends Screen {
     println("RGT -> paused")
     world.setContactListener(null)
     Gdx.input.setInputProcessor(null)
-//    uiStage.dispose()
-//    ResMgr.dispose()
     gameStage.pause()
     uiStage.pause()
 
-    handleGameState(true)
+    if (RxMgr.isGmRunning)
+      handleGameState(true)
   }
 
   override def resume(): Unit = {
@@ -110,6 +107,6 @@ class GameScreen extends Screen {
     invalidate()
     gameStage.resume()
     uiStage.resume()
-    handleGameState(false)
+//    handleGameState(false)
   }
 }

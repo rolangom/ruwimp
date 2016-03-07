@@ -3,10 +3,12 @@ package com.tagor.ras.models.tables
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions._
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, Label, Table}
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
 import com.tagor.ras.models.{Showable, RxPlayerConst}
 import com.tagor.ras.utils.{RxMgr, Const, ResMgr}
@@ -14,10 +16,10 @@ import com.tagor.ras.utils.{RxMgr, Const, ResMgr}
 /**
   * Created by rolangom on 2/2/16.
   */
-class GameTable extends Table with Showable {
+class GameTable(clickListener: ClickListener) extends Table with Showable {
 
   private var dirImg: Image = _
-  private var jumpImg: Image = _
+  private var pauseImg: Image = _
   private var scoreLbl: Label = _
   private var fpsLbl: Label = _
   private var levelLbl: Label = _
@@ -65,11 +67,14 @@ class GameTable extends Table with Showable {
     dirImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "arrowUp"))
     dirImg.setOrigin(Align.center)
 
-    jumpImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
-    jumpImg.setOrigin(Align.center)
-    jumpImg.setRotation(-90f)
+    pauseImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
+    pauseImg.setOrigin(Align.center)
+    pauseImg.setUserObject(Const.PausedStr)
+    pauseImg.addListener(clickListener)
+    pauseImg.setTouchable(Touchable.enabled)
 
-    add(scoreLbl)
+    add(scoreLbl).expandX()
+    add(pauseImg).size(48f).align(Align.right).padRight(24f)
     row()
     add(levelLbl)
     row()
@@ -77,8 +82,6 @@ class GameTable extends Table with Showable {
     row()
     add(fpsLbl).colspan(2).align(Align.center)
     setVisible(false)
-
-
   }
 
   private def showLevel(level: Int): Unit = {
@@ -119,18 +122,6 @@ class GameTable extends Table with Showable {
     )
   }
 
-  def showDelayed(): Unit = {
-    addAction(
-      sequence(
-        alpha(0f),
-        Actions.visible(true),
-        delay(.5f),
-        fadeIn(.5f)
-      )
-    )
-  }
-
-
   override def show(): Unit = {
     addAction(
       sequence(
@@ -139,5 +130,6 @@ class GameTable extends Table with Showable {
         fadeIn(.5f)
       )
     )
+    pauseImg.setTouchable(Touchable.enabled)
   }
 }

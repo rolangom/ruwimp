@@ -21,7 +21,7 @@ class UiStage(batch: Batch)
     Const.Width, Const.Height,
     new OrthographicCamera), batch){
 
-  private lazy val uiClickListener = new ClickListener() {
+  private lazy val clickListener = new ClickListener() {
     override def touchDown(event: InputEvent,
                            x: Float, y: Float,
                            pointer: Int,
@@ -31,6 +31,13 @@ class UiStage(batch: Batch)
           (() => RxMgr.onGameState.onNext(Const.GameStatePlay), true)
         case Const.PlayAgainStr =>
           (() => playAgain(), true)
+        case Const.PausedStr =>
+          (() => {
+            RxMgr.onGameState.onNext(Const.GameStatePause)
+            pauseGame()
+          }, true)
+        case Const.ResumeStr =>
+          (() => resumeGame(), true)
         case _ => (() => (), false)
       }
       if (touched)
@@ -49,16 +56,16 @@ class UiStage(batch: Batch)
       sequence(
         scaleBy(-.25f, -.25f, .15f),
         scaleTo(1f, 1f, .15f),
-        delay(.15f),
+//        delay(.15f),
         run(runnable(f))
       )
     )
   }
 
-  private lazy val gtable = new GameTable
-  private lazy val stable = new StartTable(uiClickListener)
-  private lazy val dtable = new DashboardTable(uiClickListener)
-  private lazy val ptable = new PausedTable(uiClickListener)
+  private lazy val gtable = new GameTable(clickListener)
+  private lazy val stable = new StartTable(clickListener)
+  private lazy val dtable = new DashboardTable(clickListener)
+  private lazy val ptable = new PausedTable(clickListener)
 
   private var currAct: Float => Unit = emptyAct
   private lazy val (screenSideR, screenSideL) = getScreenSideRects
@@ -79,20 +86,33 @@ class UiStage(batch: Batch)
     addActor(stable)
     stable.show()
 
-    subs =
-      RxMgr.onGameState
-        .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
-        .map(_ == Const.GameStatePlay)
-        .subscribe(r => handleGame(r))
+    subs = RxMgr.onGameState
+      .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
+      .map(_ == Const.GameStatePlay)
+      .subscribe(r => handleGame(r))
   }
 
   private def resumeGame(): Unit = {
-    RxMgr.onGameState.onNext(Const.GameStateResume)
+    ptable.hide()
+    addGameTbl()
+    configGameInput(true)
+    addActionDelayed(1.5f, () => RxMgr.onGameState.onNext(Const.GameStateResume))
   }
 
   private def showGameTable(): Unit = {
     stable.hide()
     addGameTbl()
+  }
+
+  def pauseGame(): Unit = {
+    gtable.hide()
+    addPausedTbl()
+    configGameInput(false)
+  }
+
+  private def addPausedTbl(): Unit = {
+    addActor(ptable)
+    ptable.show()
   }
 
   private def playAgain(): Unit = {
@@ -126,10 +146,10 @@ class UiStage(batch: Batch)
     if (isRunning)
       showGameTable()
     else
-      post(() => showDashboadTbl())
+      post(() => showDashboardTbl())
   }
 
-  private def showDashboadTbl(): Unit = {
+  private def showDashboardTbl(): Unit = {
     gtable.hide()
     addDashboardTbl()
   }
@@ -170,16 +190,16 @@ class UiStage(batch: Batch)
       RxMgr.onPlayerAction.onNext(RxPlayerConst.Toggle)
       return true
     }
-//    super.touchDown(screenX, screenY, pointer, button)
-    false
+    super.touchDown(screenX, screenY, pointer, button)
   }
 
   def pause(): Unit = {
-    ptable.show()
+    if (RxMgr.isGmRunning)
+      pauseGame()
   }
 
-  def resume(): Unit ={
-    ptable.show()
+  def resume(): Unit = {
+//    ptable.show()
   }
 
   private def emptyAct(delta: Float): Unit = { }

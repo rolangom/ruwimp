@@ -26,15 +26,19 @@ object RxMgr {
 
   onGameState
     .subscribeOn(ComputationScheduler())
-    .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
-    .map(_ == Const.GameStatePlay)
-    .doOnNext(s => _isGmRunning = s)
-    .filter(s => s)
+    .doOnNext({
+      case Const.GameStatePlay =>
+        _isGmRunning = true
+      case Const.GameStateOver =>
+        _isGmRunning = false
+      case _ => ()
+    })
+    .filter(s => s == Const.GameStatePlay || s == Const.GameStateResume)
     .subscribe(_ => startInterval())
 
   private def startInterval(): Unit = {
     _intervalObs = Observable.interval(125 milliseconds)
-      .takeUntil(onGameState)
+      .takeUntil(onGameState.filter(s => s == Const.GameStatePause || s == Const.GameStateOver))
       .publish.refCount
   }
 

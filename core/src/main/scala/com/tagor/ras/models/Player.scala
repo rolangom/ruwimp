@@ -132,6 +132,8 @@ class Player
 
   def resume(): Unit = {
     initDisposables()
+    if (RxMgr.isGmRunning)
+      activate()
   }
 
   def pause(): Unit = {
@@ -248,6 +250,15 @@ class Player
     groundContacts = 0
   }
 
+  def pauseGame(): Unit = {
+    body.setGravityScale(0)
+    footStepSound.stop()
+  }
+
+  def resumeGame(): Unit = {
+    body.setGravityScale(Const.RunnerGravityScale)
+  }
+
   override def act(delta: Float): Unit = {
     super.act(delta)
     vtmp.set(body.getPosition)
@@ -270,6 +281,4 @@ class Player
     batch.draw(chAnim(), getX, getY, getOriginX, getOriginY, getWidth, getHeight,
       getScaleX, getScaleY, getRotation)
   }
-
-
 }

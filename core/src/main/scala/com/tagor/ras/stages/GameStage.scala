@@ -53,19 +53,18 @@ class GameStage(batch: Batch)
   var subs: CompositeSubscription = _
 
   private def initSubs(): Unit = {
-    if (subs == null || subs.isUnsubscribed) {
-      subs = CompositeSubscription(
-        RxMgr.onActorAdded
-          .subscribe(a => post(() => addActor(a))),
-        RxMgr.onGameState
-          .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
-          .map(_ == Const.GameStatePlay)
-          .doOnUnsubscribe(() => println("RGT -> GameStage -> onGameState unsubscribed"))
-          .subscribe(r => post(() => handleGame(r))),
-        RxMgr.newLevel
-          .subscribe(l => goFaster())
-      )
-    }
+    if (subs == null || subs.isUnsubscribed) subs = CompositeSubscription(
+      RxMgr.onActorAdded
+        .subscribe(a => post(() => addActor(a))),
+      RxMgr.onGameState subscribe ( m => m match {
+        case Const.GameStatePlay | Const.GameStateOver =>
+          post(() => handleGame(m == Const.GameStatePlay))
+        case Const.GameStatePause | Const.GameStateResume =>
+          post(() => handleGameMode(m == Const.GameStatePause))
+      }),
+      RxMgr.newLevel
+        .subscribe(l => goFaster())
+    )
   }
 
   def init(): Unit = {
@@ -97,16 +96,17 @@ class GameStage(batch: Batch)
   private def start(): Unit = {
     player.activate()
     currAct = gameAct
+    initInterval()
+  }
 
+  private def initInterval(): Unit = {
     val cam = getCamera
     val halfViewportWidth = getViewport.getWorldWidth * .5f
-
-    subs +=
-      RxMgr.intervalObs
-        .subscribeOn(ComputationScheduler())
-        .sample(1 seconds)
-        .filter(_ => player.getTop < 0 || player.getRight < cam.position.x - halfViewportWidth)
-        .subscribe(_ => RxMgr.onGameState.onNext(Const.GameStateOver))
+    subs += RxMgr.intervalObs
+      .subscribeOn(ComputationScheduler())
+      .sample(1 seconds)
+      .filter(_ => player.getTop < 0 || player.getRight < cam.position.x - halfViewportWidth)
+      .subscribe(_ => RxMgr.onGameState.onNext(Const.GameStateOver))
   }
 
   private def preStart(): Unit = {
@@ -122,12 +122,31 @@ class GameStage(batch: Batch)
   }
 
   private def end(): Unit = {
+    ScoreMgr.save()
     gameOverSound.play()
     currAct = emptyAct
     spawner.end()
     player.reset()
     cSpeed = MinCamSpeed
-    ScoreMgr.save()
+  }
+
+  private def handleGameMode(isPaused: Boolean): Unit = {
+    if (isPaused)
+      pauseGame()
+    else
+      resumeGame()
+  }
+
+  def pauseGame(): Unit = {
+    currAct = emptyAct
+    player.pauseGame()
+  }
+
+  private def resumeGame(): Unit = {
+    currAct = gameAct
+    player.resumeGame()
+    spawner.resumeGame()
+    initInterval()
   }
 
   private def gameAct(delta: Float): Unit = {
@@ -184,11 +203,6 @@ class GameStage(batch: Batch)
     spawner.resume()
     player.resume()
     gameOverSound = ResMgr.getSound("audio/jingles_PIZZA01.mp3")
-    if (RxMgr.isGmRunning) {
-      addAction(Actions.delay(
-        2f, Actions.run(runnable(() => start()))))
-      currAct = gameAct
-    }
   }
 
   def pause(): Unit = {
@@ -198,10 +212,8 @@ class GameStage(batch: Batch)
     subs.unsubscribe()
     currAct = emptyAct
     ResMgr.remove("audio/jingles_PIZZA01.mp3")
-  }
 
-  def disposeLight(): Unit = {
-    ResMgr.remove(ResMgr.getThemeTextureStr(BlockConst.BLOCK_INDEX))
-    ResMgr.remove(ResMgr.getThemeTextureStr(BlockConst.JOINT_INDEX))
+    if (RxMgr.isGmRunning)
+      pauseGame()
   }
 }

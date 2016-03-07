@@ -17,9 +17,12 @@ object ScoreMgr {
   private var isFixedLvlInc = false
   private var newScoreToReach: Int = _
   private val PlusScore = 35
+  private var _isNewBestScore = false
 
   def score = _score
   def bestScore = prefs.getInteger("score", 0)
+
+  prefs.remove("score")
 
   def increase(): Unit = {
     _score += 1
@@ -59,15 +62,17 @@ object ScoreMgr {
     _score = 0
     _level = 0
     isFixedLvlInc = false
+    _isNewBestScore = false
     RxMgr.newScore.onNext(_score)
     RxMgr.newLevel.onNext(_level)
   }
 
-  def isNewBestScore: Boolean = _score > bestScore
+  def isNewBestScore: Boolean = _isNewBestScore //_score > bestScore
 
   def save(): Unit = {
-    val currScore = prefs.getInteger("score", 0)
-    if (_score > currScore) {
+    val currBestScore = bestScore
+    if (_score > currBestScore) {
+      _isNewBestScore = true
       prefs.putInteger("score", _score)
       prefs.flush()
     }

@@ -53,7 +53,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     parameter.size = 32
     font = generator.generateFont(parameter)
     labelStyle = new Label.LabelStyle(font, Color.YELLOW)
-    newDashbLbl = new Label("Best", labelStyle)
+    newDashbLbl = new Label("New", labelStyle)
     generator.dispose()
 
     val gameoverImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "game_over"))
@@ -71,8 +71,11 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     lBoardBtnImg.addListener(clickListener)
     lBoardBtnImg.setTouchable(Touchable.enabled)
 
-    setBackground(new TiledDrawable(ResMgr.getRegion(Const.BGS_PATH, "white_square"))
-      .tint(Color.valueOf("000000E7")))
+    val bg = new TiledDrawable(ResMgr.getRegion(Const.BGS_PATH, "white_square"))
+      .tint(Color.valueOf("000000E7"))
+    bg.setMinWidth(Const.Width)
+    bg.setMinHeight(Const.Height)
+    setBackground(bg)
 
     add(gameoverImg).colspan(3).spaceBottom(32).spaceTop(32)
     row()
@@ -82,7 +85,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     add(scoreDashbLbl).align(Align.left).colspan(2)
     add(bestDashbLbl).align(Align.right)
     row()
-    add(newDashbLbl).align(Align.left).spaceBottom(32)
+    add(newDashbLbl).colspan(3).align(Align.right).spaceBottom(32)
     row()
     add(playBtnImg).align(Align.left).colspan(2)
     add(lBoardBtnImg).align(Align.right)

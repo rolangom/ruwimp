@@ -62,7 +62,7 @@ object Const {
   val PlayStr = new String("play")
   val PlayAgainStr = new String("playAgain")
   val LeaderBoardStr = new String("LeaderBoard")
-  val PausedStr = new String("LeaderBoard")
+  val PausedStr = new String("Pause")
   val ResumeStr = new String("Resume")
   val GoHomeStr = new String("GoHome")
 
