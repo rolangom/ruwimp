@@ -47,6 +47,7 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
   }
 
   override def show(): Unit = {
+    clearActions()
     addAction(
       sequence(
         alpha(0),
@@ -60,6 +61,7 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
   }
 
   override def hide(): Unit = {
+    clearActions()
     addAction(
       sequence(
         fadeOut(.5f),

@@ -67,7 +67,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
 
     lBoardBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
     lBoardBtnImg.setOrigin(Align.center)
-    lBoardBtnImg.setUserObject(Const.LeaderBoardStr)
+    lBoardBtnImg.setUserObject(Const.GoHomeStr)
     lBoardBtnImg.addListener(clickListener)
     lBoardBtnImg.setTouchable(Touchable.enabled)
 
@@ -109,6 +109,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
   }
 
   override def hide(): Unit = {
+    clearActions()
     addAction(
       sequence(
         fadeOut(.5f),
@@ -119,6 +120,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
   }
 
   override def hideAndFunc(f: () => Unit): Unit = {
+    clearActions()
     addAction(
       sequence(
         run(runnable(f)),

@@ -61,6 +61,8 @@ class GameStage(batch: Batch)
           post(() => handleGame(m == Const.GameStatePlay))
         case Const.GameStatePause | Const.GameStateResume =>
           post(() => handleGameMode(m == Const.GameStatePause))
+        case Const.GameStateHome =>
+          post(() => goHome())
       }),
       RxMgr.newLevel
         .subscribe(l => goFaster())
@@ -94,6 +96,7 @@ class GameStage(batch: Batch)
   }
 
   private def start(): Unit = {
+    println("RGT -> GameStage start")
     player.activate()
     currAct = gameAct
     initInterval()
@@ -126,6 +129,16 @@ class GameStage(batch: Batch)
     gameOverSound.play()
     currAct = emptyAct
     spawner.end()
+    player.reset()
+    cSpeed = MinCamSpeed
+  }
+
+  private def goHome(): Unit = {
+    println("RGT -> GameStage goHome")
+    ScoreMgr.reset()
+    currAct = emptyAct
+    spawner.end()
+    player.resumeGame()
     player.reset()
     cSpeed = MinCamSpeed
   }

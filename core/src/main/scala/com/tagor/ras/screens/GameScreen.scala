@@ -26,7 +26,7 @@ class GameScreen extends Screen {
   RxMgr.newTheme
     .subscribe(_ => invalidate())
   RxMgr.onGameState
-    .filter(s => s == Const.GameStatePause || s == Const.GameStateResume)
+    .filter(s => s == Const.GameStatePause || s == Const.GameStateResume || s == Const.GameStatePlay)
     .map(_ == Const.GameStatePause)
     .subscribe(p => handleGameState(p))
 
@@ -86,6 +86,7 @@ class GameScreen extends Screen {
   }
 
   private def handleGameState(isPaused: Boolean): Unit = {
+    println(s"RGT -> GameScreen handleGameState (isPaused= $isPaused)")
     worldAct = if (isPaused) emptyAct else renderFixed
   }
 

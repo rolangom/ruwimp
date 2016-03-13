@@ -36,6 +36,11 @@ class UiStage(batch: Batch)
             RxMgr.onGameState.onNext(Const.GameStatePause)
             pauseGame()
           }, true)
+        case Const.GoHomeStr =>
+          (() => {
+            RxMgr.onGameState.onNext(Const.GameStateHome)
+            goHome()
+          }, true)
         case Const.ResumeStr =>
           (() => resumeGame(), true)
         case _ => (() => (), false)
@@ -83,13 +88,17 @@ class UiStage(batch: Batch)
     dtable.init()
     ptable.init()
 
-    addActor(stable)
-    stable.show()
+    showStartTable()
 
     subs = RxMgr.onGameState
       .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
       .map(_ == Const.GameStatePlay)
       .subscribe(r => handleGame(r))
+  }
+
+  private def showStartTable(): Unit = {
+    addActor(stable)
+    stable.show()
   }
 
   private def resumeGame(): Unit = {
@@ -117,6 +126,15 @@ class UiStage(batch: Batch)
     dtable.hideAndFunc {
       () => RxMgr.onGameState.onNext(Const.GameStatePlay)
     }
+  }
+
+  private def goHome(): Unit = {
+    if (ptable.hasParent)
+      ptable.hide()
+    if (dtable.hasParent)
+      dtable.hide()
+    gtable.hide()
+    addActionDelayed(.75f, () => showStartTable())
   }
 
   private def addGameTbl(): Unit = {

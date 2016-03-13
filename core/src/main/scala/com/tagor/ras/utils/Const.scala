@@ -52,7 +52,7 @@ object Const {
   val ThemeImg = 0
   val ThemeColor = 1
 
-  val GameStateStart = 0
+  val GameStateHome = 0
   val GameStatePlay = 1
   val GameStateOver = 2
   val GameStatePlayAgain = 3
