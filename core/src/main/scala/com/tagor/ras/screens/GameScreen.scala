@@ -107,6 +107,5 @@ class GameScreen extends Screen {
     invalidate()
     gameStage.resume()
     uiStage.resume()
-//    handleGameState(false)
   }
 }

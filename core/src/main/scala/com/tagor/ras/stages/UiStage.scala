@@ -94,7 +94,6 @@ class UiStage(batch: Batch)
 
   private def resumeGame(): Unit = {
     ptable.hide()
-    addGameTbl()
     configGameInput(true)
     addActionDelayed(1.5f, () => RxMgr.onGameState.onNext(Const.GameStateResume))
   }
@@ -105,7 +104,6 @@ class UiStage(batch: Batch)
   }
 
   def pauseGame(): Unit = {
-    gtable.hide()
     addPausedTbl()
     configGameInput(false)
   }
