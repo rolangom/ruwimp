@@ -12,8 +12,6 @@ import com.tagor.ras.utils._
  */
 class GameScreen extends Screen {
 
-  private var (r, b, g) = (0f, 0f, 0f)
-
   private val world = WorldFactory.world
   private val batch = new SpriteBatch
   private val gameStage = new GameStage(batch)
@@ -23,24 +21,14 @@ class GameScreen extends Screen {
   private var accumulator = 0f
   private val TIME_STEP = 0.01f// 1f / (if (Gdx.app.getType == ApplicationType.iOS) 60f else 300f)
 
-  RxMgr.newTheme
-    .subscribe(_ => invalidate())
   RxMgr.onGameState
     .filter(s => s == Const.GameStatePause || s == Const.GameStateResume || s == Const.GameStatePlay)
     .map(_ == Const.GameStatePause)
     .subscribe(p => handleGameState(p))
 
-  private def invalidate(): Unit = {
-    val color = Color.valueOf(ThemeMgr.getBgColorStr(BlockConst.BG2_COLOR_INDEX))
-    r = color.r
-    g = color.g
-    b = color.b
-  }
-
   override def show(): Unit = {
     gameStage.init()
     uiStage.init()
-    invalidate()
 
     world.setContactListener(gameStage)
     Gdx.input.setInputProcessor(uiStage)
@@ -59,11 +47,12 @@ class GameScreen extends Screen {
     gameStage dispose()
     uiStage dispose()
     ResMgr dispose()
+    WorldFactory.dispose()
   }
 
   override def render(delta: Float): Unit = {
     val gl = Gdx.gl
-    gl.glClearColor(r, g, b, 1f)
+    gl.glClearColor(1, 1, 1, 1f)
     gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
     worldAct(delta)
@@ -105,7 +94,6 @@ class GameScreen extends Screen {
     world.setContactListener(gameStage)
     Gdx.input.setInputProcessor(uiStage)
 
-    invalidate()
     gameStage.resume()
     uiStage.resume()
   }

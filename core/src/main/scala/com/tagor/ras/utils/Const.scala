@@ -60,6 +60,7 @@ object Const {
   val GameStateResume = 5
 
   val PlayStr = new String("play")
+  val ShareStr = new String("Share")
   val PlayAgainStr = new String("playAgain")
   val LeaderBoardStr = new String("LeaderBoard")
   val PausedStr = new String("Pause")
@@ -68,7 +69,7 @@ object Const {
 
   val GROUND_UI_ATLAS_PATH = "atlas/groundUi.txt"
 
-  val BGS_PATH = "atlas/worldAtlas.txt"
+  val BGS_PATH = "atlas/worldAtlas2.txt"
 
   val CLOUD_IMG = "cloud%d"
 

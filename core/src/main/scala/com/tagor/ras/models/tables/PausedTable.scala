@@ -29,10 +29,8 @@ class PausedTable(clickListener: ClickListener) extends Table with Showable {
     val generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AldotheApache.ttf"))
     val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
     parameter.size = 48
-    parameter.shadowOffsetX = 2
-    parameter.shadowOffsetY = 2
     var font = generator.generateFont(parameter)
-    var labelStyle = new Label.LabelStyle(font, Color.YELLOW)
+    var labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.DarkBlue))
     val pauseLbl = new Label("Paused", labelStyle)
     generator.dispose()
 
@@ -42,17 +40,11 @@ class PausedTable(clickListener: ClickListener) extends Table with Showable {
     resumeImg.addListener(clickListener)
     resumeImg.setTouchable(Touchable.enabled)
 
-    goHomeImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
+    goHomeImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "home_btn"))
     goHomeImg.setOrigin(Align.center)
     goHomeImg.setUserObject(Const.GoHomeStr)
     goHomeImg.addListener(clickListener)
     goHomeImg.setTouchable(Touchable.enabled)
-
-    val bg = new TiledDrawable(ResMgr.getRegion(Const.BGS_PATH, "white_square"))
-      .tint(Color.valueOf("000000E7"))
-    bg.setMinWidth(Const.Width)
-    bg.setMinHeight(Const.Height)
-    setBackground(bg)
 
     add(pauseLbl).colspan(2).spaceBottom(32).spaceTop(64)
     row()
@@ -84,5 +76,6 @@ class PausedTable(clickListener: ClickListener) extends Table with Showable {
         Actions.removeActor()
       )
     )
+    enableTouchable(false, resumeImg, goHomeImg)
   }
 }

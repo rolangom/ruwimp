@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.scenes.scene2d._
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.tagor.ras.models.RxPlayerConst
-import com.tagor.ras.models.tables.{PausedTable, DashboardTable, StartTable, GameTable}
+import com.tagor.ras.models.tables.{DashboardTable, GameTable, PausedTable, StartTable}
 import com.tagor.ras.utils._
 import rx.lang.scala.Subscription
 
@@ -103,6 +103,7 @@ class UiStage(batch: Batch)
 
   private def resumeGame(): Unit = {
     ptable.hide()
+    gtable.setTouchableEnabled()
     configGameInput(true)
     addActionDelayed(1.5f, () => RxMgr.onGameState.onNext(Const.GameStateResume))
   }
@@ -222,10 +223,6 @@ class UiStage(batch: Batch)
 
   private def stageAct(delta: Float): Unit = {
     gtable.setFpsText(s"FPS: ${Gdx.graphics.getFramesPerSecond}, body count: ${WorldFactory.world.getBodyCount}")
-  }
-
-  override def draw(): Unit = {
-    super.draw()
   }
 
   override def act(delta: Float): Unit = {

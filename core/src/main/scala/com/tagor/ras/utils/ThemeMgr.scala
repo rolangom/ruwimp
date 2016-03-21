@@ -38,32 +38,33 @@ object ThemeMgr {
 
   private def nextThemeImg(): Unit = {
     dispose()
-    _currentTheme = if (_currentTheme >= BlockConst.THEMES.length - 1) 0 else + 1
+    _currentTheme = if (_currentTheme >= BlockConst.THEMES.length - 1) 0 else _currentTheme + 1
     RxMgr.newTheme.onNext(Const.ThemeImg)
   }
 
   private def nextColorSet(): Unit = {
-    _currentColorSet = if (_currentColorSet >= BlockConst.COLOR_THEME_SET.length - 1) 0 else + 1
+    _currentColorSet = if (_currentColorSet >= BlockConst.COLOR_THEME_SET(currentTheme).length - 1) 0 else _currentColorSet + 1
     RxMgr.newTheme.onNext(Const.ThemeColor)
   }
 
   def dispose() {
     ResMgr.remove(BlockConst.THEMES_IMGS(_currentTheme)(BlockConst.BLOCK_INDEX))
-    //res.removeTexture(BlockConst.THEMES_IMGS(currentTheme)(BlockConst.JOINT_INDEX))
+//    ResMgr.remove(BlockConst.THEMES_IMGS(currentTheme)(BlockConst.JOINT_INDEX))
     ResMgr.remove(BlockConst.THEMES_IMGS(_currentTheme)(BlockConst.BG1_INDEX))
-    ResMgr.remove(BlockConst.THEMES_IMGS(_currentTheme)(BlockConst.BG2_INDEX))
   }
 
   def getBgColorStr(index: Int): String =
     BlockConst.COLOR_THEME_SET(currentTheme)(currentColorSet)(index)
 
+  def getBgColor(index: Int): Color =
+    Color.valueOf(
+      BlockConst.COLOR_THEME_SET(currentTheme)(currentColorSet)(index))
+
   def getBgColorStr: String =
-    getBgColorStr(BlockConst.BG2_COLOR_INDEX)
+    getBgColorStr(BlockConst.BG0_COLOR_INDEX)
 
   def getBlockColor(dimen: Int): Color =
     Color.valueOf(
       BlockConst.COLOR_THEME_SET
         (currentTheme)(currentColorSet)(BlockConst.BLOCK_UP_INDEX + dimen))
-
-
 }

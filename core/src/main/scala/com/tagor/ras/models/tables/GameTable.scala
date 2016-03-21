@@ -10,8 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, Label, Table}
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
-import com.tagor.ras.models.{Showable, RxPlayerConst}
-import com.tagor.ras.utils.{RxMgr, Const, ResMgr}
+import com.tagor.ras.models.{RxPlayerConst, Showable}
+import com.tagor.ras.utils._
 
 /**
   * Created by rolangom on 2/2/16.
@@ -46,19 +46,15 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
     val generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AldotheApache.ttf"))
     val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
     parameter.size = 48
-    parameter.shadowOffsetX = 2
-    parameter.shadowOffsetY = 2
     val lblFont = generator.generateFont(parameter)
-    val labelStyle = new Label.LabelStyle(lblFont, Color.WHITE)
+    val labelStyle = new Label.LabelStyle(lblFont, Color.valueOf(BlockConst.DarkBlue))
 
     scoreLbl = new Label("00", labelStyle)
     fpsLbl = new Label("00", labelStyle)
 
     parameter.size = 32
-    parameter.shadowOffsetX = 1
-    parameter.shadowOffsetY = 1
     val lvlFnt = generator.generateFont(parameter)
-    val lvlStyle = new LabelStyle(lvlFnt, Color.YELLOW)
+    val lvlStyle = new LabelStyle(lvlFnt, Color.valueOf(BlockConst.Red))
     generator.dispose()
 
     levelLbl = new Label("Level 0", lvlStyle)
@@ -67,7 +63,7 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
     dirImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "arrowUp"))
     dirImg.setOrigin(Align.center)
 
-    pauseImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
+    pauseImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "pause_btn"))
     pauseImg.setOrigin(Align.center)
     pauseImg.setUserObject(Const.PausedStr)
     pauseImg.addListener(clickListener)
@@ -121,6 +117,7 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
         Actions.removeActor()
       )
     )
+    enableTouchable(false, pauseImg, pauseImg)
   }
 
   override def show(): Unit = {
@@ -132,6 +129,10 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
         fadeIn(.5f)
       )
     )
+    setTouchableEnabled()
+  }
+
+  def setTouchableEnabled(): Unit = {
     pauseImg.setTouchable(Touchable.enabled)
   }
 }

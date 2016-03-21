@@ -80,11 +80,24 @@ object ResMgr extends Disposable {
   def getThemeTexture(key: Int): Texture =
     getTexture(getThemeTextureStr(key))
 
+  def getThemeTextureRegion(key: Int): TextureRegion =
+    getRegion(Const.BGS_PATH, getThemeTextureRegionStr(key))
+
+
   def getThemeTextureStr(key: Int): String =
     BlockConst.THEMES_IMGS(ThemeMgr.currentTheme)(key)
 
+  def getThemeTextureRegionStr(key: Int): String =
+    BlockConst.THEMES_IMGS(ThemeMgr.currentTheme)(key)
+
+
   def removeThemeTextureStr(key: Int): Unit = {
     remove(getThemeTextureStr(key))
+  }
+
+  @Deprecated
+  def removeThemeTextureRegionStr(key: Int): Unit = {
+    remove(getThemeTextureRegionStr(key))
   }
 
   override def dispose(): Unit = {

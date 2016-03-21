@@ -39,7 +39,7 @@ class Background(camera: Camera) extends Actor {
     val bg2Texture = ResMgr.getThemeTexture(BlockConst.BG1_INDEX)
     bg2Texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest)
     bg2Texture.setWrap(TextureWrap.Repeat, TextureWrap.ClampToEdge)
-    val bg2Rect = new Rectangle(0, -50, Const.Width + bg2Texture.getWidth, bg2Texture.getHeight) // y = 46
+    val bg2Rect = new Rectangle(0, 0, Const.Width + bg2Texture.getWidth, bg2Texture.getHeight) // y = 46
 
     bg2Sprite.setTexture(bg2Texture)
     bg2Sprite.setRegion(Int.box(0), 0, bg2Texture.getWidth, bg2Texture.getHeight)
@@ -54,8 +54,8 @@ class Background(camera: Camera) extends Actor {
 
   def resume(): Unit = {
     initBgSprites()
-    setSpriteColor(ThemeMgr.getBgColorStr(BlockConst.BG1_COLOR_INDEX), bg2Sprite)
-    setSpriteColor(ThemeMgr.getBgColorStr(BlockConst.CLOUDS_COLOR_INDEX), cloud1Sprite, cloud2Sprite)
+    setSpriteColor(ThemeMgr.getBgColorStr(BlockConst.BG0_COLOR_INDEX), bg2Sprite)
+    setSpriteColor(ThemeMgr.getBgColorStr(BlockConst.BG0_COLOR_INDEX), cloud1Sprite, cloud2Sprite)
   }
 
   private def configClouds(): Unit = {
@@ -135,10 +135,10 @@ class Background(camera: Camera) extends Actor {
   private def invalidate(themeItem: Int): Unit = {
     themeItem match {
       case Const.ThemeColor =>
-        setSpriteColor(ThemeMgr.getBgColorStr(BlockConst.BG1_COLOR_INDEX), bg2Sprite)
-        setSpriteColor(ThemeMgr.getBgColorStr(BlockConst.CLOUDS_COLOR_INDEX), cloud1Sprite, cloud2Sprite)
+        setSpriteColor(ThemeMgr.getBgColorStr(BlockConst.BG0_COLOR_INDEX), bg2Sprite)
+        setSpriteColor(ThemeMgr.getBgColorStr(BlockConst.BG0_COLOR_INDEX), cloud1Sprite, cloud2Sprite)
       case Const.ThemeImg =>
-        ResMgr.removeThemeTextureStr(BlockConst.BG2_INDEX)
+        ResMgr.removeThemeTextureStr(BlockConst.BG1_INDEX)
         initBgSprites()
       case _ => ()
     }

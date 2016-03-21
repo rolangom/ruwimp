@@ -69,5 +69,6 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
         Actions.removeActor()
       )
     )
+    enableTouchable(false, lBoardBtnImg, playBtnImg)
   }
 }

@@ -22,8 +22,10 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
   private var bestDashbLbl: Label = _
   private var newDashbLbl: Label = _
 
+  private var shareBtnImg: Image = _
   private var playBtnImg: Image = _
   private var lBoardBtnImg: Image = _
+  private var homeBtnImg: Image = _
 
   def init(): Unit = {
     reset()
@@ -35,29 +37,37 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     val generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AldotheApache.ttf"))
     val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
     parameter.size = 32
-    parameter.shadowOffsetX = 2
-    parameter.shadowOffsetY = 2
     var font = generator.generateFont(parameter)
-    var labelStyle = new Label.LabelStyle(font, Color.WHITE)
+    var labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.DarkBlue))
 
     val scoreLbl = new Label("Score", labelStyle)
     val bestLbl = new Label("Best", labelStyle)
 
     parameter.size = 48
     font = generator.generateFont(parameter)
-    labelStyle = new Label.LabelStyle(font, Color.WHITE)
+    labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.Red))
 
     scoreDashbLbl = new Label(ScoreMgr.score.toString, labelStyle)
     bestDashbLbl = new Label(ScoreMgr.bestScore.toString, labelStyle)
 
-    parameter.size = 32
+    parameter.size = 64
     font = generator.generateFont(parameter)
-    labelStyle = new Label.LabelStyle(font, Color.YELLOW)
+    labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.DarkBlue))
+    val gameOverLbl = new Label("Game Over", labelStyle)
+
+    parameter.size = 32
+    parameter.borderColor = Color.valueOf(BlockConst.DarkBlue)
+    parameter.borderWidth = 2
+    font = generator.generateFont(parameter)
+    labelStyle = new Label.LabelStyle(font, Color.WHITE)
     newDashbLbl = new Label("New", labelStyle)
     generator.dispose()
 
-    val gameoverImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "game_over"))
-    gameoverImg.setOrigin(Align.center)
+    shareBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "share_btn"))
+    shareBtnImg.setOrigin(Align.center)
+    shareBtnImg.setUserObject(Const.ShareStr)
+    shareBtnImg.addListener(clickListener)
+    shareBtnImg.setTouchable(Touchable.enabled)
 
     playBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
     playBtnImg.setOrigin(Align.center)
@@ -67,28 +77,30 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
 
     lBoardBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
     lBoardBtnImg.setOrigin(Align.center)
-    lBoardBtnImg.setUserObject(Const.GoHomeStr)
+    lBoardBtnImg.setUserObject(Const.LeaderBoardStr)
     lBoardBtnImg.addListener(clickListener)
     lBoardBtnImg.setTouchable(Touchable.enabled)
 
-    val bg = new TiledDrawable(ResMgr.getRegion(Const.BGS_PATH, "white_square"))
-      .tint(Color.valueOf("000000E7"))
-    bg.setMinWidth(Const.Width)
-    bg.setMinHeight(Const.Height)
-    setBackground(bg)
+    homeBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "home_btn"))
+    homeBtnImg.setOrigin(Align.center)
+    homeBtnImg.setUserObject(Const.GoHomeStr)
+    homeBtnImg.addListener(clickListener)
+    homeBtnImg.setTouchable(Touchable.enabled)
 
-    add(gameoverImg).colspan(3).spaceBottom(32).spaceTop(32)
+    add(gameOverLbl).colspan(4).spaceBottom(32).spaceTop(32)
     row()
-    add(scoreLbl).align(Align.left).colspan(2)
-    add(bestLbl).align(Align.right)
+    add(scoreLbl).colspan(3).left()
+    add(bestLbl).right()
     row()
-    add(scoreDashbLbl).align(Align.left).colspan(2)
-    add(bestDashbLbl).align(Align.right)
+    add(scoreDashbLbl).colspan(3).left()
+    add(bestDashbLbl).right()
     row()
-    add(newDashbLbl).colspan(3).align(Align.right).spaceBottom(32)
+    add(newDashbLbl).colspan(4).right().spaceBottom(32)
     row()
-    add(playBtnImg).align(Align.left).colspan(2)
-    add(lBoardBtnImg).align(Align.right)
+    add(homeBtnImg).size(64)
+    add(shareBtnImg).size(64)
+    add(lBoardBtnImg).size(64)
+    add(playBtnImg).size(64)
     setVisible(false)
   }
 
@@ -99,7 +111,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
         Actions.visible(true),
         fadeIn(.5f),
         run(runnable(
-          () => enableTouchable(true, playBtnImg, lBoardBtnImg)
+          () => enableTouchable(true, lBoardBtnImg, playBtnImg, shareBtnImg, homeBtnImg)
         ))
       )
     )
@@ -117,6 +129,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
         Actions.removeActor()
       )
     )
+    enableTouchable(false, lBoardBtnImg, playBtnImg, shareBtnImg, homeBtnImg)
   }
 
   override def hideAndFunc(f: () => Unit): Unit = {
@@ -130,5 +143,6 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
         Actions.removeActor()
       )
     )
+    enableTouchable(false, lBoardBtnImg, playBtnImg, shareBtnImg, homeBtnImg)
   }
 }
