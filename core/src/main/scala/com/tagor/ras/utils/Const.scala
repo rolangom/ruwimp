@@ -61,6 +61,8 @@ object Const {
 
   val PlayStr = new String("play")
   val ShareStr = new String("Share")
+  val SoundStr = new String("Sound")
+  val RateStr = new String("Rate")
   val PlayAgainStr = new String("playAgain")
   val LeaderBoardStr = new String("LeaderBoard")
   val PausedStr = new String("Pause")

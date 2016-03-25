@@ -28,6 +28,7 @@ object ScoreMgr {
     _score += 1
     RxMgr.newScore.onNext(_score)
     Future(handleScore())
+    SoundMgr.playScored()
   }
 
   private def handleScore(): Unit = {

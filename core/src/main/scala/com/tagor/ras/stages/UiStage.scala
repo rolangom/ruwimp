@@ -26,26 +26,28 @@ class UiStage(batch: Batch)
                            x: Float, y: Float,
                            pointer: Int,
                            button: Int): Boolean = {
-      val (act, touched) = event.getTarget.getUserObject match {
+      val (act, touched, block) = event.getTarget.getUserObject match {
         case Const.PlayStr =>
-          (() => RxMgr.onGameState.onNext(Const.GameStatePlay), true)
+          (() => RxMgr.onGameState.onNext(Const.GameStatePlay), true, true)
         case Const.PlayAgainStr =>
-          (() => playAgain(), true)
+          (() => playAgain(), true, true)
         case Const.PausedStr =>
           (() => {
             RxMgr.onGameState.onNext(Const.GameStatePause)
             pauseGame()
-          }, true)
+          }, true, true)
         case Const.GoHomeStr =>
           (() => {
             RxMgr.onGameState.onNext(Const.GameStateHome)
             goHome()
-          }, true)
+          }, true, true)
+        case Const.SoundStr =>
+          (() => toggleSound(), true, false)
         case Const.ResumeStr =>
-          (() => resumeGame(), true)
-        case _ => (() => (), false)
+          (() => resumeGame(), true, true)
+        case _ => (() => (), false, true)
       }
-      if (touched)
+      if (block)
         event.getTarget.setTouchable(Touchable.disabled)
       event.getTarget.addAction(clickEffect(act))
       touched
@@ -99,6 +101,10 @@ class UiStage(batch: Batch)
   private def showStartTable(): Unit = {
     addActor(stable)
     stable.show()
+  }
+
+  private def toggleSound(): Unit = {
+    stable.toggleSound()
   }
 
   private def resumeGame(): Unit = {

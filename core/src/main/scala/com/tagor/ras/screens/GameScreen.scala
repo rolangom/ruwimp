@@ -4,7 +4,7 @@ import com.badlogic.gdx.Application.ApplicationType
 import com.badlogic.gdx.graphics.{Color, GL20}
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.{Gdx, Screen}
-import com.tagor.ras.stages.{BgStage, UiStage, GameStage}
+import com.tagor.ras.stages.{UiStage, GameStage}
 import com.tagor.ras.utils._
 
 /**
@@ -32,6 +32,7 @@ class GameScreen extends Screen {
 
     world.setContactListener(gameStage)
     Gdx.input.setInputProcessor(uiStage)
+    SoundMgr.init()
   }
 
   override def hide(): Unit = {
@@ -85,6 +86,7 @@ class GameScreen extends Screen {
     Gdx.input.setInputProcessor(null)
     gameStage.pause()
     uiStage.pause()
+    SoundMgr.pause()
 
     if (RxMgr.isGmRunning)
       handleGameState(true)
@@ -96,5 +98,6 @@ class GameScreen extends Screen {
 
     gameStage.resume()
     uiStage.resume()
+    SoundMgr.resume()
   }
 }

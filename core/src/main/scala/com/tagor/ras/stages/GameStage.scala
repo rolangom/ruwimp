@@ -36,7 +36,6 @@ class GameStage(batch: Batch)
   private val background = new Background(getCamera)
   private var currAct: Float => Unit = emptyAct
   private val player = new Player
-  private var gameOverSound: Sound = _
 
   def playerVelX = player.velX
 
@@ -74,7 +73,6 @@ class GameStage(batch: Batch)
     background.init()
     player.init()
     RxMgr.onActorAdded.onNext(background)
-    gameOverSound = ResMgr.getSound("audio/jingles_PIZZA01.mp3")
   }
 
   def goFaster(): Unit = {
@@ -126,7 +124,7 @@ class GameStage(batch: Batch)
 
   private def end(): Unit = {
     ScoreMgr.save()
-    gameOverSound.play()
+    SoundMgr.playGameOver()
     currAct = emptyAct
     spawner.end()
     player.reset()
@@ -215,7 +213,6 @@ class GameStage(batch: Batch)
     background.resume()
     spawner.resume()
     player.resume()
-    gameOverSound = ResMgr.getSound("audio/jingles_PIZZA01.mp3")
   }
 
   def pause(): Unit = {
@@ -224,7 +221,6 @@ class GameStage(batch: Batch)
     background.pause()
     subs.unsubscribe()
     currAct = emptyAct
-    ResMgr.remove("audio/jingles_PIZZA01.mp3")
 
     if (RxMgr.isGmRunning)
       pauseGame()

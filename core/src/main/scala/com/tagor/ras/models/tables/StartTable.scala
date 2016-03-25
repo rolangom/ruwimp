@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions._
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, Table}
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, TextureRegionDrawable}
 import com.badlogic.gdx.utils.Align
 import com.tagor.ras.models.Showable
 import com.tagor.ras.utils.{Const, ResMgr}
@@ -17,6 +17,9 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
 
   private var playBtnImg: Image = _
   private var lBoardBtnImg: Image = _
+  private var rateBtnImg: Image = _
+  private var shareBtnImg: Image = _
+  private var soundBtnImg: Image = _
 
   def init(): Unit = {
     reset()
@@ -26,6 +29,24 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
 
     val logoImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "logo"))
     logoImg.setOrigin(Align.center)
+
+    soundBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "sound_on_btn"))
+    soundBtnImg.setOrigin(Align.center)
+    soundBtnImg.setUserObject(Const.SoundStr)
+    soundBtnImg.addListener(clickListener)
+    soundBtnImg.setTouchable(Touchable.enabled)
+
+    shareBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "share_btn"))
+    shareBtnImg.setOrigin(Align.center)
+    shareBtnImg.setUserObject(Const.ShareStr)
+    shareBtnImg.addListener(clickListener)
+    shareBtnImg.setTouchable(Touchable.enabled)
+
+    rateBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "rate_btn"))
+    rateBtnImg.setOrigin(Align.center)
+    rateBtnImg.setUserObject(Const.RateStr)
+    rateBtnImg.addListener(clickListener)
+    rateBtnImg.setTouchable(Touchable.enabled)
 
     playBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
     playBtnImg.setOrigin(Align.center)
@@ -39,11 +60,21 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
     lBoardBtnImg.addListener(clickListener)
     lBoardBtnImg.setTouchable(Touchable.enabled)
 
-    add(logoImg).colspan(2).spaceBottom(32).spaceTop(64)
+    add(logoImg).colspan(5).spaceBottom(32).spaceTop(64)
     row()
-    add(lBoardBtnImg).align(Align.center)
-    add(playBtnImg).align(Align.center)
+    add(soundBtnImg).center()
+    add(lBoardBtnImg).center()
+    add(shareBtnImg).center()
+    add(rateBtnImg).center()
+    add(playBtnImg).center()
     setVisible(false)
+  }
+
+  def toggleSound(): Unit = {
+    SoundMgr.toggle()
+    val region = ResMgr.getRegion(Const.BGS_PATH,
+      if (SoundMgr.isOn) "sound_on_btn" else "sound_off_btn")
+    soundBtnImg.setDrawable(new TextureRegionDrawable(region))
   }
 
   override def show(): Unit = {
@@ -54,7 +85,7 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
         Actions.visible(true),
         fadeIn(1f),
         run(runnable(
-          () => enableTouchable(true, lBoardBtnImg, playBtnImg)
+          () => enableTouchable(true, soundBtnImg, lBoardBtnImg, playBtnImg)
         ))
       )
     )
@@ -69,6 +100,6 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
         Actions.removeActor()
       )
     )
-    enableTouchable(false, lBoardBtnImg, playBtnImg)
+    enableTouchable(false, soundBtnImg, lBoardBtnImg, playBtnImg)
   }
 }

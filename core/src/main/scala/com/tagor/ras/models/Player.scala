@@ -50,11 +50,6 @@ class Player
   private var fallingAnim: Animation = _
   private var chAnim: () => TextureRegion = handleAnimOnAir
 
-  private var footStepSound: Sound = _
-  private var jumpSound: Sound = _
-  private var goingUpSound: Sound = _
-  private var goingDownSound: Sound = _
-
   RxMgr.onPlayerAction
     .subscribe(i => handleInput(i))
 
@@ -80,11 +75,6 @@ class Player
     runningAnim = new Animation(0.02f, atlas.findRegions("running_"), PlayMode.LOOP)
     jumpingAnim = new Animation(0.02f, atlas.findRegions("jumping_"), PlayMode.NORMAL)
     fallingAnim = new Animation(0.1f, atlas.findRegions("falling_"), PlayMode.NORMAL)
-
-    footStepSound = ResMgr.getSound("audio/footstep09.mp3")
-    jumpSound = ResMgr.getSound("audio/phaseJump1.mp3")
-    goingUpSound = ResMgr.getSound("audio/highUp.mp3")
-    goingDownSound = ResMgr.getSound("audio/highDown.mp3")
   }
 
   def hello() = {
@@ -138,29 +128,20 @@ class Player
 
   def pause(): Unit = {
     onAir()
-    Array[Sound](
-      footStepSound, jumpSound, goingUpSound, goingDownSound
-    ).foreach(_.stop())
-    ResMgr.remove(
-      "atlas/player_01_anims.txt",
-      "audio/footstep09.mp3",
-      "audio/phaseJump1.mp3",
-      "audio/highUp.mp3",
-      "audio/highDown.mp3"
-    )
+    ResMgr.remove("atlas/player_01_anims.txt")
   }
 
   def goUp(): Unit = {
     println("player goUp")
     toFront()
-    goingUpSound.play()
+    SoundMgr.playGoingUp()
     changeDir(true)
   }
 
   def goDown(): Unit = {
     println("player goDown")
     toBack()
-    goingDownSound.play()
+    SoundMgr.playGoingDown()
     changeDir(false)
   }
 
@@ -179,7 +160,9 @@ class Player
       body.applyLinearImpulse(
         Const.RunnerJumpingLinearImpulse,
         body.getWorldCenter, true)
-      jumpSound.play(if (isDimenUp) Const.UpScale else Const.DownScale, MathUtils.random(1, 1.2f), 0)
+      SoundMgr.playJump(
+        if (isDimenUp) Const.UpScale else Const.DownScale,
+        MathUtils.random(1, 1.2f), 0)
       jumps += 1
       if (!isOnGround)
         addAction(Actions.rotateBy(-360, Const.TransitTime))
@@ -208,7 +191,7 @@ class Player
     jumps = 1
     if (groundContacts <= 0) {
       chAnim = () => handleAnimOnAir()
-      footStepSound.stop()
+      SoundMgr.stopFootStep()
     }
   }
 
@@ -220,8 +203,7 @@ class Player
     jumps = 0
     chAnim = () => handleAnimOnGround()
 
-    footStepSound.play()
-    footStepSound.loop((if (isDimenUp) Const.UpScale else Const.DownScale) - .5f, 1.45f, 0)
+    SoundMgr.playFootStep((if (isDimenUp) Const.UpScale else Const.DownScale) - .5f)
   }
 
   def isOnGround: Boolean = groundContacts > 0
@@ -252,7 +234,7 @@ class Player
 
   def pauseGame(): Unit = {
     body.setGravityScale(0)
-    footStepSound.stop()
+    SoundMgr.stopFootStep()
   }
 
   def resumeGame(): Unit = {
