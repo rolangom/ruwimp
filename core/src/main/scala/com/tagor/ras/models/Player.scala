@@ -3,11 +3,11 @@ package com.tagor.ras.models
 import com.badlogic.gdx.{Audio, Input}
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
-import com.badlogic.gdx.graphics.g2d.{TextureRegion, Animation, Batch}
+import com.badlogic.gdx.graphics.g2d.{Animation, Batch, TextureRegion}
 import com.badlogic.gdx.math.{MathUtils, Vector2}
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.utils.{Disposable, Align}
-import com.tagor.ras.utils.{ResMgr, RxMgr, Const, WorldFactory}
+import com.badlogic.gdx.utils.{Align, Disposable}
+import com.tagor.ras.utils._
 import com.tagor.ras.utils.Const.PPM
 
 /**
@@ -17,6 +17,7 @@ import com.tagor.ras.utils.Const.PPM
 object RxPlayerConst {
 
   val Jump = Input.Keys.SPACE
+  val JumpReleased = Input.Keys.SPACE - 100
   val GoUp = Input.Keys.UP
   val GoDown = Input.Keys.DOWN
   val Toggle = Input.Keys.ENTER
@@ -49,6 +50,7 @@ class Player
   private var jumpingAnim: Animation = _
   private var fallingAnim: Animation = _
   private var chAnim: () => TextureRegion = handleAnimOnAir
+  private var cVelY: () => Float = () => velY
 
   RxMgr.onPlayerAction
     .subscribe(i => handleInput(i))
@@ -94,6 +96,7 @@ class Player
       case RxPlayerConst.GoDown => goDown()
       case RxPlayerConst.Jump => jump()
       case RxPlayerConst.Toggle => toggle()
+      case RxPlayerConst.JumpReleased => jumpReleased()
       case _ => ()
     }
   }
@@ -167,6 +170,11 @@ class Player
       if (!isOnGround)
         addAction(Actions.rotateBy(-360, Const.TransitTime))
     }
+    cVelY = () => clampedVelY
+  }
+
+  def jumpReleased(): Unit = {
+    cVelY = () => velY
   }
 
   def toggle(): Unit = {
@@ -215,8 +223,12 @@ class Player
     }
   }
 
+  private def velY = body.getLinearVelocity.y
+
+  private def clampedVelY = MathUtils.clamp(body.getLinearVelocity.y, -2.5f, Integer.MAX_VALUE)
+
   private def running(): Unit = {
-    body.setLinearVelocity(currentSpeed, body.getLinearVelocity.y)
+    body.setLinearVelocity(currentSpeed, cVelY())
   }
 
   private def scaleVal: Float =
@@ -230,6 +242,7 @@ class Player
     currentSpeed = Const.RunnerLinearVelocity
     remove() // Remove Actor from stage
     groundContacts = 0
+    cVelY = () => velY
   }
 
   def pauseGame(): Unit = {

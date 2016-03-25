@@ -9,7 +9,7 @@ import com.tagor.ras.utils.Const._
  */
 object WorldFactory {
 
-  val world = new World(new Vector2(0, -17), true)
+  val world = new World(new Vector2(0, -18), true)
 
   def dispose(): Unit = {
     val bodies = new com.badlogic.gdx.utils.Array[Body]()

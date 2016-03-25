@@ -78,7 +78,9 @@ class UiStage(batch: Batch)
   private lazy val (screenSideR, screenSideL) = getScreenSideRects
 
   private var cTouchDown: (Int, Int, Int, Int) => Boolean = super.touchDown
+  private var cTouchUp: (Int, Int, Int, Int) => Boolean = super.touchUp
   private var cKeyDown: (Int) => Boolean = super.keyDown
+  private var cKeyUp: (Int) => Boolean = super.keyUp
 
   var subs: Subscription = _
 
@@ -191,17 +193,32 @@ class UiStage(batch: Batch)
     cKeyDown(keyCode)
   }
 
+  override def keyUp(keyCode: Int): Boolean = {
+    cKeyUp(keyCode)
+  }
+
   private def configGameInput(running: Boolean): Unit = {
     cTouchDown = if (running) runningTouchDown else super.touchDown
     cKeyDown = if (running) runningKeyDown else super.keyDown
+    cTouchUp = if (running) runningTouchUp else super.touchUp
+    cKeyUp = if (running) runningKeyUp else super.keyUp
   }
 
   override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
     cTouchDown(screenX, screenY, pointer, button)
   }
 
+  override def touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
+    cTouchUp(screenX, screenY, pointer, button)
+  }
+
   private def runningKeyDown(keyCode: Int): Boolean = {
     RxMgr.onPlayerAction.onNext(keyCode)
+    true
+  }
+
+  private def runningKeyUp(keyCode: Int): Boolean = {
+    RxMgr.onPlayerAction.onNext(keyCode - 100)
     true
   }
 
@@ -214,6 +231,14 @@ class UiStage(batch: Batch)
       return true
     }
     super.touchDown(screenX, screenY, pointer, button)
+  }
+
+  private def runningTouchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
+    if (screenSideR.contains(screenX, screenY)) {
+      RxMgr.onPlayerAction.onNext(RxPlayerConst.JumpReleased)
+      return true
+    }
+    false
   }
 
   def pause(): Unit = {
