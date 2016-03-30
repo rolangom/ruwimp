@@ -64,3 +64,12 @@ build/
 
 ## OS Specific
 .DS_Store
+
+## RoboVM
+ios/src/robovm-build/
+ios/robovm-build/
+
+## Logs
+logs/
+objects/
+hooks/
