@@ -3,115 +3,115 @@ size: 512, 512
 format: RGBA4444
 filter: MipMapLinearNearest,Nearest
 repeat: none
-arrowUp
+white_square
   rotate: false
-  xy: 0, 0
-  size: 64, 64
-  orig: 64, 64
+  xy: 1, 1
+  size: 3, 3
+  orig: 3, 3
   offset: 0, 0
   index: -1
 cloud0
   rotate: false
-  xy: 64, 0
+  xy: 6, 1
   size: 75, 23
   orig: 75, 23
   offset: 0, 0
   index: -1
-cloud1
-  rotate: false
-  xy: 139, 0
-  size: 50, 32
-  orig: 50, 32
-  offset: 0, 0
-  index: -1
 cloud2
   rotate: false
-  xy: 189, 0
+  xy: 83, 1
   size: 80, 26
   orig: 80, 26
   offset: 0, 0
   index: -1
-help_btn
+cloud1
   rotate: false
-  xy: 269, 0
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-home_btn
-  rotate: false
-  xy: 333, 0
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-leaderboard_btn
-  rotate: false
-  xy: 397, 0
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-logo
-  rotate: false
-  xy: 0, 64
-  size: 300, 113
-  orig: 300, 113
-  offset: 0, 0
-  index: -1
-no_ads_btn
-  rotate: false
-  xy: 300, 64
-  size: 64, 64
-  orig: 64, 64
+  xy: 165, 1
+  size: 50, 32
+  orig: 50, 32
   offset: 0, 0
   index: -1
 pause_btn
   rotate: false
-  xy: 364, 64
+  xy: 217, 1
   size: 48, 48
   orig: 48, 48
   offset: 0, 0
   index: -1
 play_btn
   rotate: false
-  xy: 412, 64
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-rate_btn
-  rotate: false
-  xy: 0, 177
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-share_btn
-  rotate: false
-  xy: 64, 177
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-sound_off_btn
-  rotate: false
-  xy: 128, 177
+  xy: 267, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 sound_on_btn
   rotate: false
-  xy: 192, 177
+  xy: 333, 1
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-white_square
+rate_btn
   rotate: false
-  xy: 256, 177
-  size: 3, 3
-  orig: 3, 3
+  xy: 399, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+sound_off_btn
+  rotate: false
+  xy: 1, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+share_btn
+  rotate: false
+  xy: 67, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+no_ads_btn
+  rotate: false
+  xy: 133, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+help_btn
+  rotate: false
+  xy: 199, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+home_btn
+  rotate: false
+  xy: 265, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+leaderboard_btn
+  rotate: false
+  xy: 331, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+arrowUp
+  rotate: false
+  xy: 397, 67
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+logo
+  rotate: false
+  xy: 1, 133
+  size: 300, 113
+  orig: 300, 113
   offset: 0, 0
   index: -1
