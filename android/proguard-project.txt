@@ -30,31 +30,12 @@
 -dontwarn com.badlogic.gdx.utils.GdxBuild
 -dontwarn com.badlogic.gdx.physics.box2d.utils.Box2DBuild
 -dontwarn com.badlogic.gdx.jnigen.*
--dontwarn com.badlogic.gdx.jnigen.BuildTarget*
 
+-keep class com.badlogic.gdx.**
 
-# This needs also descriptor classes
--keep public class com.badlogic.gdx.Screen
--keep public class com.badlogic.gdx.Application
--keep public class com.badlogic.gdx.ApplicationListener
--keep public class com.badlogic.gdx.LifecycleListener
--keep public class com.badlogic.gdx.InputProcessor
--keep public class com.badlogic.gdx.files.FileHandle
--keep public class com.badlogic.gdx.Files$FileType
--keep public class com.badlogic.gdx.Graphics$DisplayMode
--keep public class com.badlogic.gdx.Input$TextInputListener
--keep public class com.badlogic.gdx.Input$Peripheral
--keep public class com.badlogic.gdx.Input$Orientation
--keep public class com.badlogic.gdx.Net$HttpRequest
--keep public class com.badlogic.gdx.Net$HttpResponseListener
--keep public class com.badlogic.gdx.Net$Protocol
--keep public class com.badlogic.gdx.net.SocketHints
--keep public class com.badlogic.gdx.net.ServerSocketHints
--keep public class com.badlogic.gdx.utils.Array
--keep public class com.badlogic.gdx.audio.Music$OnCompletionListener
--keep public class com.badlogic.gdx.graphics.Pixmap
-
--keep class com.badlogic.gdx.controllers.android.AndroidControllers
+-keepclassmembers class com.badlogic.gdx.** {
+  *;
+}
 
 -keepclassmembers class com.badlogic.gdx.backends.android.AndroidInput* {
    <init>(com.badlogic.gdx.Application, android.content.Context, java.lang.Object, com.badlogic.gdx.backends.android.AndroidApplicationConfiguration);
@@ -113,27 +94,9 @@
 -keepclassmembers class **.R$* {
     public static <fields>;
 }
-
--dontwarn android.support.**
-
+#
 -keep public class rx.libdx.*
--keep public class com.tagor.rumper.*
-#-keep class com.tagor.rumper.utils.WorldUtils
-#-keep class com.tagor.rumper.utils.ThemeManager
-#-keep class com.tagor.rumper.utils.ScoreManager
-#-keep class com.tagor.rumper.utils.RxGameManager
-#-keep class com.tagor.rumper.utils.ResMgr
-#-keep class com.tagor.rumper.utils.Const
-#-keep class com.tagor.rumper.utils.BodyUtils
-#-keep class com.tagor.rumper.utils.BlockPooler
-#-keep class com.tagor.rumper.utils.BlockConst
-#-keep class com.tagor.rumper.stages.RxGameUiStace
-#-keep class com.tagor.rumper.screen.RxGameScreen
-#-keep class com.tagor.rumper.models.ItemToInst
-#-keep class com.tagor.rumper.models.BlockType
-#-keep class com.tagor.rumper.actors.RxPlayer
-#-keep class com.tagor.rumper.actors.RxBx2dActor
-#-keep class com.tagor.rumper.actors.Block
+-keep public class com.tagor.ras.*
 
 
 ## Scala
