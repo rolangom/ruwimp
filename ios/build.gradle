@@ -4,7 +4,7 @@ sourceCompatibility = '1.7'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 ext {
-	mainClassName = "com.tagor.rumper.ios.IOSLauncher"
+	mainClassName = "com.tagor.ras.IOSLauncher"
 }
 
 launchIPhoneSimulator.dependsOn build
