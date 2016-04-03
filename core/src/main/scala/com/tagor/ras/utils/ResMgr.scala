@@ -32,26 +32,9 @@ object ResMgr extends Disposable {
     getAtlas(atlasKey).createSprite(spriteKey)
   }
 
-  def getRandomCloudRegion(): TextureRegion = {
+  def getRandomCloudRegion: TextureRegion = {
     val randomIndx = MathUtils.random(2)
     getRegion(Const.BGS_PATH, Const.CLOUD_IMG.format(randomIndx))
-  }
-
-  def getRandomCloudSprite(): Sprite = {
-    val randomIndx = MathUtils.random(2)
-    getSprite(Const.BGS_PATH, Const.CLOUD_IMG.format(randomIndx))
-  }
-
-  def getCityRegion(index: Int): TextureRegion = {
-    getRegion(Const.BGS_PATH, Const.CITY_BGS.format(index))
-  }
-
-  def getCityTexture(index: Int): Texture = {
-    getTexture(Const.CITY_BGS.format(index))
-  }
-
-  def getTreesTexture(index: Int): Texture = {
-    getTexture(Const.TREES_BGS.format(index))
   }
 
   def getTexture(textureKey: String): Texture = {

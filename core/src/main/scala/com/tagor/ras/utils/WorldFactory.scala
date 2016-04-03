@@ -9,14 +9,9 @@ import com.tagor.ras.utils.Const._
  */
 object WorldFactory {
 
-  val world = new World(new Vector2(0, -18), true)
+  val world = new World(new Vector2(0, -19), true)
 
   def dispose(): Unit = {
-    val bodies = new com.badlogic.gdx.utils.Array[Body]()
-    world.getBodies(bodies)
-    bodies.items.foreach(b =>
-      try {world.destroyBody(b)}
-      catch {case e: Exception => e.printStackTrace()})
     world.dispose()
   }
 

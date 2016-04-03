@@ -15,8 +15,8 @@ allprojects {
 
     version = '1.0'
     ext {
-        appName = 'JumpAndSwitch'
-        gdxVersion = '1.9.1'
+        appName = "Run Jump 'n Switch"
+        gdxVersion = '1.9.2'
         roboVMVersion = '1.12.0'
         scalaVersion = '2.11.7'
     }

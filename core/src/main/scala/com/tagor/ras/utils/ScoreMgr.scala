@@ -22,8 +22,6 @@ object ScoreMgr {
   def score = _score
   def bestScore = prefs.getInteger("score", 0)
 
-  prefs.remove("score")
-
   def increase(): Unit = {
     _score += 1
     RxMgr.newScore.onNext(_score)

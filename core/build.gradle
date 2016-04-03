@@ -7,10 +7,10 @@ sourceCompatibility = 1.6
 sourceSets.main.java.srcDirs = [ "src/main/java" ]
 sourceSets.main.scala.srcDirs = [ "src/main/scala" ]
 
-
 eclipse.project {
     name = appName + "-core"
 }
+
 
 compileScala {
     scalaCompileOptions.fork = true
