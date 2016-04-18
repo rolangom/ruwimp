@@ -3,9 +3,8 @@ package com.tagor.ras.models
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.MathUtils
 import com.tagor.ras.utils
-import com.tagor.ras.utils.{RxMgr, BlockPooler, BlockConst}
+import com.tagor.ras.utils._
 import rx.lang.scala.schedulers.ComputationScheduler
-import rx.scala.concurrency.GdxScheduler
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
@@ -21,7 +20,7 @@ class Spawner(camera: OrthographicCamera) {
   private lazy val patGen = new PatternGenerator(pooler)
   private lazy val vblocks = ArrayBuffer[Block]()
   private lazy val pblocks = ArrayBuffer[Block]()
-  private lazy val vspan = BlockConst.Sizes(BlockConst.SizeM) * BlockConst.Size
+//  private lazy val vspan = BlockConst.Sizes(BlockConst.SizeM) * BlockConst.Size
 
   RxMgr.onItiAdded
     .subscribe(i => utils.post(() => initBlock(i)))
@@ -49,7 +48,7 @@ class Spawner(camera: OrthographicCamera) {
     utils.post { () =>
       initDefaults(vblocks, camPos.x, camPos.y, 1)
         .lastOption
-        .foreach(b => spawn(b.maxX, b.maxY))
+        .foreach(b => spawn(b.rightX, b.rightY, b))
     }
     subscribeInterval()
   }
@@ -84,22 +83,10 @@ class Spawner(camera: OrthographicCamera) {
     checkFirstVisible()
   }
 
-  private def spawn(x: Float, y: Float): Unit = {
+  private def spawn(x: Float, y: Float, pblock: Block): Unit = {
     Future {
       println("lets spawn")
-//      patGen.genLinearSeq(x, y)
-//      patGen.genSeqX(x, y)
-//      patGen.genSeqV(x, y)
-//      patGen.genSeqInvV(x, y)
-//      patGen.genSeqVandInvV(x, y)
-//      patGen.genSeqInvVandV(x, y)
-//      patGen.genSeqLT(x, y)
-//      patGen.genSeqGT(x, y)
-//      patGen.genDiamond(x, y)
-//      patGen.genGtAndLt(x, y)
-//      patGen.genParallelSeq(x, y)
-//      patGen.genParPairSeqV(x, y)
-      patGen.genRandSeq(x, y)
+        patGen.genRandSeq(x, y, pblock)
     }
   }
 
@@ -115,7 +102,6 @@ class Spawner(camera: OrthographicCamera) {
       b1.init(x + b1.btype.width * i, y, ang).activate()
       b2.init(x + b2.btype.width * i, y, -ang).activate()
 
-//      blocks ++= Seq(b1, b2)
       blocks += b1
       blocks += b2
 
@@ -126,33 +112,27 @@ class Spawner(camera: OrthographicCamera) {
   }
 
   private def checkFirstVisible(): Unit = {
-//    println("lets checkFirstVisible -1")
     vblocks.headOption
       .filter { b => camLeft >= b.getRight }
       .foreach { b =>
-//        println("checkFirstVisible true -1")
         utils.post(() => pooler.free(b))
         vblocks.remove(0)
       }
   }
 
   private def checkLastVisible(): Unit = {
-//    println("lets checkLastVisible -2")
     vblocks.lastOption
       .filter { b => b.isLast && camRight >= b.getX }
       .foreach { b =>
-//        println("checkLastVisible true -2")
         b.notAsLast()
-        utils.post(() => spawn(b.maxX, b.maxY))
+        utils.post(() => spawn(b.rightX, b.rightY, b))
       }
   }
 
   private def checkFirstPending(): Unit = {
-//    println("lets checkFirstPending -3")
     pblocks.headOption
-      .filter { b => camRight + vspan >= b.getX }
+      .filter { b => camRight >= b.getX }
       .foreach { b =>
-//        println("checkFirstPending true -3")
         vblocks += b
         pblocks.remove(0)
         utils.post(() => b.activate())
@@ -163,5 +143,5 @@ class Spawner(camera: OrthographicCamera) {
     camera.position.x - camera.viewportWidth * .5f
 
   private def camRight: Float =
-    camera.position.x + camera.viewportWidth * .5f
+    camera.position.x + camera.viewportWidth * 1.5f
 }
