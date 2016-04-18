@@ -10,8 +10,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 object ScoreMgr {
 
-  private val prefs = Gdx.app.getPreferences("RumperGamePrefs")
-
   private var _score: Int = 0
   private var _level: Int = 0
   private var isFixedLvlInc = false
@@ -20,7 +18,7 @@ object ScoreMgr {
   private var _isNewBestScore = false
 
   def score = _score
-  def bestScore = prefs.getInteger("score", 0)
+  def bestScore = PrefMgr.prefs.getInteger("score", 0)
 
   def increase(): Unit = {
     _score += 1
@@ -31,12 +29,12 @@ object ScoreMgr {
 
   private def handleScore(): Unit = {
     if (isFixedLvlInc) {
-      if (score > newScoreToReach) {
+      if (_score > newScoreToReach) {
         newScoreToReach += PlusScore
         increaseLevel()
       }
     } else {
-      score match {
+      _score match {
         case 10 | 25 | 45 | 60 =>
           increaseLevel()
         case 90 =>
@@ -72,6 +70,7 @@ object ScoreMgr {
     val currBestScore = bestScore
     if (_score > currBestScore) {
       _isNewBestScore = true
+      val prefs = PrefMgr.prefs
       prefs.putInteger("score", _score)
       prefs.flush()
     }

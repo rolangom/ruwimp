@@ -16,14 +16,16 @@ object SoundMgr {
   private var goingDownSound: Sound = _
 
   private var currProfile: Playable = _
+  def isOn: Boolean = PrefMgr.prefs.getBoolean("isSoundOn", true)
 
-  private var _isOn: Boolean = true
-  def isOn: Boolean = _isOn
   def toggle(): Unit = {
-    _isOn = !_isOn
-    currProfile = if (_isOn) getNewPlayableTrue else new PlayableFalse()
-    println(s"SoundMgr isOn ${_isOn}")
+    val lIsOn = !isOn
+    PrefMgr.prefs.putBoolean("isSoundOn", lIsOn)
+    currProfile = if (lIsOn) getNewPlayableTrue else new PlayableFalse()
+    println(s"SoundMgr isOn $lIsOn")
   }
+
+  def soundBtnStr = if (isOn) "sound_on_btn" else "sound_off_btn"
 
   def init(): Unit = {
     gameOverSound = ResMgr.getSound("audio/jingles_PIZZA01.mp3")

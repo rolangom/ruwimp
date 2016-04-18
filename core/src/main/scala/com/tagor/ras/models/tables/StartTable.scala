@@ -30,13 +30,25 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
     val logoImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "logo"))
     logoImg.setOrigin(Align.center)
 
-    soundBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "sound_on_btn"))
+    noAdsBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "no_ads_btn"))
+    noAdsBtnImg.setOrigin(Align.center)
+    noAdsBtnImg.setUserObject(Const.NoAdsStr)
+    noAdsBtnImg.addListener(clickListener)
+    noAdsBtnImg.setTouchable(Touchable.enabled)
+
+    helpImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "help_btn"))
+    helpImg.setOrigin(Align.center)
+    helpImg.setUserObject(Const.HelpStr)
+    helpImg.addListener(clickListener)
+    helpImg.setTouchable(Touchable.enabled)
+
+    soundBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, SoundMgr.soundBtnStr))
     soundBtnImg.setOrigin(Align.center)
     soundBtnImg.setUserObject(Const.SoundStr)
     soundBtnImg.addListener(clickListener)
     soundBtnImg.setTouchable(Touchable.enabled)
 
-    shareBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "share_btn"))
+    shareBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, ResMgr.shareBtnStr))
     shareBtnImg.setOrigin(Align.center)
     shareBtnImg.setUserObject(Const.ShareStr)
     shareBtnImg.addListener(clickListener)
