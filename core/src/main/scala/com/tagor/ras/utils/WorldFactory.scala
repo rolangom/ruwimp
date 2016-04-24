@@ -169,7 +169,7 @@ object WorldFactory {
       val fix = iter.next()
       fix.getShape match {
         case cs: CircleShape =>
-          cs.setRadius(RunnerWidth * scale / 2 / PPM)
+          cs.setRadius(RunnerWidth * scale * 1.15f / 2 / PPM)
         case ps: PolygonShape =>
           val ns = RunnerHeight * scale / 2 / PPM
           ps.setAsBox(ns / 2, ns)

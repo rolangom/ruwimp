@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.{MathUtils, Vector2}
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.{Align, Disposable}
 import com.tagor.ras.utils._
-import com.tagor.ras.utils.Const.PPM
+import com.tagor.ras.utils.Const._
 
 /**
   * Created by rolangom on 12/11/15.
@@ -26,7 +26,7 @@ object RxPlayerConst {
   val Jumping: Int = 1
   val Falling: Int = 2
 
-  val MaxSpeed: Float = Const.RunnerLinearVelocity * 2f
+  val MaxSpeed: Float = Const.RunnerLinearVelocity * 3f
   val MaxJumpUpSpeed: Float = 10f
   val MinJumpDownSpeed: Float = -2f
   val MaxJumpDownSpeed: Float = -25f
@@ -57,7 +57,7 @@ class Player
 
   def init(): Unit = {
     val bodyPos = body.getPosition
-    val (w, h) = (Const.RunnerWidth * 1.2f, Const.RunnerHeight * 1.2f)
+    val (w, h) = (Const.RunnerWidth * 1.4f, Const.RunnerHeight * 1.4f)
     setBounds(
       bodyPos.x * PPM - w / 2,
       bodyPos.y * PPM - h / 2,
@@ -74,7 +74,7 @@ class Player
 
   private def initDisposables(): Unit = {
     val atlas = ResMgr.getAtlas("atlas/player_01_anims.txt")
-    runningAnim = new Animation(0.02f, atlas.findRegions("running_"), PlayMode.LOOP)
+    runningAnim = new Animation(0.025f, atlas.findRegions("running_"), PlayMode.LOOP)
     jumpingAnim = new Animation(0.02f, atlas.findRegions("jumping_"), PlayMode.NORMAL)
     fallingAnim = new Animation(0.1f, atlas.findRegions("falling_"), PlayMode.NORMAL)
   }
@@ -87,7 +87,7 @@ class Player
 
   def goFaster(): Unit = {
     if (currentSpeed < RxPlayerConst.MaxSpeed)
-      currentSpeed += 1f
+      currentSpeed += 2f
   }
 
   private def handleInput(input:Int): Unit = {
@@ -102,7 +102,6 @@ class Player
   }
 
   private def handleGame(isRunning: Boolean): Unit = {
-    println(s"Player.handleGame $isRunning")
     if (isRunning) activate()
     else reset()
   }
@@ -111,6 +110,7 @@ class Player
     body.setTransform(
       Const.RunnerX / PPM,
       Const.RunnerY / PPM, 0f)
+    setPosition(Const.RunnerX, Const.RunnerY)
     RxMgr.onPlayerAction.onNext(RxPlayerConst.GoUp)
 //    goUp()
     handleAnimOnAir()
@@ -135,14 +135,12 @@ class Player
   }
 
   def goUp(): Unit = {
-    println("player goUp")
     toFront()
     SoundMgr.playGoingUp()
     changeDir(true)
   }
 
   def goDown(): Unit = {
-    println("player goDown")
     toBack()
     SoundMgr.playGoingDown()
     changeDir(false)
@@ -155,7 +153,6 @@ class Player
   }
 
   def jump(): Unit = {
-    println(s"player jump; groundContacts= $groundContacts, jumps= $jumps")
     val isOnGround = this.isOnGround
     if (isOnGround || jumps < MaxJumps) {
       stateTime = 0
@@ -193,7 +190,6 @@ class Player
   }
 
   def onAir(): Unit = {
-    println("player onAir")
     groundContacts -= 1
     stateTime = 0
     jumps = 1
@@ -204,12 +200,12 @@ class Player
   }
 
   def landedAt(zIndex: Int): Unit = {
-    println(s"player landed; x= $getX")
     groundContacts += 1
     stateTime = 0f
     setZIndex(if (zIndex < 0) 0 else zIndex)
     jumps = 0
     chAnim = () => handleAnimOnGround()
+    cVelY = () => velY
 
     SoundMgr.playFootStep((if (isDimenUp) Const.UpScale else Const.DownScale) - .5f)
   }
@@ -217,19 +213,13 @@ class Player
   def isOnGround: Boolean = groundContacts > 0
 
   private val configBitsRunnable = new Runnable {
-    override def run(): Unit = {
-      println(s"configBitsRunnable isDimenUp = $isDimenUp")
+    override def run(): Unit =
       WorldFactory.configBodyBits(body, isDimenUp)
-    }
   }
 
   private def velY = body.getLinearVelocity.y
 
   private def clampedVelY = MathUtils.clamp(body.getLinearVelocity.y, -2.5f, Integer.MAX_VALUE)
-
-  private def running(): Unit = {
-    body.setLinearVelocity(currentSpeed, cVelY())
-  }
 
   private def scaleVal: Float =
     if (isDimenUp) Const.UpScale else Const.DownScale
@@ -257,10 +247,8 @@ class Player
   override def act(delta: Float): Unit = {
     super.act(delta)
     vtmp.set(body.getPosition)
-      .scl(PPM)
-      .add(- getOriginX, - getOriginY)
-    setPosition(vtmp.x, vtmp.y)
-    running()
+    setPosition(vtmp.x * PPM - getOriginX, vtmp.y * PPM - getOriginY)
+    body.setLinearVelocity(currentSpeed, cVelY())
     stateTime += delta
   }
 

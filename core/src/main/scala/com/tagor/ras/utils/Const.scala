@@ -40,12 +40,12 @@ object Const {
   val FootStrType = "foot"
   val TopStrType = "top"
 
-  val RunnerJumpingLinearImpulse = new Vector2(0, 11f)
-  val RunnerGravityScale = 2.7f
+  val RunnerJumpingLinearImpulse = new Vector2(0, 12f)
+  val RunnerGravityScale = 3f
   val RunnerGravityScaleOnair = RunnerGravityScale / 2
-  val RunnerLinearVelocity = 4.5f
+  val RunnerLinearVelocity = 3.5f //4.65f
   val RunnerX = Width * .35f
-  val RunnerY = Height * .85f
+  val RunnerY = Height * 1.05f
 
   val GroundLinearVelocity = .15f
 
