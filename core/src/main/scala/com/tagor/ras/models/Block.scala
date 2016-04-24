@@ -1,14 +1,12 @@
 package com.tagor.ras.models
 
 import com.badlogic.gdx.graphics.Texture.{TextureFilter, TextureWrap}
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.{Sprite, Batch}
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Pool.Poolable
-import com.tagor.ras.stages.GameStage
 import com.tagor.ras.utils
 import com.tagor.ras.utils.Const.PPM
 import com.tagor.ras.utils._
@@ -40,7 +38,6 @@ class Block(pbody: Body, val btype: BlockType)
       bpos.y * PPM - btype.halfh,
       btype.width,
       btype.height)
-//    initSpriteTexture()
 
     setOrigin(Align.center)
 
@@ -131,7 +128,7 @@ class Block(pbody: Body, val btype: BlockType)
       (getY + getOriginY) / PPM,
       MathUtils.degreesToRadians * getRotation)
 
-    configJointPos()
+//    configJointPos()
     RxMgr.onActorAdded.onNext(this)
 
     setVisible(true)
@@ -222,8 +219,8 @@ class Block(pbody: Body, val btype: BlockType)
       setX(pos.x * PPM - getOriginX)
       sprite.setX(getX)
       val deltaX = getX - prevX
-      jointLeftSprite.translateX(deltaX)
-      jointRightSprite.translateX(deltaX)
+//      jointLeftSprite.translateX(deltaX)
+//      jointRightSprite.translateX(deltaX)
     }
   }
 
@@ -233,8 +230,8 @@ class Block(pbody: Body, val btype: BlockType)
     sprite.draw(batch)
     batch.enableBlending()
 
-    jointLeftSprite.draw(batch)
-    jointRightSprite.draw(batch)
+//    jointLeftSprite.draw(batch)
+//    jointRightSprite.draw(batch)
   }
 
   def minX: Float = optX(_ - _)

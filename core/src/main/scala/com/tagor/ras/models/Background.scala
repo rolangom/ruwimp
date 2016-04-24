@@ -59,8 +59,8 @@ class Background(camera: Camera) extends Actor {
   }
 
   private def configClouds(): Unit = {
-    cloud1Sprite.setRegion(ResMgr.getRandomCloudRegion())
-    cloud2Sprite.setRegion(ResMgr.getRandomCloudRegion())
+    cloud1Sprite.setRegion(ResMgr.getRandomCloudRegion)
+    cloud2Sprite.setRegion(ResMgr.getRandomCloudRegion)
 
     cloud1Sprite.setSize(
       cloud1Sprite.getRegionWidth,
@@ -130,6 +130,7 @@ class Background(camera: Camera) extends Actor {
 
     lastCamX = camera.position.x
     configClouds()
+    toBack()
   }
 
   private def invalidate(themeItem: Int): Unit = {
