@@ -1,8 +1,9 @@
 package com.tagor.ras
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.{Actor, Touchable}
-import com.badlogic.gdx.utils.{Pools, Pool}
+import com.badlogic.gdx.utils.{Pool, Pools}
 
 /**
   * Created by rolangom on 12/16/15.
@@ -39,4 +40,7 @@ package object utils {
     val tenabled = if (enabled) Touchable.enabled else Touchable.disabled
     actors.foreach(_.setTouchable(tenabled))
   }
+
+  def wAng(w: Float, a: Float): Float = w * MathUtils.cosDeg(a)
+  def hAng(w: Float, a: Float): Float = w * MathUtils.sinDeg(a)
 }

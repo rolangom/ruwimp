@@ -234,10 +234,12 @@ class Block(pbody: Body, val btype: BlockType)
 //    jointRightSprite.draw(batch)
   }
 
-  def minX: Float = optX(_ - _)
-  def maxX: Float = optX(_ + _)
-  def minY: Float = optY(_ - _)
-  def maxY: Float = optY(_ + _)
+  def leftX: Float = optX(_ - _)
+  def rightX: Float = optX(_ + _)
+  def leftY: Float = optY(_ - _)
+  def rightY: Float = optY(_ + _)
+
+  def centerX = wAng(btype.halfw, getRotation)
 
   private def optX(f: (Float, Float) => Float): Float = {
     val cx = body.getPosition.x * PPM
@@ -247,7 +249,7 @@ class Block(pbody: Body, val btype: BlockType)
 
   private def optY(f: (Float, Float) => Float): Float = {
     val cy = body.getPosition.y * PPM
-    val hh = (getHeight * getScaleY) / 2 * MathUtils.sinDeg(getRotation)
+    val hh = (getWidth * getScaleX) / 2 * MathUtils.sinDeg(getRotation)
     f(cy, hh)
   }
 
