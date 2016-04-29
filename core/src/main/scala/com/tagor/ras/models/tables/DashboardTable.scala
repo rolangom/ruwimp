@@ -63,9 +63,9 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     newDashbLbl = new Label("New", labelStyle)
     generator.dispose()
 
-    shareBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "share_btn"))
+    shareBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, ResMgr.shareBtnStr))
     shareBtnImg.setOrigin(Align.center)
-    shareBtnImg.setUserObject(Const.ShareStr)
+    shareBtnImg.setUserObject(Const.ShareScoreStr)
     shareBtnImg.addListener(clickListener)
     shareBtnImg.setTouchable(Touchable.enabled)
 
@@ -87,7 +87,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     homeBtnImg.addListener(clickListener)
     homeBtnImg.setTouchable(Touchable.enabled)
 
-    add(gameOverLbl).colspan(4).spaceBottom(32).spaceTop(32)
+    add(gameOverLbl).colspan(4).spaceBottom(24)
     row()
     add(scoreLbl).colspan(3).left()
     add(bestLbl).right()
@@ -95,7 +95,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     add(scoreDashbLbl).colspan(3).left()
     add(bestDashbLbl).right()
     row()
-    add(newDashbLbl).colspan(4).right().spaceBottom(32)
+    add(newDashbLbl).colspan(4).right().spaceBottom(12)
     row()
     add(homeBtnImg).size(64)
     add(shareBtnImg).size(64)

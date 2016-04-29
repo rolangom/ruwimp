@@ -5,11 +5,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.{Color, OrthographicCamera}
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.math.{Rectangle, Vector2}
 import com.badlogic.gdx.scenes.scene2d._
-import com.badlogic.gdx.utils.viewport.FitViewport
-import com.tagor.ras.models.RxPlayerConst
-import com.tagor.ras.models.tables.{DashboardTable, GameTable, PausedTable, StartTable}
+import com.badlogic.gdx.utils.viewport.{ExtendViewport, FillViewport, FitViewport, StretchViewport}
+import com.tagor.ras.models.{RxPlayerConst, Showable}
+import com.tagor.ras.models.tables._
 import com.tagor.ras.utils._
 import rx.lang.scala.Subscription
 
@@ -17,7 +17,7 @@ import rx.lang.scala.Subscription
   * Created by rolangom on 12/12/15.
   */
 class UiStage(batch: Batch)
-  extends Stage(new FitViewport(
+  extends Stage(new ExtendViewport(
     Const.Width, Const.Height,
     new OrthographicCamera), batch){
 
@@ -45,6 +45,14 @@ class UiStage(batch: Batch)
           (() => toggleSound(), true, false)
         case Const.ResumeStr =>
           (() => resumeGame(), true, true)
+        case s @ (Const.HelpStr | Const.HelpToPlayStr) =>
+          (() => showHelpTable(s), true, false)
+        case Const.ExitFromHelpStr =>
+          (() => hideHelpTable(), true, false)
+        case Const.ShareStr =>
+          (() => RxMgr.showShareText(Const.ShareMsg), true, false)
+        case Const.ShareScoreStr =>
+          (() => RxMgr.showShareText(Const.ShareScoreMsg), true, false)
         case _ => (() => (), false, true)
       }
       if (block)
@@ -73,6 +81,7 @@ class UiStage(batch: Batch)
   private lazy val stable = new StartTable(clickListener)
   private lazy val dtable = new DashboardTable(clickListener)
   private lazy val ptable = new PausedTable(clickListener)
+  private lazy val htable = new InstrTable(clickListener)
 
   private var currAct: Float => Unit = emptyAct
   private lazy val (screenSideR, screenSideL) = getScreenSideRects
@@ -82,7 +91,7 @@ class UiStage(batch: Batch)
   private var cKeyDown: (Int) => Boolean = super.keyDown
   private var cKeyUp: (Int) => Boolean = super.keyUp
 
-  var subs: Subscription = _
+  private var subs: Subscription = _
 
   def init(): Unit = {
     clear()
@@ -91,6 +100,7 @@ class UiStage(batch: Batch)
     gtable.init()
     dtable.init()
     ptable.init()
+    htable.init()
 
     showStartTable()
 
@@ -100,9 +110,32 @@ class UiStage(batch: Batch)
       .subscribe(r => handleGame(r))
   }
 
+  def hideAndShow(toHide: Showable, toShow: Showable): Unit = {
+    toHide.hide()
+    addActor(toShow.asInstanceOf[Actor])
+    toShow.show()
+  }
+
   private def showStartTable(): Unit = {
     addActor(stable)
     stable.show()
+  }
+
+  private def showHelpTable(from: AnyRef): Unit = {
+    stable.hide()
+    addActor(htable)
+    htable.setUserObject(from)
+    htable.show()
+  }
+
+  private def hideHelpTable(): Unit = {
+    htable.hide()
+    htable.getUserObject match {
+      case Const.HelpToPlayStr =>
+        RxMgr.onGameState.onNext(Const.GameStatePlay)
+      case _ =>
+        showStartTable()
+    }
   }
 
   private def toggleSound(): Unit = {
@@ -129,9 +162,11 @@ class UiStage(batch: Batch)
   private def addPausedTbl(): Unit = {
     addActor(ptable)
     ptable.show()
+    RxMgr.setBannerVisible(true)
   }
 
   private def playAgain(): Unit = {
+    RxMgr.setBannerVisible(false)
     dtable.hideAndFunc {
       () => RxMgr.onGameState.onNext(Const.GameStatePlay)
     }
@@ -158,6 +193,8 @@ class UiStage(batch: Batch)
   }
 
   private def addDashboardTbl(): Unit = {
+    RxMgr.setInterstitialVisible(true)
+    RxMgr.setBannerVisible(true)
     addActionDelayed(.5f, () => {
       addActor(dtable)
       dtable.show()
@@ -180,13 +217,15 @@ class UiStage(batch: Batch)
   }
 
   private def getScreenSideRects = {
-    val scoreHeight = 48
-    (new Rectangle(Gdx.graphics.getWidth / 2, scoreHeight,
+    val v = stageToScreenCoordinates(new Vector2(0f, 64f))
+    v.y = Gdx.graphics.getHeight - v.y
+    println(s"getScreenSideRects v.y = ${v.y}")
+    (new Rectangle(Gdx.graphics.getWidth / 2, v.y,
       Gdx.graphics.getWidth / 2,
-      Gdx.graphics.getHeight - scoreHeight),
-     new Rectangle(0, scoreHeight,
-      Gdx.graphics.getWidth / 2,
-      Gdx.graphics.getHeight - scoreHeight))
+      Gdx.graphics.getHeight - v.y),
+      new Rectangle(0, v.y,
+        Gdx.graphics.getWidth / 2,
+        Gdx.graphics.getHeight - v.y))
   }
 
   override def keyDown(keyCode: Int): Boolean = {

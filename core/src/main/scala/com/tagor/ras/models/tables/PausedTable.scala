@@ -30,7 +30,7 @@ class PausedTable(clickListener: ClickListener) extends Table with Showable {
     val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
     parameter.size = 48
     var font = generator.generateFont(parameter)
-    var labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.DarkBlue))
+    var labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.Red))
     val pauseLbl = new Label("Paused", labelStyle)
     generator.dispose()
 

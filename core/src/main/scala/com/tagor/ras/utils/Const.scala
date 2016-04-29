@@ -60,17 +60,26 @@ object Const {
   val GameStateResume = 5
 
   val CurrFont = "fonts/LAIKA.ttf"
+
+  val HelpToPlayStr = new String("HelpToPay")
   val PlayStr = new String("play")
   val ShareStr = new String("Share")
+  val ShareScoreStr = new String("ShareScore")
   val SoundStr = new String("Sound")
+  val NoAdsStr = new String("NoAds")
   val RateStr = new String("Rate")
   val PlayAgainStr = new String("playAgain")
   val LeaderBoardStr = new String("LeaderBoard")
   val PausedStr = new String("Pause")
   val ResumeStr = new String("Resume")
   val GoHomeStr = new String("GoHome")
+  val HelpStr = new String("Help")
+  val ExitFromHelpStr = new String("GoHomeFromHelp")
 
   val BGS_PATH = "atlas/worldAtlas2.txt"
 
   val CLOUD_IMG = "cloud%d"
+
+  val ShareMsg = "Checkout this very funny game \"Run, Jump 'n Switch\"  @ http://www.google.com"
+  def ShareScoreMsg = s"Checkout my score (${ScoreMgr.score}) this very funny game <<Run, Jump 'n Switch>> @ http://www.google.com"
 }

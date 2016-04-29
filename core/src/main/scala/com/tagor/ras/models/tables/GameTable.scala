@@ -70,13 +70,13 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
     pauseImg.setTouchable(Touchable.enabled)
 
     add(scoreLbl).expandX()
-    add(pauseImg).size(48f).align(Align.right).padRight(24f)
+    add(pauseImg).size(64f).right().padRight(24f)
     row()
     add(levelLbl)
     row()
-    add(dirImg).expand().align(Align.left)
+    add(dirImg).expandY().left()
     row()
-    add(fpsLbl).colspan(2).align(Align.center)
+    add(fpsLbl).colspan(2).center()
     setVisible(false)
   }
 
