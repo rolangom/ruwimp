@@ -1,13 +1,12 @@
 package com.tagor.ras.stages
 
-import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.math.{MathUtils, Interpolation, Vector3}
+import com.badlogic.gdx.math.{MathUtils, Vector3}
 import com.badlogic.gdx.physics.box2d._
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.utils.viewport.StretchViewport
+import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tagor.ras.models._
 import com.tagor.ras.utils._
 import rx.lang.scala.schedulers.ComputationScheduler
@@ -19,7 +18,7 @@ import scala.concurrent.duration.DurationInt
  * Created by rolangom on 7/8/15.
  */
 class GameStage(batch: Batch)
-  extends Stage(new StretchViewport(
+  extends Stage(new ExtendViewport(
     Const.Width, Const.Height,
     new OrthographicCamera), batch)
   with ContactListener {
@@ -28,8 +27,8 @@ class GameStage(batch: Batch)
 //  private val b2dCam = new OrthographicCamera
   private val spawner = new Spawner(getCamera.asInstanceOf[OrthographicCamera])
 
-  private val MinCamSpeed = 1f
-  private val MaxCamSpeed = 3f
+  private val MinCamSpeed: Float = .0067f
+  private val MaxCamSpeed: Float = .0195f
   private var cSpeed = MinCamSpeed
   private val CamTargetX = Const.Width * .65f
   private val newCamPos = new Vector3()
@@ -49,7 +48,7 @@ class GameStage(batch: Batch)
 
   player.hello()
 
-  var subs: CompositeSubscription = _
+  private var subs: CompositeSubscription = _
 
   private def initSubs(): Unit = {
     if (subs == null || subs.isUnsubscribed) subs = CompositeSubscription(
@@ -78,7 +77,7 @@ class GameStage(batch: Batch)
   def goFaster(): Unit = {
     player.goFaster()
     if (cSpeed < MaxCamSpeed)
-      cSpeed += .5f
+      cSpeed += .003f
   }
 
   private def handleGame(isRunning: Boolean): Unit = {
@@ -97,6 +96,7 @@ class GameStage(batch: Batch)
     println("RGT -> GameStage start")
     player.activate()
     currAct = gameAct
+    getCamera.update()
     initInterval()
   }
 
@@ -114,8 +114,7 @@ class GameStage(batch: Batch)
     println("RGT -> GameStage preStart")
     ScoreMgr.reset()
     val cam = getCamera
-    newCamPos.set(cam.viewportWidth / 2, cam.position.y, cam.position.z)
-    cam.position.set(newCamPos)
+    cam.position.set(newCamPos.set(cam.viewportWidth / 2, cam.position.y, cam.position.z))
     cam.update()
     player.preStart()
     background.start()
@@ -169,9 +168,9 @@ class GameStage(batch: Batch)
 //      cam.position.z)
 //    b2dCam.update()
 
-    newCamPos.x = player.getX() + CamTargetX
-//    newCamPos.y = MathUtils.clamp(player.getY(), 0f, 1400f)
-    cam.position.interpolate(newCamPos, cSpeed * delta, Interpolation.linear)
+    newCamPos.x = MathUtils.lerp(newCamPos.x, player.getX + CamTargetX, cSpeed)
+    cam.position.x = newCamPos.x
+    cam.update()
   }
 
   private def emptyAct(delta: Float): Unit = { }
@@ -193,6 +192,7 @@ class GameStage(batch: Batch)
     WorldFactory.blockIfLanded(
       contact.getFixtureA,
       contact.getFixtureB).foreach { b =>
+        println("beginContact player on block")
         player.landedAt(b.getZIndex)
         if (b.setAsLanded())
           ScoreMgr.increase()
