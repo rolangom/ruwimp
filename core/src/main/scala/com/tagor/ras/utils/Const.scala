@@ -59,6 +59,7 @@ object Const {
   val GameStatePause = 4
   val GameStateResume = 5
 
+  val CurrFont = "fonts/LAIKA.ttf"
   val PlayStr = new String("play")
   val ShareStr = new String("Share")
   val SoundStr = new String("Sound")

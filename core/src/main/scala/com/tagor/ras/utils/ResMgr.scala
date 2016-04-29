@@ -1,5 +1,6 @@
 package com.tagor.ras.utils
 
+import com.badlogic.gdx.Application.ApplicationType
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Pixmap.Format
@@ -73,6 +74,7 @@ object ResMgr extends Disposable {
   def getThemeTextureRegionStr(key: Int): String =
     BlockConst.THEMES_IMGS(ThemeMgr.currentTheme)(key)
 
+  def shareBtnStr = if (Gdx.app.getType == ApplicationType.iOS) "share_ios_btn" else "share_btn"
 
   def removeThemeTextureStr(key: Int): Unit = {
     remove(getThemeTextureStr(key))

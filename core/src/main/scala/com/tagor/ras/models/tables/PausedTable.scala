@@ -26,7 +26,7 @@ class PausedTable(clickListener: ClickListener) extends Table with Showable {
     setFillParent(true)
     align(Align.center)
 
-    val generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AldotheApache.ttf"))
+    val generator = new FreeTypeFontGenerator(Gdx.files.internal(Const.CurrFont))
     val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
     parameter.size = 48
     var font = generator.generateFont(parameter)

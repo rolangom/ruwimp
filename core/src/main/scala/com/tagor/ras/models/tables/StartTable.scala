@@ -17,9 +17,11 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
 
   private var playBtnImg: Image = _
   private var lBoardBtnImg: Image = _
+  private var helpImg: Image = _
   private var rateBtnImg: Image = _
   private var shareBtnImg: Image = _
   private var soundBtnImg: Image = _
+  private var noAdsBtnImg: Image = _
 
   def init(): Unit = {
     reset()
@@ -62,7 +64,7 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
 
     playBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "play_btn"))
     playBtnImg.setOrigin(Align.center)
-    playBtnImg.setUserObject(Const.PlayStr)
+    playBtnImg.setUserObject(Const.HelpToPlayStr)
     playBtnImg.addListener(clickListener)
     playBtnImg.setTouchable(Touchable.enabled)
 
@@ -72,20 +74,22 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
     lBoardBtnImg.addListener(clickListener)
     lBoardBtnImg.setTouchable(Touchable.enabled)
 
-    add(logoImg).colspan(5).spaceBottom(32).spaceTop(64)
+    add(logoImg).colspan(6).spaceBottom(32).spaceTop(64)
     row()
-    add(soundBtnImg).center()
-    add(lBoardBtnImg).center()
-    add(shareBtnImg).center()
-    add(rateBtnImg).center()
-    add(playBtnImg).center()
+    add(lBoardBtnImg).pad(12).center()
+    add(shareBtnImg).pad(12).center()
+    add(rateBtnImg).pad(12).center()
+    add(playBtnImg).pad(12).center()
+    row()
+    add(soundBtnImg).pad(12).center()
+    add(helpImg).pad(12).center()
+    add(noAdsBtnImg).pad(12).center()
     setVisible(false)
   }
 
   def toggleSound(): Unit = {
     SoundMgr.toggle()
-    val region = ResMgr.getRegion(Const.BGS_PATH,
-      if (SoundMgr.isOn) "sound_on_btn" else "sound_off_btn")
+    val region = ResMgr.getRegion(Const.BGS_PATH, SoundMgr.soundBtnStr)
     soundBtnImg.setDrawable(new TextureRegionDrawable(region))
   }
 

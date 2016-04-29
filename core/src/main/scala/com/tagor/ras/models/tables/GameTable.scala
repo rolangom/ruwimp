@@ -43,7 +43,7 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
 //    setDebug(true)
     align(Align.top)
 
-    val generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/AldotheApache.ttf"))
+    val generator = new FreeTypeFontGenerator(Gdx.files.internal(Const.CurrFont))
     val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
     parameter.size = 48
     val lblFont = generator.generateFont(parameter)
