@@ -21,6 +21,7 @@ object SoundMgr {
   def toggle(): Unit = {
     val lIsOn = !isOn
     PrefMgr.prefs.putBoolean("isSoundOn", lIsOn)
+    PrefMgr.prefs.flush()
     currProfile = if (lIsOn) getNewPlayableTrue else new PlayableFalse()
     println(s"SoundMgr isOn $lIsOn")
   }
@@ -28,15 +29,7 @@ object SoundMgr {
   def soundBtnStr = if (isOn) "sound_on_btn" else "sound_off_btn"
 
   def init(): Unit = {
-    gameOverSound = ResMgr.getSound("audio/jingles_PIZZA01.mp3")
-    scoredSound = ResMgr.getSound("audio/powerUp2.mp3")
-
-    footStepSound = ResMgr.getSound("audio/footstep09.mp3")
-    jumpSound = ResMgr.getSound("audio/phaseJump1.mp3")
-    goingUpSound = ResMgr.getSound("audio/highUp.mp3")
-    goingDownSound = ResMgr.getSound("audio/highDown.mp3")
-
-    currProfile = getNewPlayableTrue
+    resume()
   }
 
   private def getNewPlayableTrue: Playable = new PlayableTrue(
@@ -59,6 +52,8 @@ object SoundMgr {
     jumpSound = ResMgr.getSound("audio/phaseJump1.mp3")
     goingUpSound = ResMgr.getSound("audio/highUp.mp3")
     goingDownSound = ResMgr.getSound("audio/highDown.mp3")
+
+    currProfile = if (isOn) getNewPlayableTrue else new PlayableFalse()
   }
 
   def pause(): Unit = {
