@@ -10,6 +10,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 object ScoreMgr {
 
+  private var _plays: Int = 1
   private var _score: Int = 0
   private var _level: Int = 0
   private var isFixedLvlInc = false
@@ -19,6 +20,7 @@ object ScoreMgr {
 
   def score = _score
   def bestScore = PrefMgr.prefs.getInteger("score", 0)
+  def plays = _plays
 
   def increase(): Unit = {
     _score += 1
@@ -67,6 +69,7 @@ object ScoreMgr {
   def isNewBestScore: Boolean = _isNewBestScore //_score > bestScore
 
   def save(): Unit = {
+    _plays += 1
     val currBestScore = bestScore
     if (_score > currBestScore) {
       _isNewBestScore = true
@@ -75,4 +78,6 @@ object ScoreMgr {
       prefs.flush()
     }
   }
+
+  def isInterstitialToShow: Boolean = _plays % 5 == 0
 }

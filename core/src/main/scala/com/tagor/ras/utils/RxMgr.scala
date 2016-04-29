@@ -18,6 +18,11 @@ object RxMgr {
   lazy val newLevel = Subject[Int]()
   lazy val newTheme = Subject[Int]()
 
+  lazy val onShareText = Subject[String]()
+  lazy val onLeaderBoardClicked = Subject[String]()
+  lazy val bannerViewVisible = Subject[String]()
+  lazy val interstitialViewVisible = Subject[String]()
+
   private var _intervalObs: Observable[Long] = _
   private var _isGmRunning = false
 
@@ -35,6 +40,17 @@ object RxMgr {
     })
     .filter(s => s == Const.GameStatePlay || s == Const.GameStateResume)
     .subscribe(_ => startInterval())
+
+  def setBannerVisible(visible: Boolean): Unit = {
+    bannerViewVisible.onNext(String.valueOf(visible))
+  }
+
+  def setInterstitialVisible(visible: Boolean): Unit = {
+    if (ScoreMgr.isInterstitialToShow)
+      interstitialViewVisible.onNext(String.valueOf(visible))
+  }
+
+  def showShareText(msg: String): Unit = onShareText.onNext(msg)
 
   private def startInterval(): Unit = {
     _intervalObs = Observable.interval(125 milliseconds)
