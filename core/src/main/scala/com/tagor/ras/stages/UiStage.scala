@@ -92,13 +92,44 @@ class UiStage(batch: Batch)
     )
   }
 
-  private lazy val gtable = new GameTable(clickListener)
-  private lazy val stable = new StartTable(clickListener)
-  private lazy val dtable = new DashboardTable(clickListener)
-  private lazy val ptable = new PausedTable(clickListener)
-  private lazy val htable = new InstrTable(clickListener)
+  private var _gtable: GameTable = _
+  private var _stable: StartTable = _
+  private var _dtable: DashboardTable = _
+  private var _ptable: PausedTable = _
+  private var _htable:  InstrTable = _
+  private var _itable:  InfoTable = _
 
-  private var currAct: Float => Unit = emptyAct
+  private def gtable: GameTable = {
+    if (_gtable == null)
+      _gtable = new GameTable(clickListener)
+    _gtable
+  }
+  private def stable: StartTable = {
+    if (_stable == null)
+      _stable = new StartTable(clickListener)
+    _stable
+  }
+  private def dtable: DashboardTable = {
+    if (_dtable == null)
+      _dtable = new DashboardTable(clickListener)
+    _dtable
+  }
+  private def ptable: PausedTable = {
+    if (_ptable == null)
+      _ptable = new PausedTable(clickListener)
+    _ptable
+  }
+  private def htable: InstrTable = {
+    if (_htable == null)
+      _htable = new InstrTable(clickListener)
+    _htable
+  }
+  private def itable: InfoTable = {
+    if (_itable == null)
+      _itable = new InfoTable(clickListener)
+    _itable
+  }
+
   private lazy val (screenSideR, screenSideL) = getScreenSideRects
 
   private var cTouchDown: (Int, Int, Int, Int) => Boolean = super.touchDown
@@ -110,25 +141,12 @@ class UiStage(batch: Batch)
 
   def init(): Unit = {
     clear()
-
-    stable.init()
-    gtable.init()
-    dtable.init()
-    ptable.init()
-    htable.init()
-
     showStartTable()
 
     subs = RxMgr.onGameState
       .filter(s => s == Const.GameStatePlay || s == Const.GameStateOver)
       .map(_ == Const.GameStatePlay)
       .subscribe(r => handleGame(r))
-  }
-
-  def hideAndShow(toHide: Showable, toShow: Showable): Unit = {
-    toHide.hide()
-    addActor(toShow.asInstanceOf[Actor])
-    toShow.show()
   }
 
   private def showStartTable(): Unit = {
@@ -139,18 +157,38 @@ class UiStage(batch: Batch)
   private def showHelpTable(from: AnyRef): Unit = {
     stable.hide()
     addActor(htable)
-    htable.setUserObject(from)
-    htable.show()
+    _htable.setUserObject(from)
+    _htable.show()
   }
 
   private def hideHelpTable(): Unit = {
-    htable.hide()
     htable.getUserObject match {
       case Const.HelpToPlayStr =>
         RxMgr.onGameState.onNext(Const.GameStatePlay)
       case _ =>
         showStartTable()
     }
+    htable.hideAndFunc(() =>{
+      _htable = null
+    })
+  }
+
+  private def showInfoTable(): Unit = {
+    stable.hide()
+    addActor(itable)
+    _itable.show()
+    RxMgr.setBannerVisible(true)
+  }
+
+  private def hideInfoTable(): Unit = {
+    itable.hideAndFunc(() => {
+      _itable = null
+    })
+    addActor(stable)
+    _stable.show()
+    RxMgr.setBannerVisible(false)
+  }
+
   private def openTwitter(personal: Boolean): Unit = {
     val url = if (personal) "http://www.twitter.com/rolangom" else "http://www.twitter.com/rolangom"
     Gdx.net.openURI(url)
@@ -165,14 +203,19 @@ class UiStage(batch: Batch)
   }
 
   private def resumeGame(): Unit = {
-    ptable.hide()
+    RxMgr.setBannerVisible(false)
+    ptable.hideAndFunc(() => {
+      _ptable = null
+    })
     gtable.setTouchableEnabled()
     configGameInput(true)
     addActionDelayed(1.5f, () => RxMgr.onGameState.onNext(Const.GameStateResume))
   }
 
   private def showGameTable(): Unit = {
-    stable.hide()
+    stable.hideAndFunc(() => {
+      _stable = null
+    })
     addGameTbl()
   }
 
@@ -189,17 +232,20 @@ class UiStage(batch: Batch)
 
   private def playAgain(): Unit = {
     RxMgr.setBannerVisible(false)
-    dtable.hideAndFunc {
-      () => RxMgr.onGameState.onNext(Const.GameStatePlay)
-    }
+    dtable.hideAndFunc(
+      () => RxMgr.onGameState.onNext(Const.GameStatePlay))
   }
 
   private def goHome(): Unit = {
     if (ptable.hasParent)
-      ptable.hide()
+      ptable.hideAndFunc(() => {
+        _ptable = null
+      })
     if (dtable.hasParent)
       dtable.hide()
-    gtable.hide()
+    gtable.hideAndFunc(() => {
+      _gtable = null
+    })
     addActionDelayed(.75f, () => showStartTable())
   }
 
@@ -219,12 +265,11 @@ class UiStage(batch: Batch)
     RxMgr.setBannerVisible(true)
     addActionDelayed(.5f, () => {
       addActor(dtable)
-      dtable.show()
+      _dtable.show()
     })
   }
 
   private def handleGame(isRunning: Boolean): Unit = {
-    currAct = if (isRunning) stageAct else emptyAct
     configGameInput(isRunning)
 
     if (isRunning)
@@ -308,19 +353,11 @@ class UiStage(batch: Batch)
   }
 
   def resume(): Unit = {
-//    ptable.show()
+
   }
 
   private def emptyAct(delta: Float): Unit = { }
 
-  private def stageAct(delta: Float): Unit = {
-    gtable.setFpsText(s"FPS: ${Gdx.graphics.getFramesPerSecond}, body count: ${WorldFactory.world.getBodyCount}")
-  }
-
-  override def act(delta: Float): Unit = {
-    super.act(delta)
-    currAct(delta)
-  }
 
   override def dispose(): Unit = {
     super.dispose()

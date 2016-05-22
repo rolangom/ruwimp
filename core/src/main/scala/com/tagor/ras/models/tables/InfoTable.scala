@@ -13,69 +13,70 @@ import com.tagor.ras.models.Showable
 import com.tagor.ras.utils._
 
 /**
-  * Created by rolangom on 4/9/16.
+  * Created by rolangom on 4/30/16.
   */
-class InstrTable(clickListener: ClickListener) extends Table with Showable {
+class InfoTable(clickListener: ClickListener) extends Table with Showable {
 
   def init(): Unit = {
     reset()
 
     setFillParent(true)
-    //    setDebug(true)
     align(Align.center)
 
     val generator = new FreeTypeFontGenerator(Gdx.files.internal(Const.CurrFont))
     val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
-    parameter.size = 32
-    val font = generator.generateFont(parameter)
-    val labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.DarkBlue))
+    parameter.size = 48
+    var font = generator.generateFont(parameter)
+    var labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.DarkBlue))
 
-    val leftLbl = new Label("Tap left\nto switch", labelStyle)
-    val rightLbl = new Label("Tap right\nto jump,\nhold to float", labelStyle)
+    val titleLbl = new Label("About", labelStyle)
+
+    parameter.size = 32
+    font = generator.generateFont(parameter)
+    labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.DarkBlue))
+
+    val lbl1 = new Label("Designed and Developed by", labelStyle)
     val tapContLbl = new Label("Tap to continue", labelStyle)
-    leftLbl.setAlignment(Align.center)
-    rightLbl.setAlignment(Align.center)
+    val creditsLbl = new Label("Thanks to Libgdx and Kenney's assets", labelStyle)
+    labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.Red))
+    val myTwitterlbl = new Label("@rolangom", labelStyle)
+
+    titleLbl.setAlignment(Align.center)
+    lbl1.setAlignment(Align.center)
+    myTwitterlbl.setAlignment(Align.center)
     tapContLbl.setAlignment(Align.center)
 
-    leftLbl.setUserObject(Const.ExitFromHelpStr)
-    rightLbl.setUserObject(Const.ExitFromHelpStr)
-    tapContLbl.setUserObject(Const.ExitFromHelpStr)
+    myTwitterlbl.setUserObject(Const.MyTwitterStr)
+    tapContLbl.setUserObject(Const.ExitFromInfoStr)
 
-    leftLbl.setTouchable(Touchable.enabled)
-    rightLbl.setTouchable(Touchable.enabled)
+    myTwitterlbl.setTouchable(Touchable.enabled)
     tapContLbl.setTouchable(Touchable.enabled)
 
-    leftLbl.addListener(clickListener)
-    rightLbl.addListener(clickListener)
+    myTwitterlbl.addListener(clickListener)
     tapContLbl.addListener(clickListener)
 
-    val switchImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "switch_img"))
-    val jumpImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "jump_img"))
-
-    add(switchImg).center().pad(24)
-    add(jumpImg).center().pad(24)
+    add(titleLbl).center().pad(12).spaceBottom(24)
     row()
-
-    add(leftLbl).center().padRight(24)
-    add(rightLbl).center().padLeft(24)
+    add(lbl1).center()
     row()
-
-    add(tapContLbl).center().pad(24).colspan(2)
+    add(myTwitterlbl).center().pad(12)
+    row()
+    add(creditsLbl).center().pad(12).spaceBottom(24)
+    row()
+    add(tapContLbl).center().pad(24)
 
     setVisible(false)
   }
   init()
 
   override def show(): Unit = {
+    println("InfoTable to show")
     clearActions()
     addAction(
       sequence(
         alpha(0),
         Actions.visible(true),
-        fadeIn(1f)/*,
-        run(runnable(
-          () => enableTouchable(true, soundBtnImg, lBoardBtnImg, playBtnImg)
-        ))*/
+        fadeIn(1f)
       )
     )
   }
@@ -94,6 +95,5 @@ class InstrTable(clickListener: ClickListener) extends Table with Showable {
         run(runnable(f))
       )
     )
-    //    enableTouchable(false, soundBtnImg, lBoardBtnImg, playBtnImg)
   }
 }

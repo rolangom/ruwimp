@@ -21,7 +21,7 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
   private var dirImg: Image = _
   private var pauseImg: Image = _
   private var scoreLbl: Label = _
-  private var fpsLbl: Label = _
+//  private var fpsLbl: Label = _
   private var levelLbl: Label = _
 
   RxMgr.onPlayerAction
@@ -50,7 +50,7 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
     val labelStyle = new Label.LabelStyle(lblFont, Color.valueOf(BlockConst.DarkBlue))
 
     scoreLbl = new Label("00", labelStyle)
-    fpsLbl = new Label("00", labelStyle)
+//    fpsLbl = new Label("00", labelStyle)
 
     parameter.size = 32
     val lvlFnt = generator.generateFont(parameter)
@@ -75,10 +75,11 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
     add(levelLbl)
     row()
     add(dirImg).expandY().left()
-    row()
-    add(fpsLbl).colspan(2).center()
+//    row()
+//    add(fpsLbl).colspan(2).center()
     setVisible(false)
   }
+  init()
 
   private def showLevel(level: Int): Unit = {
     levelLbl.setText(s"Level $level")
@@ -106,15 +107,20 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
     )
   }
 
-  def setFpsText(s: String): Unit = fpsLbl.setText(s)
+//  def setFpsText(s: String): Unit = fpsLbl.setText(s)
 
   override def hide(): Unit = {
+    hideAndFunc(() => ())
+  }
+
+  override def hideAndFunc(f: () => Unit): Unit = {
     clearActions()
     addAction(
       sequence(
         fadeOut(.5f),
         Actions.visible(false),
-        Actions.removeActor()
+        Actions.removeActor(),
+        run(runnable(f))
       )
     )
     enableTouchable(false, pauseImg, pauseImg)

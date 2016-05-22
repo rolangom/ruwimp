@@ -77,7 +77,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
 
     lBoardBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
     lBoardBtnImg.setOrigin(Align.center)
-    lBoardBtnImg.setUserObject(Const.LeaderBoardStr)
+    lBoardBtnImg.setUserObject(Const.SubmitLeaderBoardStr)
     lBoardBtnImg.addListener(clickListener)
     lBoardBtnImg.setTouchable(Touchable.enabled)
 
@@ -103,6 +103,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     add(playBtnImg).size(64)
     setVisible(false)
   }
+  init()
 
   override def show(): Unit = {
     addAction(
@@ -121,18 +122,14 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
   }
 
   override def hide(): Unit = {
-    clearActions()
-    addAction(
-      sequence(
-        fadeOut(.5f),
-        Actions.visible(false),
-        Actions.removeActor()
-      )
-    )
-    enableTouchable(false, lBoardBtnImg, playBtnImg, shareBtnImg, homeBtnImg)
+    hideAndFunc(() => ())
   }
 
   override def hideAndFunc(f: () => Unit): Unit = {
+    hideAndFunc2(f, () => ())
+  }
+
+  def hideAndFunc2(f: () => Unit, f2: () => Unit): Unit = {
     clearActions()
     addAction(
       sequence(
@@ -140,7 +137,8 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
         delay(.15f),
         fadeOut(.5f),
         Actions.visible(false),
-        Actions.removeActor()
+        Actions.removeActor(),
+        run(runnable(f2))
       )
     )
     enableTouchable(false, lBoardBtnImg, playBtnImg, shareBtnImg, homeBtnImg)

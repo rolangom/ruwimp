@@ -21,7 +21,9 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
   private var rateBtnImg: Image = _
   private var shareBtnImg: Image = _
   private var soundBtnImg: Image = _
-  private var noAdsBtnImg: Image = _
+//  private var noAdsBtnImg: Image = _
+  private var twitterImg: Image = _
+  private var infoImg: Image = _
 
   def init(): Unit = {
     reset()
@@ -32,11 +34,11 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
     val logoImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "logo"))
     logoImg.setOrigin(Align.center)
 
-    noAdsBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "no_ads_btn"))
-    noAdsBtnImg.setOrigin(Align.center)
-    noAdsBtnImg.setUserObject(Const.NoAdsStr)
-    noAdsBtnImg.addListener(clickListener)
-    noAdsBtnImg.setTouchable(Touchable.enabled)
+//    noAdsBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "no_ads_btn"))
+//    noAdsBtnImg.setOrigin(Align.center)
+//    noAdsBtnImg.setUserObject(Const.NoAdsStr)
+//    noAdsBtnImg.addListener(clickListener)
+//    noAdsBtnImg.setTouchable(Touchable.enabled)
 
     helpImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "help_btn"))
     helpImg.setOrigin(Align.center)
@@ -74,6 +76,18 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
     lBoardBtnImg.addListener(clickListener)
     lBoardBtnImg.setTouchable(Touchable.enabled)
 
+    twitterImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "twitter_btn"))
+    twitterImg.setOrigin(Align.center)
+    twitterImg.setUserObject(Const.TwitterStr)
+    twitterImg.addListener(clickListener)
+    twitterImg.setTouchable(Touchable.enabled)
+
+    infoImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "info_btn"))
+    infoImg.setOrigin(Align.center)
+    infoImg.setUserObject(Const.InfoStr)
+    infoImg.addListener(clickListener)
+    infoImg.setTouchable(Touchable.enabled)
+
     add(logoImg).colspan(6).spaceBottom(32).spaceTop(64)
     row()
     add(lBoardBtnImg).pad(12).center()
@@ -83,9 +97,12 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
     row()
     add(soundBtnImg).pad(12).center()
     add(helpImg).pad(12).center()
-    add(noAdsBtnImg).pad(12).center()
+//    add(noAdsBtnImg).pad(12).center()
+    add(twitterImg).pad(12).center()
+    add(infoImg).pad(12).center()
     setVisible(false)
   }
+  init()
 
   def toggleSound(): Unit = {
     SoundMgr.toggle()
@@ -108,12 +125,17 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
   }
 
   override def hide(): Unit = {
+    hideAndFunc(() => ())
+  }
+
+  override def hideAndFunc(f: () => Unit): Unit = {
     clearActions()
     addAction(
       sequence(
         fadeOut(.5f),
         Actions.visible(false),
-        Actions.removeActor()
+        Actions.removeActor(),
+        run(runnable(f))
       )
     )
     enableTouchable(false, soundBtnImg, lBoardBtnImg, playBtnImg)

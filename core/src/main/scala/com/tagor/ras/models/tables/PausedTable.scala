@@ -52,6 +52,7 @@ class PausedTable(clickListener: ClickListener) extends Table with Showable {
     add(resumeImg).align(Align.center)
     setVisible(false)
   }
+  init()
 
   override def show(): Unit = {
     clearActions()
@@ -68,14 +69,20 @@ class PausedTable(clickListener: ClickListener) extends Table with Showable {
   }
 
   override def hide(): Unit = {
+    hideAndFunc(() => ())
+  }
+
+  override def hideAndFunc(f: () => Unit): Unit = {
     clearActions()
     addAction(
       sequence(
         fadeOut(.5f),
         Actions.visible(false),
-        Actions.removeActor()
+        Actions.removeActor(),
+        run(runnable(f))
       )
     )
     enableTouchable(false, resumeImg, goHomeImg)
+
   }
 }
