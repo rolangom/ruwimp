@@ -1,5 +1,7 @@
 package com.tagor.ras.utils
 
+import com.badlogic.gdx.Application.ApplicationType
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.Vector2
 
 /**
@@ -44,7 +46,7 @@ object Const {
   val RunnerGravityScale = 3f
   val RunnerGravityScaleOnair = RunnerGravityScale / 2
   val RunnerLinearVelocity = 3.5f //4.65f
-  val RunnerX = Width * .35f
+  val RunnerX = Width * .2f
   val RunnerY = Height * 1.05f
 
   val GroundLinearVelocity = .15f
@@ -70,16 +72,28 @@ object Const {
   val RateStr = new String("Rate")
   val PlayAgainStr = new String("playAgain")
   val LeaderBoardStr = new String("LeaderBoard")
+  val SubmitLeaderBoardStr = new String("SubmitLeaderBoard")
   val PausedStr = new String("Pause")
   val ResumeStr = new String("Resume")
   val GoHomeStr = new String("GoHome")
   val HelpStr = new String("Help")
+  val InfoStr = new String("Info")
+  val TwitterStr = new String("CompTwitter")
   val ExitFromHelpStr = new String("GoHomeFromHelp")
+  val MyTwitterStr = new String("MyTwitter")
+  val ExitFromInfoStr = new String("GoHomeFromInfo")
 
   val BGS_PATH = "atlas/worldAtlas2.txt"
 
   val CLOUD_IMG = "cloud%d"
 
-  val ShareMsg = "Checkout this very funny game \"Run, Jump 'n Switch\"  @ http://www.google.com"
-  def ShareScoreMsg = s"Checkout my score (${ScoreMgr.score}) this very funny game <<Run, Jump 'n Switch>> @ http://www.google.com"
+  val IOSUrl = "https://itunes.apple.com/app/id980891232"
+  val AndroidUrl = "http://play.google.com/store/apps/details?id=com.tagor.ras"
+  val AppUrl = Gdx.app.getType match {
+    case ApplicationType.iOS => IOSUrl
+    case _ => AndroidUrl
+  }
+
+  val ShareMsg = s"Check this very fun game <<Run, Jump 'n Switch>>  @ $AppUrl"
+  def ShareScoreMsg = s"Check my score (${ScoreMgr.score}) in this very fun game <<Run, Jump 'n Switch>> @ $AppUrl"
 }

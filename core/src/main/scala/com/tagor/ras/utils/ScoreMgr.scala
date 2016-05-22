@@ -70,6 +70,7 @@ object ScoreMgr {
 
   def save(): Unit = {
     _plays += 1
+    RxMgr.incEvent.onNext(String.valueOf(_plays))
     val currBestScore = bestScore
     if (_score > currBestScore) {
       _isNewBestScore = true

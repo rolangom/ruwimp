@@ -15,6 +15,8 @@ object RxMgr {
   lazy val onPlayerAction = Subject[Int]()
   lazy val onItiAdded = Subject[ItemToInst]()
   lazy val newScore = Subject[Int]()
+  lazy val incEvent = Subject[String]()
+  lazy val showLeaderBoard = Subject[String]()
   lazy val newLevel = Subject[Int]()
   lazy val newTheme = Subject[Int]()
 

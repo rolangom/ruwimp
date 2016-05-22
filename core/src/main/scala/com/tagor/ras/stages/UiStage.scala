@@ -41,6 +41,10 @@ class UiStage(batch: Batch)
             RxMgr.onGameState.onNext(Const.GameStateHome)
             goHome()
           }, true, true)
+        case Const.LeaderBoardStr =>
+          (() => RxMgr.showLeaderBoard.onNext(""), true, false)
+        case Const.SubmitLeaderBoardStr =>
+          (() => RxMgr.showLeaderBoard.onNext(String.valueOf(ScoreMgr.score)), true, false)
         case Const.SoundStr =>
           (() => toggleSound(), true, false)
         case Const.ResumeStr =>
@@ -53,6 +57,16 @@ class UiStage(batch: Batch)
           (() => RxMgr.showShareText(Const.ShareMsg), true, false)
         case Const.ShareScoreStr =>
           (() => RxMgr.showShareText(Const.ShareScoreMsg), true, false)
+        case Const.MyTwitterStr =>
+          (() => openTwitter(true), true, false)
+        case Const.TwitterStr =>
+          (() => openTwitter(false), true, false)
+        case Const.RateStr =>
+          (() => rateApp(), true, false)
+        case Const.InfoStr =>
+          (() => showInfoTable(), true, false)
+        case Const.ExitFromInfoStr =>
+          (() => hideInfoTable(), true, false)
         case _ => (() => (), false, true)
       }
       if (block)
@@ -63,6 +77,7 @@ class UiStage(batch: Batch)
   }
 
   private def clickEffect(f: () => Unit): Action = {
+    SoundMgr.playJump(1f, 1f, 0f)
     parallel(
       sequence(
         color(Color.GRAY, .15f),
@@ -136,6 +151,13 @@ class UiStage(batch: Batch)
       case _ =>
         showStartTable()
     }
+  private def openTwitter(personal: Boolean): Unit = {
+    val url = if (personal) "http://www.twitter.com/rolangom" else "http://www.twitter.com/rolangom"
+    Gdx.net.openURI(url)
+  }
+
+  private def rateApp(): Unit = {
+    Gdx.net.openURI(Const.AppUrl)
   }
 
   private def toggleSound(): Unit = {
