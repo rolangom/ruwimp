@@ -68,6 +68,7 @@ build/
 ## RoboVM
 ios/src/robovm-build/
 ios/robovm-build/
+ios/libs/
 
 ## Logs
 logs/
