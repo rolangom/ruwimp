@@ -109,6 +109,7 @@ class PlayableTrue(gameOverSound: Sound,
     jumpSound.play(vol, pit, pan)
   }
   override def playFootStep(vol: Float): Unit = {
+    footStepSound.stop()
     footStepSound.play()
     footStepSound.loop(vol, 1.45f, 0f)
   }

@@ -29,11 +29,15 @@ import rx.functions.Action1;
 
 public class AndroidLauncher extends AndroidApplication implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-	private Subscription shareSub;
-	private Subscription bannerSub;
-	private Subscription interstitialSub;
-	private Subscription showLeaderBoardSub;
-	private Subscription incEventSub;
+	private Subscription
+			shareSub,
+			bannerSub,
+			interstitialSub,
+			showLeaderBoardSub,
+			submitLeaderBoardSub,
+			showAchivsSub,
+			submitAchivsSub,
+			incEventSub;
 
 	private AdView bannerView;
 	private InterstitialAd mInterstitialAd;
@@ -41,6 +45,7 @@ public class AndroidLauncher extends AndroidApplication implements GoogleApiClie
 	private GoogleApiClient mGoogleApiClient;
 
 	private static final int REQUEST_LEADERBOARD = 123;
+	private static final int REQUEST_ACHIVS = 124;
 	private final int RC_SIGN_IN = 9001;
 	// Request code to use when launching the resolution activity
 	private static final int REQUEST_RESOLVE_ERROR = 1001;
@@ -175,24 +180,106 @@ public class AndroidLauncher extends AndroidApplication implements GoogleApiClie
 				.asJavaObservable()
 				.subscribe(new Action1<String>() {
 			@Override public void call(final String s) {
+				if (mGoogleApiClient.isConnected())
+					bannerView.post(new Runnable() {
+						@Override public void run() {
+							try {
+								Log.e("RGT", "showLeaderBoard let's work!");
+								startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGoogleApiClient,
+										getString(R.string.leaderboard_main_score)), REQUEST_LEADERBOARD);
+							} catch (NumberFormatException e) {
+								e.printStackTrace();
+								Log.e("RGT", "showLeaderBoard Err "+e.getMessage(), e);
+							}
+						}
+					});
+			}
+		});
+
+		submitLeaderBoardSub = RxMgr.submitLeaderBoard()
+				.asJavaObservable()
+				.subscribe(new Action1<String>() {
+			@Override public void call(final String s) {
 				bannerView.post(new Runnable() {
 					@Override public void run() {
 						try {
-							if (!mGoogleApiClient.isConnected()) {
-								Log.e("RGT", "showLeaderBoard is not connected, let's connect!");
-								mGoogleApiClient.connect();
-								return;
+							Log.e("RGT", "submitLeaderBoard let's work!");
+							if (mGoogleApiClient.isConnected() && !s.isEmpty()) {
+								String[] arr = s.split(";");
+								int overallScore = Integer.parseInt(arr[0]);
+								int upScore = Integer.parseInt(arr[1]);
+								int downScore = Integer.parseInt(arr[2]);
+
+								if (overallScore > 0)
+									Games.Leaderboards.submitScoreImmediate(mGoogleApiClient, getString(R.string.leaderboard_main_score), overallScore);
+								if (upScore > 0)
+									Games.Leaderboards.submitScoreImmediate(mGoogleApiClient, getString(R.string.leaderboard_up_blocks_scored), upScore);
+								if (downScore > 0)
+									Games.Leaderboards.submitScoreImmediate(mGoogleApiClient, getString(R.string.leaderboard_down_blocks_scored), downScore);
 							}
-							Log.e("RGT", "showLeaderBoard let's work!");
-							if (!s.isEmpty()) {
-                                Games.Leaderboards.
-										submitScoreImmediate(mGoogleApiClient, getString(R.string.leaderboard_main_score), Integer.parseInt(s));
-                            }
-							startActivityForResult(Games.Leaderboards.getLeaderboardIntent(mGoogleApiClient,
-                                    getString(R.string.leaderboard_main_score)), REQUEST_LEADERBOARD);
 						} catch (NumberFormatException e) {
 							e.printStackTrace();
-							Log.e("RGT", "showLeaderBoard Err "+e.getMessage(), e);
+							Log.e("RGT", "submitLeaderBoard Err "+e.getMessage(), e);
+						}
+					}
+				});
+			}
+		});
+
+		showAchivsSub = RxMgr.showAchivements()
+				.asJavaObservable()
+				.subscribe(new Action1<String>() {
+			@Override public void call(final String s) {
+				if (mGoogleApiClient.isConnected())
+					bannerView.post(new Runnable() {
+						@Override public void run() {
+							try {
+								Log.e("RGT", "showAchivements let's work!");
+								startActivityForResult(Games.Achievements.getAchievementsIntent(mGoogleApiClient), REQUEST_ACHIVS);
+							} catch (NumberFormatException e) {
+								e.printStackTrace();
+								Log.e("RGT", "showAchivements Err "+e.getMessage(), e);
+							}
+						}
+					});
+			}
+		});
+
+		submitAchivsSub = RxMgr.submitAchivements()
+				.asJavaObservable()
+				.subscribe(new Action1<String>() {
+			@Override public void call(final String s) {
+				bannerView.post(new Runnable() {
+					@Override public void run() {
+						try {
+							if (mGoogleApiClient.isConnected()) {
+								Log.d("RGT", "submitAchivements let's work!");
+								String[] arr = s.split(";");
+								int overallScore = Integer.parseInt(arr[0]);
+								int upScore = Integer.parseInt(arr[1]);
+								int downScore = Integer.parseInt(arr[2]);
+
+								if (overallScore > 0) {
+									Games.Achievements.incrementImmediate(mGoogleApiClient, getString(R.string.achievement_50_overall_score), overallScore);
+									Games.Achievements.incrementImmediate(mGoogleApiClient, getString(R.string.achievement_100_overall_score), overallScore);
+									Games.Achievements.incrementImmediate(mGoogleApiClient, getString(R.string.achievement_150_overall_score), overallScore);
+								}
+
+								if (upScore > 0) {
+									Games.Achievements.incrementImmediate(mGoogleApiClient, getString(R.string.achievement_25_up_score), upScore);
+									Games.Achievements.incrementImmediate(mGoogleApiClient, getString(R.string.achievement_50_up_score), upScore);
+									Games.Achievements.incrementImmediate(mGoogleApiClient, getString(R.string.achievement_75_up_score), upScore);
+								}
+
+								if (downScore > 0) {
+									Games.Achievements.incrementImmediate(mGoogleApiClient, getString(R.string.achievement_25_down_score), downScore);
+									Games.Achievements.incrementImmediate(mGoogleApiClient, getString(R.string.achievement_50_down_score), downScore);
+									Games.Achievements.incrementImmediate(mGoogleApiClient, getString(R.string.achievement_75_down_score), downScore);
+								}
+							}
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+							Log.e("RGT", "showAchivements Err "+e.getMessage(), e);
 						}
 					}
 				});
@@ -203,16 +290,17 @@ public class AndroidLauncher extends AndroidApplication implements GoogleApiClie
 				.asJavaObservable()
 				.subscribe(new Action1<String>() {
 			@Override public void call(final String s) {
-				bannerView.post(new Runnable() {
-					@Override public void run() {
-						try {
-							Games.Events.increment(mGoogleApiClient, getString(R.string.event_plays_count), 1);
-						} catch (Exception e) {
-							e.printStackTrace();
-							Log.e("RGT", "Games.Events.increment Err "+e.getMessage(), e);
+				if (mGoogleApiClient.isConnected())
+					bannerView.post(new Runnable() {
+						@Override public void run() {
+							try {
+								Games.Events.increment(mGoogleApiClient, getString(R.string.event_plays_count), 1);
+							} catch (Exception e) {
+								e.printStackTrace();
+								Log.e("RGT", "Games.Events.increment Err "+e.getMessage(), e);
+							}
 						}
-					}
-				});
+					});
 			}
 		});
 
@@ -245,6 +333,12 @@ public class AndroidLauncher extends AndroidApplication implements GoogleApiClie
 			interstitialSub.unsubscribe();
 		if (showLeaderBoardSub != null)
 			showLeaderBoardSub.unsubscribe();
+		if (submitLeaderBoardSub != null)
+			submitLeaderBoardSub.unsubscribe();
+		if (showAchivsSub != null)
+			showAchivsSub.unsubscribe();
+		if (submitAchivsSub != null)
+			submitAchivsSub.unsubscribe();
 		if (incEventSub != null)
 			incEventSub.unsubscribe();
 
@@ -310,7 +404,7 @@ public class AndroidLauncher extends AndroidApplication implements GoogleApiClie
 			if (resultCode == 10001) { // RESULT_RECONNECT_REQUIRED
 				Log.d("RGT", "GoogleClient RESULT_RECONNECT_REQUIRED");
 				mResolvingConnectionFailure = false;
-				mGoogleApiClient.disconnect();
+				mGoogleApiClient.reconnect();
 			}
 		}
 	}

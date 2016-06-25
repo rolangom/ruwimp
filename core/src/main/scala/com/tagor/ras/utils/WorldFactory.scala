@@ -25,15 +25,15 @@ object WorldFactory {
     val fdef = new FixtureDef
     val shape = new PolygonShape
 
-    bdef.position.set(x / PPM, y * PPM)
+    bdef.position.set(x * MPP, y * MPP)
     bdef.fixedRotation = true
     bdef.`type` = BodyDef.BodyType.KinematicBody
     bdef.active = false
 
     val body = world createBody bdef
     shape.setAsBox(
-      btype.width * btype.scale / 2 / PPM,
-      btype.height * btype.scale / 2 / PPM)
+      btype.width * btype.scale * .5f * MPP,
+      btype.height * btype.scale * .5f * MPP)
     fdef.shape = shape
     fdef.filter.categoryBits = btype.category
     fdef.filter.maskBits = btype.mask
@@ -124,16 +124,16 @@ object WorldFactory {
 
   private def createPlayerShape(scale: Float): Shape = {
     val shape = new PolygonShape
-    val ns = RunnerHeight * scale / 2 / PPM
-    shape.setAsBox(ns / 2, ns)
+    val ns = RunnerHeight * scale * .5f * MPP * SmallerFactor  //  / 2 / PPM
+    shape.setAsBox(ns *.5f, ns)
     shape
   }
 
   private def createPlayerFootShape(scale: Float): Shape = {
     val shape = new CircleShape()
-    shape.setRadius(RunnerWidth * 1.25f * scale / 2 / PPM)
+    shape.setRadius(RunnerWidth * LargerFactor * scale * .5f * MPP) /// 2 / PPM
     shape.setPosition(
-      new Vector2(0f, - RunnerHeight * .75f * scale / 2 / PPM))
+      new Vector2(0f, - RunnerHeight * SmallerFactor * scale * .5f * MPP)) /// 2 / PPM
     shape
   }
 
@@ -152,29 +152,54 @@ object WorldFactory {
   private def configFixtureBits(body: Body,
                                 category: Short,
                                 mask: Short): Unit = {
-    val iter = body.getFixtureList.iterator()
-    while (iter.hasNext) {
-      val fixture = iter.next()
+//    val iter = body.getFixtureList.iterator()
+//    while (iter.hasNext) {
+//      val fixture = iter.next()
+//      val filter = fixture.getFilterData
+//      filter.categoryBits = category
+//      filter.maskBits = mask
+//      fixture.setFilterData(filter)
+//    }
+    val fixtures = body.getFixtureList
+    var i = fixtures.size - 1
+    while (i >= 0) {
+      val fixture = fixtures.get(i)
       val filter = fixture.getFilterData
       filter.categoryBits = category
       filter.maskBits = mask
       fixture.setFilterData(filter)
+      i -= 1
     }
   }
 
   def scaleFixtures(body:Body, isDimenUp:Boolean): Unit = {
     val scale = if (isDimenUp) UpScale else DownScale
-    val iter = body.getFixtureList.iterator()
-    while (iter.hasNext) {
-      val fix = iter.next()
+//    val iter = body.getFixtureList.iterator()
+//    while (iter.hasNext) {
+//      val fix = iter.next()
+//      fix.getShape match {
+//        case cs: CircleShape =>
+//          cs.setRadius(RunnerWidth * scale * LargerFactor * .5f * MPP)
+//        case ps: PolygonShape =>
+//          val ns = RunnerHeight * scale * .5f * MPP
+//          ps.setAsBox(ns * .5f, ns)
+//        case _ => ()
+//      }
+//    }
+
+    val fixtures = body.getFixtureList
+    var i = fixtures.size - 1
+    while (i >= 0) {
+      val fix = fixtures.get(i)
       fix.getShape match {
         case cs: CircleShape =>
-          cs.setRadius(RunnerWidth * scale * 1.15f / 2 / PPM)
+          cs.setRadius(RunnerWidth * scale * LargerFactor * .5f * MPP)
         case ps: PolygonShape =>
-          val ns = RunnerHeight * scale / 2 / PPM
-          ps.setAsBox(ns / 2, ns)
+          val ns = RunnerHeight * scale * .5f * MPP
+          ps.setAsBox(ns * .5f, ns)
         case _ => ()
       }
+      i -= 1
     }
     body.resetMassData()
   }
@@ -189,6 +214,20 @@ object WorldFactory {
     }
   }
 
+  def blockIfLanded2(fixtureA: Fixture, fixtureB: Fixture): Block = {
+    fixtureA.getUserData match {
+      case Const.FootStrType => fixtureB.getUserData match {
+        case Const.GroundStrType => fixtureB.getBody.getUserData.asInstanceOf[Block]
+        case _ => null
+      }
+      case Const.GroundStrType => fixtureB.getUserData match {
+        case Const.FootStrType => fixtureA.getBody.getUserData.asInstanceOf[Block]
+        case _ => null
+      }
+      case _ => null
+    }
+  }
+
   def isPlayerAndGround(fixtureA: Fixture, fixtureB: Fixture): Boolean = {
     (fixtureA.getUserData, fixtureB.getUserData) match {
       case (_, Const.FootStrType) | // Const.GroundStrType
@@ -196,4 +235,7 @@ object WorldFactory {
       case _ => false
     }
   }
+
+  def isPlayerAndGround2(fixtureA: Fixture, fixtureB: Fixture): Boolean =
+    fixtureA.getUserData == Const.FootStrType || fixtureB.getUserData == Const.FootStrType
 }

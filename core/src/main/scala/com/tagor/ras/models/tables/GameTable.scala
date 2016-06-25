@@ -49,7 +49,7 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
     val lblFont = generator.generateFont(parameter)
     val labelStyle = new Label.LabelStyle(lblFont, Color.valueOf(BlockConst.DarkBlue))
 
-    scoreLbl = new Label("00", labelStyle)
+    scoreLbl = new Label("0", labelStyle)
 //    fpsLbl = new Label("00", labelStyle)
 
     parameter.size = 32
@@ -69,14 +69,14 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
     pauseImg.addListener(clickListener)
     pauseImg.setTouchable(Touchable.enabled)
 
-    add(scoreLbl).expandX()
-    add(pauseImg).size(64f).right().padRight(24f)
+    add(pauseImg).size(64f).left().pad(12f)
+    add(scoreLbl).pad(12f).expandX()
+    add(dirImg).size(64f).right().pad(12f)
     row()
-    add(levelLbl)
-    row()
-    add(dirImg).expandY().left()
+    add(levelLbl).colspan(3).center()
 //    row()
 //    add(fpsLbl).colspan(2).center()
+
     setVisible(false)
   }
   init()

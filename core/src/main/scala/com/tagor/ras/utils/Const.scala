@@ -9,16 +9,19 @@ import com.badlogic.gdx.math.Vector2
  */
 object Const {
 
-  val Width = 800; // 960;
-  val Height = 480; // 640;
+  val Width = 800; //960; //
+  val Height = 480; //640; //
 
   val PPM = 85f
-//  val PTM = 1f/MTP
+  val MPP:Float = 1f/PPM
 
   val UpScale: Float = 1f
   val DownScale: Float = .85f
 
-  val TransitTime = .150f
+  val SmallerFactor = .65f
+  val LargerFactor = 1.25f
+
+  val TransitTime = .1f
 
   val CategoryGroundUp: Short = 0x0001
   val CategoryPlayerUp: Short = 0x0002
@@ -43,11 +46,11 @@ object Const {
   val TopStrType = "top"
 
   val RunnerJumpingLinearImpulse = new Vector2(0, 12f)
-  val RunnerGravityScale = 3f
+  val RunnerGravityScale = 3.5f
   val RunnerGravityScaleOnair = RunnerGravityScale / 2
   val RunnerLinearVelocity = 3.5f //4.65f
   val RunnerX = Width * .2f
-  val RunnerY = Height * 1.05f
+  val RunnerY = Height - RunnerHeight
 
   val GroundLinearVelocity = .15f
 
@@ -72,7 +75,9 @@ object Const {
   val RateStr = new String("Rate")
   val PlayAgainStr = new String("playAgain")
   val LeaderBoardStr = new String("LeaderBoard")
+  val AchivementsStr = new String("Achivements")
   val SubmitLeaderBoardStr = new String("SubmitLeaderBoard")
+  val SubmitAchivementsStr = new String("SubmitAchivements")
   val PausedStr = new String("Pause")
   val ResumeStr = new String("Resume")
   val GoHomeStr = new String("GoHome")
@@ -83,7 +88,7 @@ object Const {
   val MyTwitterStr = new String("MyTwitter")
   val ExitFromInfoStr = new String("GoHomeFromInfo")
 
-  val BGS_PATH = "atlas/worldAtlas2.txt"
+  val BGS_PATH = "atlas/worldAtlas3.txt"
 
   val CLOUD_IMG = "cloud%d"
 
@@ -94,6 +99,6 @@ object Const {
     case _ => AndroidUrl
   }
 
-  val ShareMsg = s"Check this very fun game <<Run, Jump 'n Switch>>  @ $AppUrl"
-  def ShareScoreMsg = s"Check my score (${ScoreMgr.score}) in this very fun game <<Run, Jump 'n Switch>> @ $AppUrl"
+  val ShareMsg = s"Check this very fun game <<Run, Jump 'n Switch>> @ iOS: $IOSUrl, Android: $AndroidUrl"
+  def ShareScoreMsg = s"See my score (${ScoreMgr.score}) in this very fun game <<Run, Jump 'n Switch>> @ iOS: $IOSUrl, Android: $AndroidUrl"
 }

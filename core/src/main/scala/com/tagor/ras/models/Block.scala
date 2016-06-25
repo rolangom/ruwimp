@@ -1,7 +1,7 @@
 package com.tagor.ras.models
 
 import com.badlogic.gdx.graphics.Texture.{TextureFilter, TextureWrap}
-import com.badlogic.gdx.graphics.g2d.{Sprite, Batch}
+import com.badlogic.gdx.graphics.g2d.{Batch, Sprite}
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -24,12 +24,13 @@ object Block {
 class Block(pbody: Body, val btype: BlockType)
   extends B2dActor(pbody) with Poolable {
 
-  var isLanded = false
   var isLast = false
+  private var isLanded = false
   private val sprite = new Sprite()
   private val jointLeftSprite = new Sprite()
   private val jointRightSprite = new Sprite()
-  def isDimenUp = btype.isDimenUp
+  private def isDimenUp = btype.isDimenUp
+  private var currentAct: () => Unit = () => ()
 
   def init(): Unit = {
     val bpos = body.getPosition
@@ -65,37 +66,37 @@ class Block(pbody: Body, val btype: BlockType)
     val blockTexture = ResMgr.getThemeTexture(BlockConst.BLOCK_INDEX)
     sprite.setTexture(blockTexture)
     blockTexture.setWrap(
-      TextureWrap.MirroredRepeat,
+      TextureWrap.Repeat,
       TextureWrap.ClampToEdge)
     blockTexture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest)
     sprite.setRegion(Int.box(0), 0, blockTexture.getWidth, blockTexture.getHeight)
 
-    val chainTexture = ResMgr.getThemeTexture(BlockConst.JOINT_INDEX)
-    jointLeftSprite.setTexture(chainTexture)
-    jointRightSprite.setTexture(chainTexture)
-    jointLeftSprite.setRegion(Int.box(0), 0, chainTexture.getWidth, chainTexture.getHeight)
-    jointRightSprite.setRegion(Int.box(0), 0, chainTexture.getWidth, chainTexture.getHeight)
-
-    chainTexture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest)
-    chainTexture.setWrap(TextureWrap.ClampToEdge, TextureWrap.Repeat)
+//    val chainTexture = ResMgr.getThemeTexture(BlockConst.JOINT_INDEX)
+//    jointLeftSprite.setTexture(chainTexture)
+//    jointRightSprite.setTexture(chainTexture)
+//    jointLeftSprite.setRegion(Int.box(0), 0, chainTexture.getWidth, chainTexture.getHeight)
+//    jointRightSprite.setRegion(Int.box(0), 0, chainTexture.getWidth, chainTexture.getHeight)
+//
+//    chainTexture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest)
+//    chainTexture.setWrap(TextureWrap.ClampToEdge, TextureWrap.Repeat)
 
     sprite.setBounds(getX, getY, getWidth, getHeight)
     sprite.setU2(getWidth / sprite.getTexture.getWidth)
     sprite.setOriginCenter()
 
-    jointLeftSprite.setBounds(getX(), 0, jointLeftSprite.getTexture.getWidth, Const.Height - getY())
-    jointLeftSprite.setV2(getHeight / jointLeftSprite.getTexture.getHeight)
-    jointLeftSprite.setOrigin(0, 0)
-
-    jointRightSprite.setBounds(getRight, 0, jointRightSprite.getTexture.getWidth, Const.Height - getY())
-    jointRightSprite.setV2(getHeight / jointRightSprite.getTexture.getHeight)
-    jointRightSprite.setOrigin(0, 0)
+//    jointLeftSprite.setBounds(getX(), 0, jointLeftSprite.getTexture.getWidth, Const.Height - getY())
+//    jointLeftSprite.setV2(getHeight / jointLeftSprite.getTexture.getHeight)
+//    jointLeftSprite.setOrigin(0, 0)
+//
+//    jointRightSprite.setBounds(getRight, 0, jointRightSprite.getTexture.getWidth, Const.Height - getY())
+//    jointRightSprite.setV2(getHeight / jointRightSprite.getTexture.getHeight)
+//    jointRightSprite.setOrigin(0, 0)
 
     val scale = btype.scale
     setScale(scale)
     sprite.setScale(scale)
-    jointLeftSprite.setScale(scale)
-    jointRightSprite.setScale(scale)
+//    jointLeftSprite.setScale(scale)
+//    jointRightSprite.setScale(scale)
 
     setColor(ThemeMgr.getBlockColor(btype.dimen))
   }
@@ -122,10 +123,11 @@ class Block(pbody: Body, val btype: BlockType)
   }
 
   def activate(): Block = {
+    println(s"block to activate $btype")
     body.setActive(true)
     body.setTransform(
-      (getX + getOriginX) / PPM,
-      (getY + getOriginY) / PPM,
+      (getX + getOriginX) * Const.MPP,
+      (getY + getOriginY) * Const.MPP,
       MathUtils.degreesToRadians * getRotation)
 
 //    configJointPos()
@@ -142,12 +144,7 @@ class Block(pbody: Body, val btype: BlockType)
     else {
       toBack()
       body.setLinearVelocity(Const.GroundLinearVelocity, 0f)
-//      try {
-//        body.setLinearVelocity(
-//          getStage.asInstanceOf[GameStage].playerVelX * .05f, 0f)
-//      } catch {
-//        case e: NullPointerException =>
-//      }
+      currentAct = dimenDownAct
     }
   }
 
@@ -176,6 +173,7 @@ class Block(pbody: Body, val btype: BlockType)
     remove() // Remove Actor from stage
     isLast = false
     isLanded = false
+    currentAct = () => ()
   }
 
   private def configJointPos(): Unit = {
@@ -213,15 +211,17 @@ class Block(pbody: Body, val btype: BlockType)
 
   override def act(delta: Float): Unit = {
     super.act(delta)
-    if (!isDimenUp) {
-      val pos = body.getPosition
-      val prevX = getX
-      setX(pos.x * PPM - getOriginX)
-      sprite.setX(getX)
-      val deltaX = getX - prevX
-//      jointLeftSprite.translateX(deltaX)
-//      jointRightSprite.translateX(deltaX)
-    }
+    currentAct()
+  }
+
+  def dimenDownAct(): Unit = {
+    val pos = body.getPosition
+    val prevX = getX
+    setX(pos.x * PPM - getOriginX)
+    sprite.setX(getX)
+    val deltaX = getX - prevX
+    //      jointLeftSprite.translateX(deltaX)
+    //      jointRightSprite.translateX(deltaX)
   }
 
   override def draw(batch: Batch, parentAlpha: Float): Unit = {
@@ -243,13 +243,13 @@ class Block(pbody: Body, val btype: BlockType)
 
   private def optX(f: (Float, Float) => Float): Float = {
     val cx = body.getPosition.x * PPM
-    val hw = (getWidth * getScaleX) / 2 * MathUtils.cosDeg(getRotation)
+    val hw = (getWidth * getScaleX) *.5f * MathUtils.cosDeg(getRotation)
     f(cx, hw)
   }
 
   private def optY(f: (Float, Float) => Float): Float = {
     val cy = body.getPosition.y * PPM
-    val hh = (getWidth * getScaleX) / 2 * MathUtils.sinDeg(getRotation)
+    val hh = (getWidth * getScaleX) *.5f * MathUtils.sinDeg(getRotation)
     f(cy, hh)
   }
 

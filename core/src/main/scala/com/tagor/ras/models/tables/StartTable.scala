@@ -16,6 +16,7 @@ import com.tagor.ras.utils._
 class StartTable(clickListener: ClickListener) extends Table with Showable {
 
   private var playBtnImg: Image = _
+  private var achivsBtnImg: Image = _
   private var lBoardBtnImg: Image = _
   private var helpImg: Image = _
   private var rateBtnImg: Image = _
@@ -70,6 +71,12 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
     playBtnImg.addListener(clickListener)
     playBtnImg.setTouchable(Touchable.enabled)
 
+    achivsBtnImg  = new Image(ResMgr.getRegion(Const.BGS_PATH, "achivs_btn"))
+    achivsBtnImg.setOrigin(Align.center)
+    achivsBtnImg.setUserObject(Const.AchivementsStr)
+    achivsBtnImg.addListener(clickListener)
+    achivsBtnImg.setTouchable(Touchable.enabled)
+
     lBoardBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
     lBoardBtnImg.setOrigin(Align.center)
     lBoardBtnImg.setUserObject(Const.LeaderBoardStr)
@@ -88,18 +95,18 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
     infoImg.addListener(clickListener)
     infoImg.setTouchable(Touchable.enabled)
 
-    add(logoImg).colspan(6).spaceBottom(32).spaceTop(64)
+    add(helpImg).pad(6).bottom()
+    add(logoImg).colspan(5).spaceTop(64)
+    add(infoImg).pad(6).bottom()
     row()
-    add(lBoardBtnImg).pad(12).center()
-    add(shareBtnImg).pad(12).center()
-    add(rateBtnImg).pad(12).center()
-    add(playBtnImg).pad(12).center()
-    row()
-    add(soundBtnImg).pad(12).center()
-    add(helpImg).pad(12).center()
+    add(lBoardBtnImg).pad(6).center()
+    add(achivsBtnImg).pad(6).center()
+    add(shareBtnImg).pad(6).center()
+    add(playBtnImg).pad(6).size(80f).center()
+    add(rateBtnImg).pad(6).center()
+    add(twitterImg).pad(6).center()
+    add(soundBtnImg).pad(6).center()
 //    add(noAdsBtnImg).pad(12).center()
-    add(twitterImg).pad(12).center()
-    add(infoImg).pad(12).center()
     setVisible(false)
   }
   init()

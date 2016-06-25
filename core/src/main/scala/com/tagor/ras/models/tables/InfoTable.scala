@@ -37,7 +37,7 @@ class InfoTable(clickListener: ClickListener) extends Table with Showable {
 
     val lbl1 = new Label("Designed and Developed by", labelStyle)
     val tapContLbl = new Label("Tap to continue", labelStyle)
-    val creditsLbl = new Label("Thanks to Libgdx and Kenney's assets", labelStyle)
+    val creditsLbl = new Label("Powered by Libgdx", labelStyle)
     labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.Red))
     val myTwitterlbl = new Label("@rolangom", labelStyle)
 

@@ -35,7 +35,9 @@ object BlockConst {
     BlockTypes(i)(j) = new BlockType(Dimens(i), Sizes(j))
   }
 
-  val Width: (Int, Int) => Float = (d: Int, s: Int) => Scales(d) * Sizes(s) * Size
+//  val Width: (Int, Int) => Float = (d: Int, s: Int) => Scales(d) * Sizes(s) * Size
+  def Width(d: Int, s: Int): Float = Scales(d) * Sizes(s) * Size
+  def Height(d: Int): Float = Scales(d) * Size
 
   val LevelEasy = 0
   val LevelMid = 1
@@ -63,9 +65,9 @@ object BlockConst {
 
   val THEMES = Array(THEME_CITY, THEME_MOUNT, THEME_SEA)
 
-  val BLOCK_PATH = "imgs/block.png"
-  val PLAT_PATH = "imgs/plat.png"
-  val WOOD_PATH = "imgs/trunk.png"
+  val BLOCK_PATH = "imgs/brick_v2.png" // "imgs/block.png"
+  val PLAT_PATH = "imgs/plat_v2.png"
+  val WOOD_PATH = "imgs/tree_v2.png" // "imgs/trunk.png"
   val CHAIN_PATH = "imgs/chain.png"
 
   val CITY_BG2 = "imgs/city1.png"
@@ -74,17 +76,17 @@ object BlockConst {
 
   val CITY_IMGS = Array[String](BLOCK_PATH, CHAIN_PATH, CITY_BG2)
   val MOUNTS_IMGS = Array[String](WOOD_PATH, CHAIN_PATH, MOUNTS_BG2)
-  val SEA_IMGS = Array[String](BLOCK_PATH, CHAIN_PATH, SEA_BG)
+  val SEA_IMGS = Array[String](PLAT_PATH, CHAIN_PATH, SEA_BG)
 
   val THEMES_IMGS = Array[Array[String]](CITY_IMGS, MOUNTS_IMGS, SEA_IMGS)
 
-  val Red = "a02c2cff"
+  val Red = "a02c2cff" // "f07342" // orage
   val DarkBlue = "374548ff"
-  val Gray = "374845ff"
-  val Blue = "216778ff"
+  val Gray = "66a5a6" // "374845ff"
+  val Blue = "007673"// "216778ff"
   val BlueLight = "216778ff"
-  val Green = "217821ff"
-  val Brown = "784421ff"
+  val Green = "00a258ff"// "217821ff"
+  val Brown = "986639ff" //"784421ff"
 
   val COLOR_SET_BLUE = Array[String]("e6f4f4ff", Red, Blue)
   val COLOR_SET_GRAY = Array[String]("ecf0f1ff", Red, Blue)

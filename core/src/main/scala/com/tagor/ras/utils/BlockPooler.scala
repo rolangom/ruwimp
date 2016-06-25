@@ -1,7 +1,7 @@
 package com.tagor.ras.utils
 
-import com.badlogic.gdx.utils.{Pools, Pool, ObjectMap}
-import com.tagor.ras.models.{ItemToInst, Block, BlockType}
+import com.badlogic.gdx.utils.{Pool, Pools}
+import com.tagor.ras.models.{Block, BlockType, ItemToInst}
 
 import scala.collection.mutable
 

@@ -17,7 +17,7 @@ import rx.lang.scala.Subscription
   * Created by rolangom on 12/12/15.
   */
 class UiStage(batch: Batch)
-  extends Stage(new ExtendViewport(
+  extends Stage(new FitViewport(
     Const.Width, Const.Height,
     new OrthographicCamera), batch){
 
@@ -43,8 +43,8 @@ class UiStage(batch: Batch)
           }, true, true)
         case Const.LeaderBoardStr =>
           (() => RxMgr.showLeaderBoard.onNext(""), true, false)
-        case Const.SubmitLeaderBoardStr =>
-          (() => RxMgr.showLeaderBoard.onNext(String.valueOf(ScoreMgr.score)), true, false)
+        case Const.AchivementsStr =>
+          (() => RxMgr.showAchivements.onNext(""), true, false)
         case Const.SoundStr =>
           (() => toggleSound(), true, false)
         case Const.ResumeStr =>
@@ -84,7 +84,7 @@ class UiStage(batch: Batch)
         color(Color.WHITE, .15f)
       ),
       sequence(
-        scaleBy(-.25f, -.25f, .15f),
+        scaleBy(-.15f, -.15f, .15f),
         scaleTo(1f, 1f, .15f),
 //        delay(.15f),
         run(runnable(f))
@@ -284,7 +284,7 @@ class UiStage(batch: Batch)
   }
 
   private def getScreenSideRects = {
-    val v = stageToScreenCoordinates(new Vector2(0f, 64f))
+    val v = stageToScreenCoordinates(new Vector2(0f, Const.RunnerHeight * Const.LargerFactor))
     v.y = Gdx.graphics.getHeight - v.y
     println(s"getScreenSideRects v.y = ${v.y}")
     (new Rectangle(Gdx.graphics.getWidth / 2, v.y,

@@ -3,8 +3,9 @@ package com.tagor.ras.screens
 import com.badlogic.gdx.Application.ApplicationType
 import com.badlogic.gdx.graphics.{Color, GL20}
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.{Gdx, Screen}
-import com.tagor.ras.stages.{UiStage, GameStage}
+import com.tagor.ras.stages.{GameStage, UiStage}
 import com.tagor.ras.utils._
 
 /**
@@ -22,8 +23,8 @@ class GameScreen extends Screen {
   private val TIME_STEP = 0.01f// 1f / (if (Gdx.app.getType == ApplicationType.iOS) 60f else 300f)
 
   RxMgr.onGameState
-    .filter(s => s == Const.GameStatePause || s == Const.GameStateResume || s == Const.GameStatePlay)
-    .map(_ == Const.GameStatePause)
+    .filter(s => s == Const.GameStatePause || s == Const.GameStateResume || s == Const.GameStatePlay || s == Const.GameStateOver)
+    .map(s => s == Const.GameStatePause || s == Const.GameStateOver)
     .subscribe(p => handleGameState(p))
 
   override def show(): Unit = {
@@ -45,6 +46,7 @@ class GameScreen extends Screen {
   }
 
   override def dispose(): Unit = {
+    Gdx.app.log("RGT", "Screen to dispose")
     gameStage dispose()
     uiStage dispose()
     ResMgr dispose()
@@ -93,6 +95,7 @@ class GameScreen extends Screen {
   }
 
   override def resume(): Unit = {
+    println("RGT -> resumed")
     world.setContactListener(gameStage)
     Gdx.input.setInputProcessor(uiStage)
 

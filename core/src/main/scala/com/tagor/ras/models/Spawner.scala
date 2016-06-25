@@ -44,19 +44,16 @@ class Spawner(camera: OrthographicCamera) {
 
   def start(): Unit = {
     println("spanwer start")
+    subscribeInterval()
     val camPos = camera.position
     utils.post { () =>
-      initDefaults(vblocks, camPos.x, camPos.y, 1)
-        .lastOption
-        .foreach(b => spawn(b.rightX, b.rightY, b))
+      initDefaults(vblocks, camPos.x, camPos.y)
     }
-    subscribeInterval()
   }
 
   private def subscribeInterval(): Unit = {
     RxMgr.intervalObs
       .subscribeOn(ComputationScheduler())
-      //      .sample(250 milliseconds)
       .subscribe(_ => checkShortInterval())
   }
 
@@ -86,29 +83,24 @@ class Spawner(camera: OrthographicCamera) {
   private def spawn(x: Float, y: Float, pblock: Block): Unit = {
     Future {
       println("lets spawn")
-        patGen.genRandSeq(x, y, pblock)
+      patGen.genRandSeq(x, y, pblock)
     }
   }
 
   private def initDefaults(blocks: ArrayBuffer[Block],
-                           x: Float, y:Float,
-                           count: Int = MathUtils.random(2, 4)): Array[Block] = {
-    var i = 0
-    val ang = 15 // MathUtils.random(10f, 40f)
-    while (i < count) {
-      val b1 = pooler.get(BlockConst.DimenUp, BlockConst.SizeXL)
-      val b2 = pooler.get(BlockConst.DimenDown, BlockConst.SizeXL)
+                           x: Float, y:Float): Unit = {
 
-      b1.init(x + b1.btype.width * i, y, ang).activate()
-      b2.init(x + b2.btype.width * i, y, -ang).activate()
+    val ang = 15
+    val b1 = pooler.get(BlockConst.DimenUp, BlockConst.SizeXL)
+    val b2 = pooler.get(BlockConst.DimenDown, BlockConst.SizeXL)
 
-      blocks += b1
-      blocks += b2
+    b1.init(x, y, ang).activate()
+    b2.init(x, y, -ang).activate()
 
-      i += 1
-    }
-    blocks.last.asLast()
-    blocks.toArray
+    blocks += b1
+    blocks += b2
+
+    patGen.genRandSeq(b2.rightX, b2.rightY, b2)
   }
 
   private def checkFirstVisible(): Unit = {

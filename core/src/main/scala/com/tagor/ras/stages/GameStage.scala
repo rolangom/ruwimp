@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.{MathUtils, Vector3}
 import com.badlogic.gdx.physics.box2d._
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.badlogic.gdx.utils.viewport.{ExtendViewport, FillViewport, FitViewport, StretchViewport}
 import com.tagor.ras.models._
 import com.tagor.ras.utils._
 import rx.lang.scala.schedulers.ComputationScheduler
@@ -18,20 +18,24 @@ import scala.concurrent.duration.DurationInt
  * Created by rolangom on 7/8/15.
  */
 class GameStage(batch: Batch)
-  extends Stage(new ExtendViewport(
+  extends Stage(new FitViewport(
     Const.Width, Const.Height,
     new OrthographicCamera), batch)
   with ContactListener {
 
 //  private val b2dr = new Box2DDebugRenderer
 //  private val b2dCam = new OrthographicCamera
-  private val spawner = new Spawner(getCamera.asInstanceOf[OrthographicCamera])
+
+//  private val spawner = new Spawner(getCamera.asInstanceOf[OrthographicCamera])
+//  private val spawner = new LevelSpawner(getCamera.asInstanceOf[OrthographicCamera])
+//  private val spawner = new ReaderRandSpawner(getCamera.asInstanceOf[OrthographicCamera])
+//  private val spawner = new MapTiledSpawner(getCamera.asInstanceOf[OrthographicCamera])
+  private val spawner = new MapSpawner(getCamera.asInstanceOf[OrthographicCamera])
 
   private val MinCamSpeed: Float = .0067f
   private val MaxCamSpeed: Float = .0195f
   private var cSpeed = MinCamSpeed
-  private val CamTargetX = Const.Width * .65f
-  private val newCamPos = new Vector3()
+  private val CamTargetX = getCamera.viewportWidth * .65f
   private val background = new Background(getCamera)
   private var currAct: Float => Unit = emptyAct
   private val player = new Player
@@ -77,7 +81,7 @@ class GameStage(batch: Batch)
   def goFaster(): Unit = {
     player.goFaster()
     if (cSpeed < MaxCamSpeed)
-      cSpeed += .003f
+      cSpeed += .000375f // .00075f //.003f
   }
 
   private def handleGame(isRunning: Boolean): Unit = {
@@ -114,7 +118,7 @@ class GameStage(batch: Batch)
     println("RGT -> GameStage preStart")
     ScoreMgr.reset()
     val cam = getCamera
-    cam.position.set(newCamPos.set(cam.viewportWidth / 2, cam.position.y, cam.position.z))
+    cam.position.set(cam.viewportWidth / 2, cam.position.y, cam.position.z)
     cam.update()
     player.preStart()
     background.start()
@@ -163,13 +167,12 @@ class GameStage(batch: Batch)
     // TODO: ONLY WHILE IN DEBUG (Remove)
     val cam = getCamera
 //    b2dCam.position.set(
-//      cam.position.x / Const.PPM,
-//      cam.position.y / Const.PPM,
+//      cam.position.x * Const.MPP,
+//      cam.position.y * Const.MPP,
 //      cam.position.z)
 //    b2dCam.update()
 
-    newCamPos.x = MathUtils.lerp(newCamPos.x, player.getX + CamTargetX, cSpeed)
-    cam.position.x = newCamPos.x
+    cam.position.x = MathUtils.lerp(cam.position.x, player.getX + CamTargetX, cSpeed)
     cam.update()
   }
 
@@ -189,18 +192,25 @@ class GameStage(batch: Batch)
 
   override def beginContact(contact: Contact): Unit = {
 //    println("beginContact")
-    WorldFactory.blockIfLanded(
-      contact.getFixtureA,
-      contact.getFixtureB).foreach { b =>
-        println("beginContact player on block")
-        player.landedAt(b.getZIndex)
-        if (b.setAsLanded())
-          ScoreMgr.increase()
-      }
+//    WorldFactory.blockIfLanded(
+//      contact.getFixtureA,
+//      contact.getFixtureB).foreach { b =>
+//        println("beginContact player on block")
+//        player.landedAt(b.getZIndex)
+//        if (b.setAsLanded())
+//          ScoreMgr.increase(b)
+//      }
+    val b = WorldFactory.blockIfLanded2(contact.getFixtureA, contact.getFixtureB)
+    if (b != null) {
+      println("beginContact player on block")
+      player.landedAt(b.getZIndex)
+      if (b.setAsLanded())
+        ScoreMgr.increase(b)
+    }
   }
 
   override def endContact(contact: Contact): Unit = {
-    if (WorldFactory.isPlayerAndGround(contact.getFixtureA, contact.getFixtureB))
+    if (WorldFactory.isPlayerAndGround2(contact.getFixtureA, contact.getFixtureB))
       player.onAir()
   }
 

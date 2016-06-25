@@ -6,10 +6,9 @@ import com.tagor.ras.models.ItemToInst
 /**
   * Created by rolangom on 5/7/16.
   */
-object WorldParser {
+class WorldParser(pool: BlockPooler) {
 
-  val itiPool = Pools.get(classOf[ItemToInst])
-  val jsonReader = new JsonReader
+  private val jsonReader = new JsonReader
 
   def objsFromLevel2(level: Int, num: Int, xSpan: Float = 0): Unit = {
     val jsonValue = jsonReader.parse(Gdx.files.internal(s"levels/level${level}_$num.json"))
@@ -34,7 +33,7 @@ object WorldParser {
         val isLast = props.getBoolean("isLast", false)
 
         post { () =>
-          RxMgr.onItiAdded.onNext(itiPool.obtain().init(
+          RxMgr.onItiAdded.onNext(pool.getIti.init(
             dimen,
             size,
             x,

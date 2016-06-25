@@ -74,9 +74,9 @@ class Player
 
   private def initDisposables(): Unit = {
     val atlas = ResMgr.getAtlas("atlas/player_01_anims.txt")
-    runningAnim = new Animation(0.025f, atlas.findRegions("running_"), PlayMode.LOOP)
-    jumpingAnim = new Animation(0.02f, atlas.findRegions("jumping_"), PlayMode.NORMAL)
-    fallingAnim = new Animation(0.1f, atlas.findRegions("falling_"), PlayMode.NORMAL)
+    runningAnim = new Animation(0.025f, atlas.findRegions("running"), PlayMode.LOOP)
+    jumpingAnim = new Animation(0.02f, atlas.findRegions("jumping"), PlayMode.NORMAL)
+    fallingAnim = new Animation(0.1f, atlas.findRegions("falling"), PlayMode.NORMAL)
   }
 
   def hello() = {
@@ -87,7 +87,7 @@ class Player
 
   def goFaster(): Unit = {
     if (currentSpeed < RxPlayerConst.MaxSpeed)
-      currentSpeed += 2f
+      currentSpeed += .25f// .5f 2f
   }
 
   private def handleInput(input:Int): Unit = {
@@ -207,7 +207,7 @@ class Player
     chAnim = () => handleAnimOnGround()
     cVelY = () => velY
 
-    SoundMgr.playFootStep((if (isDimenUp) Const.UpScale else Const.DownScale) - .5f)
+    post(() =>  SoundMgr.playFootStep((if (isDimenUp) Const.UpScale else Const.DownScale) - .5f))
   }
 
   def isOnGround: Boolean = groundContacts > 0

@@ -17,6 +17,9 @@ object RxMgr {
   lazy val newScore = Subject[Int]()
   lazy val incEvent = Subject[String]()
   lazy val showLeaderBoard = Subject[String]()
+  lazy val submitLeaderBoard = Subject[String]()
+  lazy val showAchivements = Subject[String]()
+  lazy val submitAchivements = Subject[String]()
   lazy val newLevel = Subject[Int]()
   lazy val newTheme = Subject[Int]()
 
@@ -55,7 +58,7 @@ object RxMgr {
   def showShareText(msg: String): Unit = onShareText.onNext(msg)
 
   private def startInterval(): Unit = {
-    _intervalObs = Observable.interval(125 milliseconds)
+    _intervalObs = Observable.interval(250 milliseconds)
       .takeUntil(onGameState.filter(s => s == Const.GameStatePause
         || s == Const.GameStateOver || s == Const.GameStateHome))
       .publish.refCount

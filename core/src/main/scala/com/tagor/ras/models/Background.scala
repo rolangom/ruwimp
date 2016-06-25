@@ -20,7 +20,7 @@ class Background(camera: Camera) extends Actor {
   private var lastCamX = 0f
   private val camHalfWidth: Float = camera.viewportWidth / 2
 
-  private val topBody = WorldFactory.createTopBody(0f, Const.Height, Const.Width * 2)
+  private val topBody = WorldFactory.createTopBody(0f, camera.viewportHeight, camera.viewportWidth * 2)
 
   RxMgr.newTheme
     .subscribe(t => invalidate(t))
@@ -39,7 +39,7 @@ class Background(camera: Camera) extends Actor {
     val bg2Texture = ResMgr.getThemeTexture(BlockConst.BG1_INDEX)
     bg2Texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest)
     bg2Texture.setWrap(TextureWrap.Repeat, TextureWrap.ClampToEdge)
-    val bg2Rect = new Rectangle(0, 0, Const.Width + bg2Texture.getWidth, bg2Texture.getHeight) // y = 46
+    val bg2Rect = new Rectangle(0, 0, camera.viewportWidth + bg2Texture.getWidth, bg2Texture.getHeight) // y = 46
 
     bg2Sprite.setTexture(bg2Texture)
     bg2Sprite.setRegion(Int.box(0), 0, bg2Texture.getWidth, bg2Texture.getHeight)
@@ -66,16 +66,16 @@ class Background(camera: Camera) extends Actor {
       cloud1Sprite.getRegionWidth,
       cloud1Sprite.getRegionHeight)
     cloud1Sprite.setPosition(
-      MathUtils.random(0f, Const.Width * .5f - cloud1Sprite.getWidth),
-      MathUtils.random(Const.Height * .4f, Const.Height - cloud1Sprite.getHeight))
+      MathUtils.random(0f, camera.viewportWidth * .5f - cloud1Sprite.getWidth),
+      MathUtils.random(camera.viewportHeight * .4f, camera.viewportHeight - cloud1Sprite.getHeight))
 
     cloud2Sprite.setSize(
       cloud2Sprite.getRegionWidth,
       cloud2Sprite.getRegionHeight)
     cloud2Sprite.setPosition(
-      MathUtils.random(Const.Width * .5f, Const.Width - cloud2Sprite.getWidth),
+      MathUtils.random(camera.viewportWidth * .5f, camera.viewportWidth - cloud2Sprite.getWidth),
 //      cloud1Sprite.getX + cloud1Sprite.getWidth + MathUtils.random(0, Const.Width / 2),
-      MathUtils.random(Const.Height * .45f, Const.Height - cloud2Sprite.getHeight))
+      MathUtils.random(camera.viewportHeight * .45f, camera.viewportHeight - cloud2Sprite.getHeight))
 
     cloud1Sprite.setFlip(MathUtils.randomBoolean(), false)
     cloud2Sprite.setFlip(MathUtils.randomBoolean(), false)
@@ -118,7 +118,7 @@ class Background(camera: Camera) extends Actor {
       cloud2Sprite.setX(camX + camHalfWidth)
 
     if (topBody.getPosition.x * Const.PPM <= camX - camHalfWidth)
-      topBody.setTransform((camX + camHalfWidth) / Const.PPM, (Const.Height + BlockConst.Size) / Const.PPM, 0)
+      topBody.setTransform((camX + camHalfWidth) / Const.PPM, (camera.viewportHeight + BlockConst.Size) / Const.PPM, 0)
   }
 
   def start(): Unit = {
@@ -126,7 +126,7 @@ class Background(camera: Camera) extends Actor {
 
     topBody.setTransform(
       (camera.position.x + camHalfWidth) / Const.PPM,
-      (Const.Height + BlockConst.Size) / Const.PPM, 0)
+      (camera.viewportHeight + BlockConst.Size) / Const.PPM, 0)
 
     lastCamX = camera.position.x
     configClouds()

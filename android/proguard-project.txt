@@ -62,6 +62,7 @@
 
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
+#-dontskipnonpubliclibraryclassmembers
 -dontoptimize
 -dontpreverify
 
@@ -98,8 +99,35 @@
 -keep public class rx.libdx.*
 -keep public class com.tagor.ras.*
 
+## admob
+-keep public class com.google.android.gms.ads.** {
+   public *;
+}
+
+-keep public class com.google.ads.** {
+   public *;
+}
+
+-dontwarn com.google.android.gms.**
 
 ## Scala
+
+#-dontwarn **$$anonfun$*
+#-dontwarn scala.beans.ScalaBeanInfo
+#-dontwarn scala.collection.generic.GenTraversableFactory
+#-dontwarn scala.collection.immutable.RedBlack$Empty
+#-dontwarn scala.concurrent.forkjoin.**
+#-dontwarn scala.reflect.**
+#-dontwarn scala.sys.process.**
+#-dontwarn scala.swing.**
+#-dontwarn scala.concurrent.**
+#-dontwarn scala.tools.**,plugintemplate.**
+
+#-keep class * implements org.xml.sax.EntityResolver
+
+#-keepclassmembers class * {
+#    ** MODULE$;
+#}
 
 # Fix accesses to class members by means of introspection
 -keepclassmembernames class scala.concurrent.forkjoin.ForkJoinPool {
@@ -109,7 +137,17 @@
     ** qlock;
     ** indexSeed;
     ** parkBlocker;
+#    long eventCount;
+#    int  workerCounts;
+#    int  runControl;
+#    scala.concurrent.forkjoin.ForkJoinPool$WaitQueueNode syncStack;
+#    scala.concurrent.forkjoin.ForkJoinPool$WaitQueueNode spareStack;
 }
+#-keepclassmembernames class scala.concurrent.forkjoin.ForkJoinWorkerThread {
+#    int base;
+#    int sp;
+#    int runState;
+#}
 -keepclassmembernames class scala.concurrent.forkjoin.ForkJoinPool$WorkQueue {
     ** qlock;
 }
@@ -120,6 +158,7 @@
     ** head;
     ** tail;
     ** sweepVotes;
+#    scala.concurrent.forkjoin.LinkedTransferQueue$PaddedAtomicReference cleanMe;
 }
 -keepclassmembernames class scala.concurrent.forkjoin.LinkedTransferQueue$Node {
     ** item;
@@ -135,3 +174,24 @@
 -keep public class scala.collection.GenSeq
 -keep public class scala.collection.generic.CanBuildFrom
 -keep public class scala.math.Ordering
+
+#-dontnote scala.Enumeration
+
+#------- Google play services -------
+
+-keep class * extends java.util.ListResourceBundle {
+    protected Object[][] getContents();
+}
+
+-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+    public static final *** NULL;
+}
+
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepclassmembernames class * {
+    @com.google.android.gms.common.annotation.KeepName *;
+}
+
+-keepnames class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}

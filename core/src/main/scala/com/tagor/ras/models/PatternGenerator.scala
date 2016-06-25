@@ -10,30 +10,19 @@ import com.tagor.ras.utils.BlockConst._
 class PatternGenerator(pooler: BlockPooler) {
 
   private def randQty: Int = MathUtils.random(2, 4)
-  private def randSpace = BlockConst.Sizes(BlockConst.SizeS) * BlockConst.Size * MathUtils.random(-.25f, 1f)
+  private def randSpace = BlockConst.Sizes(BlockConst.SizeS) * BlockConst.Size * MathUtils.random(-.25f, 1.5f)
 
   private def randDimen = MathUtils.random(0, Dimens.length - 1)
   private def randSize(max: Int = Sizes.length - 1) = MathUtils.random(0, max)
 
-  private var level = 0
-
-  private def randAng(max: Int = level) =
-    if (level == 0) Angles(0) else Angles(MathUtils.random(level))
-
+  private def randAng(max: Int = Angles.length - 1) = Angles(MathUtils.random(max))
   private def isDimenUp(dimen: Int): Boolean = dimen == DimenUp
-
-  private def angSign(dimen: Int): Int =
-    if (isDimenUp(dimen)) 1 else -1
-
+  private def angSign(dimen: Int): Int = if (isDimenUp(dimen)) 1 else -1
   private def isLowY(y: Float): Boolean = y < Const.Height * .45f
 
-  private val hsh = Const.Height / 2 // half screen height
-  private val hhsh = Const.Height *.25f // half screen height
-  private val hphsh = Const.Height *.75f // 75% screen height
-
-  RxMgr.newLevel
-    .filter(_ < Angles.length)
-    .subscribe(l => level = l)
+  private def hsh = Const.Height *.5f // half screen height
+  private def hhsh = Const.Height *.25f // half screen height
+  private def hphsh = Const.Height *.75f // 75% screen height
 
   def genRandSeq(x: Float, y: Float, pblock: Block): Unit = {
     if (y >= hhsh && y <= hphsh) {
@@ -49,8 +38,8 @@ class PatternGenerator(pooler: BlockPooler) {
         val ndimen = BlockConst.DimenUp
         val si = BlockConst.SizeL
         val wid = Width(ndimen, si)
-        val h = hAng(wid, ang) / 2
-        val w = wAng(wid, ang) / 2
+        val h = hAng(wid, ang) *.5f
+        val w = wAng(wid, ang) *.5f
 
         val b = pooler.getIti.init(ndimen, si,
           x + w, h, ang, isLast = true)
@@ -60,7 +49,7 @@ class PatternGenerator(pooler: BlockPooler) {
         println(s"high y $y")
         val ndimen = BlockConst.DimenDown
         val wid = Width(ndimen, size)
-        val h = hAng(wid, nangle) / 2
+        val h = hAng(wid, nangle) *.5f
         val f = if (y >= Const.Height * 1.25f) 2f else if (y >= Const.Height) 1.5f else 1f
 
         val b = pooler.getIti.init(ndimen, size,
@@ -163,7 +152,7 @@ class PatternGenerator(pooler: BlockPooler) {
   def genSeqLT(x: Float,
                y: Float,
                c: Int = randQty,
-               ang: Float = randAng(),
+               ang: Float = randAng(2),
                size: Int = randSize(2),
                space: Float = randSpace,
                wlast: Boolean = true): Float =
@@ -172,7 +161,7 @@ class PatternGenerator(pooler: BlockPooler) {
   def genSeqGT(x: Float,
                y: Float,
                c: Int = randQty,
-               ang: Float = randAng(),
+               ang: Float = randAng(2),
                size: Int = randSize(2),
                space: Float = randSpace,
                wlast: Boolean = true): Float =
@@ -181,8 +170,8 @@ class PatternGenerator(pooler: BlockPooler) {
   private def genSeqLTorGT(x: Float,
                    y: Float,
                    c: Int = randQty,
-                   ang: Float = randAng(),
-                   size: Int = randSize(),
+                   ang: Float = randAng(2),
+                   size: Int = randSize(2),
                    space: Float = randSpace,
                    isLt: Boolean = true,
                    wlast: Boolean = true): Float = {
@@ -250,7 +239,7 @@ class PatternGenerator(pooler: BlockPooler) {
                      c: Int = randQty,
                      ang: Float = randAng(2),
                      odimen: Int = randDimen,
-                     size: Int = randSize(2),
+                     size: Int = randSize(1),
                      space: Float = randSpace,
                      wlast: Boolean = true): Float = {
     var i = 0
@@ -298,8 +287,8 @@ class PatternGenerator(pooler: BlockPooler) {
   def genSeqV(x: Float,
               y: Float,
               c: Int = randQty,
-              ang: Float = randAng(),
-              size: Int = randSize(),
+              ang: Float = randAng(2),
+              size: Int = randSize(2),
               space: Float = randSpace,
               wlast: Boolean = true): Float =
     genDimenABnSizeCC(x, y, true, c, ang, size, space, wlast)
@@ -307,8 +296,8 @@ class PatternGenerator(pooler: BlockPooler) {
   def genSeqInvV(x: Float,
               y: Float,
               c: Int = randQty,
-              ang: Float = randAng(),
-              size: Int = randSize(),
+              ang: Float = randAng(2),
+              size: Int = randSize(2),
               space: Float = randSpace,
               wlast: Boolean = true): Float =
     genDimenABnSizeCC(x, y, false, c, ang, size, space, wlast)
@@ -317,8 +306,8 @@ class PatternGenerator(pooler: BlockPooler) {
                         y: Float,
                         inverse: Boolean = true,
                         c: Int = randQty,
-                        ang: Float = randAng(),
-                        size: Int = randSize(),
+                        ang: Float = randAng(2),
+                        size: Int = randSize(2),
                         space: Float = randSpace,
                         wlast: Boolean = true): Float = {
 

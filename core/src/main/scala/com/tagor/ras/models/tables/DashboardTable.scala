@@ -24,6 +24,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
 
   private var shareBtnImg: Image = _
   private var playBtnImg: Image = _
+  private var achivsBtnImg: Image = _
   private var lBoardBtnImg: Image = _
   private var homeBtnImg: Image = _
 
@@ -75,9 +76,15 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     playBtnImg.addListener(clickListener)
     playBtnImg.setTouchable(Touchable.enabled)
 
+    achivsBtnImg  = new Image(ResMgr.getRegion(Const.BGS_PATH, "achivs_btn"))
+    achivsBtnImg.setOrigin(Align.center)
+    achivsBtnImg.setUserObject(Const.AchivementsStr)
+    achivsBtnImg.addListener(clickListener)
+    achivsBtnImg.setTouchable(Touchable.enabled)
+
     lBoardBtnImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "leaderboard_btn"))
     lBoardBtnImg.setOrigin(Align.center)
-    lBoardBtnImg.setUserObject(Const.SubmitLeaderBoardStr)
+    lBoardBtnImg.setUserObject(Const.LeaderBoardStr)
     lBoardBtnImg.addListener(clickListener)
     lBoardBtnImg.setTouchable(Touchable.enabled)
 
@@ -87,20 +94,21 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     homeBtnImg.addListener(clickListener)
     homeBtnImg.setTouchable(Touchable.enabled)
 
-    add(gameOverLbl).colspan(4).spaceBottom(24)
+    add(gameOverLbl).colspan(5).spaceBottom(24)
     row()
-    add(scoreLbl).colspan(3).left()
+    add(scoreLbl).colspan(4).left()
     add(bestLbl).right()
     row()
-    add(scoreDashbLbl).colspan(3).left()
+    add(scoreDashbLbl).colspan(4).left()
     add(bestDashbLbl).right()
     row()
-    add(newDashbLbl).colspan(4).right().spaceBottom(12)
+    add(newDashbLbl).colspan(5).right().spaceBottom(12)
     row()
-    add(homeBtnImg).size(64)
-    add(shareBtnImg).size(64)
-    add(lBoardBtnImg).size(64)
-    add(playBtnImg).size(64)
+    add(homeBtnImg).pad(6).size(64)
+    add(shareBtnImg).pad(6).size(64)
+    add(playBtnImg).pad(6).size(80)
+    add(lBoardBtnImg).pad(6).size(64)
+    add(achivsBtnImg).pad(6).size(64)
     setVisible(false)
   }
   init()
