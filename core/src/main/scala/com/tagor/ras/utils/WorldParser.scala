@@ -2,7 +2,6 @@ package com.tagor.ras.utils
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.utils._
-import com.tagor.ras.models.ItemToInst
 /**
   * Created by rolangom on 5/7/16.
   */

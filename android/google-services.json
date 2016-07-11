@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_id": "runjumpandswitch",
+    "project_number": "210694181285",
+    "name": "RunJumpAndSwitch"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:210694181285:android:115410aee2264e84",
+        "client_id": "android:com.tagor.ras",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.tagor.ras",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-67952410-2"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 2,
+          "test_banner_ad_unit_id": "ca-app-pub-3940256099942544/6300978111",
+          "test_interstitial_ad_unit_id": "ca-app-pub-3940256099942544/1033173712"
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

@@ -9,6 +9,8 @@ import org.robovm.apple.foundation.*;
 import org.robovm.apple.gamekit.*;
 import org.robovm.apple.uikit.*;
 import org.robovm.pods.google.mobileads.*;
+//import org.robovm.pods.google.analytics.GAI;
+//import org.robovm.pods.google.analytics.GAILogLevel;
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
@@ -43,6 +45,16 @@ public class IOSLauncher extends IOSApplication.Delegate implements GKGameCenter
         config.useCompass = false;
         config.allowIpod = false;
         return new IOSApplication(new RasGame(), config);
+    }
+
+    @Override
+    public boolean didFinishLaunching(UIApplication application, UIApplicationLaunchOptions launchOptions) {
+//        GAI gai = GAI.getSharedInstance();
+//        gai.enableCrashReporting();
+//        gai.getLogger().setLogLevel(GAILogLevel.Verbose);
+
+
+        return super.didFinishLaunching(application, launchOptions);
     }
 
     public static void main(String[] argv) {
@@ -387,7 +399,6 @@ public class IOSLauncher extends IOSApplication.Delegate implements GKGameCenter
         }
 
         GKGameCenterViewController gcViewController = new GKGameCenterViewController();
-
         gcViewController.setGameCenterDelegate(this);
         gcViewController.setViewState(GKGameCenterViewControllerState.Leaderboards);
         gcViewController.setLeaderboardIdentifier(LB_DEFAULT);
@@ -402,7 +413,6 @@ public class IOSLauncher extends IOSApplication.Delegate implements GKGameCenter
         }
 
         GKGameCenterViewController gcViewController = new GKGameCenterViewController();
-
         gcViewController.setGameCenterDelegate(this);
         gcViewController.setViewState(GKGameCenterViewControllerState.Achievements);
 

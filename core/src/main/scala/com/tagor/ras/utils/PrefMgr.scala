@@ -10,4 +10,11 @@ object PrefMgr {
   private val _prefs = Gdx.app.getPreferences("RumperGamePrefs")
 
   def prefs = _prefs
+
+  def currPlayer = prefs.getInteger("currPlayer", 0)
+
+  def currPlayer_=(n: Int)  = {
+    prefs.putInteger("currPlayer", n)
+    prefs.flush()
+  }
 }

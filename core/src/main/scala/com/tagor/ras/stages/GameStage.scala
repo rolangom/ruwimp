@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.{MathUtils, Vector3}
 import com.badlogic.gdx.physics.box2d._
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.utils.viewport.{ExtendViewport, FillViewport, FitViewport, StretchViewport}
+import com.badlogic.gdx.utils.viewport._
 import com.tagor.ras.models._
 import com.tagor.ras.utils._
 import rx.lang.scala.schedulers.ComputationScheduler
@@ -18,7 +18,7 @@ import scala.concurrent.duration.DurationInt
  * Created by rolangom on 7/8/15.
  */
 class GameStage(batch: Batch)
-  extends Stage(new FitViewport(
+  extends Stage(new ExtendViewport(
     Const.Width, Const.Height,
     new OrthographicCamera), batch)
   with ContactListener {
@@ -84,6 +84,10 @@ class GameStage(batch: Batch)
       cSpeed += .000375f // .00075f //.003f
   }
 
+  def onNewTheme(themeItem: Int): Unit = {
+    background.invalidate(themeItem)
+  }
+
   private def handleGame(isRunning: Boolean): Unit = {
     if (isRunning) startDelayed()
     else end()
@@ -139,6 +143,7 @@ class GameStage(batch: Batch)
     ScoreMgr.reset()
     currAct = emptyAct
     spawner.end()
+    spawner.clear()
     player.resumeGame()
     player.reset()
     cSpeed = MinCamSpeed

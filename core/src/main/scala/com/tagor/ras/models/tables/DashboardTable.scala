@@ -38,27 +38,36 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     val generator = new FreeTypeFontGenerator(Gdx.files.internal(Const.CurrFont))
     val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
     parameter.size = 32
+//    parameter.shadowOffsetY = 3
+//    parameter.shadowColor = Color.valueOf(BlockConst.DarkBlue)
     var font = generator.generateFont(parameter)
     var labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.DarkBlue))
+//    var labelStyle = new Label.LabelStyle(font, Color.WHITE)
 
     val scoreLbl = new Label("Score", labelStyle)
     val bestLbl = new Label("Best", labelStyle)
 
     parameter.size = 48
+//    parameter.shadowColor = Color.valueOf(BlockConst.Red)
     font = generator.generateFont(parameter)
     labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.Red))
+//    labelStyle = new Label.LabelStyle(font, Color.WHITE)
 
     scoreDashbLbl = new Label(ScoreMgr.score.toString, labelStyle)
     bestDashbLbl = new Label(ScoreMgr.bestScore.toString, labelStyle)
 
-    parameter.size = 64
-    font = generator.generateFont(parameter)
-    labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.DarkBlue))
-    val gameOverLbl = new Label("Game Over", labelStyle)
+//    parameter.size = 64
+//    font = generator.generateFont(parameter)
+//    labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.DarkBlue))
+//    val gameOverLbl = new Label("Game Over", labelStyle)
+
+    val gameOverImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "game_over"))
+    gameOverImg.setOrigin(Align.center)
 
     parameter.size = 32
     parameter.borderColor = Color.valueOf(BlockConst.DarkBlue)
     parameter.borderWidth = 2
+    parameter.shadowOffsetY = 0
     font = generator.generateFont(parameter)
     labelStyle = new Label.LabelStyle(font, Color.WHITE)
     newDashbLbl = new Label("New", labelStyle)
@@ -94,7 +103,7 @@ class DashboardTable(clickListener: ClickListener) extends Table with Showable {
     homeBtnImg.addListener(clickListener)
     homeBtnImg.setTouchable(Touchable.enabled)
 
-    add(gameOverLbl).colspan(5).spaceBottom(24)
+    add(gameOverImg).colspan(5).spaceBottom(24)
     row()
     add(scoreLbl).colspan(4).left()
     add(bestLbl).right()

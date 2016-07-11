@@ -25,6 +25,7 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
 //  private var noAdsBtnImg: Image = _
   private var twitterImg: Image = _
   private var infoImg: Image = _
+  private var storeImg: Image = _
 
   def init(): Unit = {
     reset()
@@ -95,8 +96,14 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
     infoImg.addListener(clickListener)
     infoImg.setTouchable(Touchable.enabled)
 
+    storeImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "players_btn"))
+    storeImg.setOrigin(Align.center)
+    storeImg.setUserObject(Const.StoreStr)
+    storeImg.addListener(clickListener)
+    storeImg.setTouchable(Touchable.enabled)
+
     add(helpImg).pad(6).bottom()
-    add(logoImg).colspan(5).spaceTop(64)
+    add(logoImg).colspan(6).spaceTop(64)
     add(infoImg).pad(6).bottom()
     row()
     add(lBoardBtnImg).pad(6).center()
@@ -105,6 +112,7 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
     add(playBtnImg).pad(6).size(80f).center()
     add(rateBtnImg).pad(6).center()
     add(twitterImg).pad(6).center()
+    add(storeImg).pad(6).center()
     add(soundBtnImg).pad(6).center()
 //    add(noAdsBtnImg).pad(12).center()
     setVisible(false)

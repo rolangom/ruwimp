@@ -1,7 +1,7 @@
 package com.tagor.ras.utils
 
 import com.badlogic.gdx.Application.ApplicationType
-import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.{Gdx, Input}
 import com.badlogic.gdx.math.Vector2
 
 /**
@@ -38,7 +38,7 @@ object Const {
   val MaskTop: Short = (CategoryPlayerDown | CategoryPlayerUp | MaskPlayerMiddle).toShort
 
   val RunnerHeight = 64f
-  val RunnerWidth = 32f
+  val RunnerWidth = 35f
 
   val GroundStrType = "ground"
   val PlayerStrType = "player"
@@ -52,6 +52,18 @@ object Const {
   val RunnerX = Width * .2f
   val RunnerY = Height - RunnerHeight
 
+  val Jump = Input.Keys.SPACE
+  val JumpReleased = Input.Keys.SPACE - 100
+  val GoUp = Input.Keys.UP
+  val GoDown = Input.Keys.DOWN
+  val Toggle = Input.Keys.ENTER
+
+  val Running: Int = 0
+  val Jumping: Int = 1
+  val Falling: Int = 2
+
+  val RunnerMaxSpeed: Float = Const.RunnerLinearVelocity * 3f
+
   val GroundLinearVelocity = .15f
 
   val ThemeImg = 0
@@ -64,7 +76,7 @@ object Const {
   val GameStatePause = 4
   val GameStateResume = 5
 
-  val CurrFont = "fonts/LAIKA.ttf"
+  val CurrFont = "fonts/LAIKA.ttf" // "fonts/AldotheApache.ttf" //
 
   val HelpToPlayStr = new String("HelpToPay")
   val PlayStr = new String("play")
@@ -81,12 +93,14 @@ object Const {
   val PausedStr = new String("Pause")
   val ResumeStr = new String("Resume")
   val GoHomeStr = new String("GoHome")
+  val ExitStoreStr = new String("GoHomeFromStore")
   val HelpStr = new String("Help")
   val InfoStr = new String("Info")
   val TwitterStr = new String("CompTwitter")
   val ExitFromHelpStr = new String("GoHomeFromHelp")
   val MyTwitterStr = new String("MyTwitter")
   val ExitFromInfoStr = new String("GoHomeFromInfo")
+  val StoreStr = new String("Store")
 
   val BGS_PATH = "atlas/worldAtlas3.txt"
 
@@ -101,4 +115,9 @@ object Const {
 
   val ShareMsg = s"Check this very fun game <<Run, Jump 'n Switch>> @ iOS: $IOSUrl, Android: $AndroidUrl"
   def ShareScoreMsg = s"See my score (${ScoreMgr.score}) in this very fun game <<Run, Jump 'n Switch>> @ iOS: $IOSUrl, Android: $AndroidUrl"
+
+  val ItemStoreFontNameSize = 18
+  val ItemStoreFontPriceSize = 22
+  val ItemStoreSpace = 4
+  val ItemStoreSize = 124
 }

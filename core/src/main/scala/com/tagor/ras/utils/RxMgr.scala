@@ -28,6 +28,8 @@ object RxMgr {
   lazy val bannerViewVisible = Subject[String]()
   lazy val interstitialViewVisible = Subject[String]()
 
+  lazy val playerRegionStream = Subject[Int]()
+
   private var _intervalObs: Observable[Long] = _
   private var _isGmRunning = false
 

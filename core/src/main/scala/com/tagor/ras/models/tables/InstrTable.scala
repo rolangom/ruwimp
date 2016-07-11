@@ -30,8 +30,8 @@ class InstrTable(clickListener: ClickListener) extends Table with Showable {
     val font = generator.generateFont(parameter)
     val labelStyle = new Label.LabelStyle(font, Color.valueOf(BlockConst.DarkBlue))
 
-    val rightLbl = new Label("Tap right\nto switch", labelStyle)
-    val leftLbl = new Label("Tap left\nto jump,\nhold to float", labelStyle)
+    val leftLbl = new Label("Tap left\nto switch", labelStyle)
+    val rightLbl = new Label("Tap right\nto jump,\nhold to float", labelStyle)
     val tapContLbl = new Label("Tap to continue", labelStyle)
     leftLbl.setAlignment(Align.center)
     rightLbl.setAlignment(Align.center)
@@ -52,8 +52,8 @@ class InstrTable(clickListener: ClickListener) extends Table with Showable {
     val switchImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "switch_btn"))
     val jumpImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "jump_btn"))
 
-    add(jumpImg).center().pad(24)
     add(switchImg).center().pad(24)
+    add(jumpImg).center().pad(24)
     row()
 
     add(leftLbl).center().padRight(24)

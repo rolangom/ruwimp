@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, Label, Table}
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
-import com.tagor.ras.models.{RxPlayerConst, Showable}
+import com.tagor.ras.models.Showable
 import com.tagor.ras.utils._
 
 /**
@@ -25,8 +25,8 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
   private var levelLbl: Label = _
 
   RxMgr.onPlayerAction
-    .filter(i => i == RxPlayerConst.GoUp || i == RxPlayerConst.GoDown)
-    .map(_ == RxPlayerConst.GoUp)
+    .filter(i => i == Const.GoUp || i == Const.GoDown)
+    .map(_ == Const.GoUp)
     .subscribe(i => rotateDirImg(i))
 
   RxMgr.newScore
@@ -46,15 +46,20 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
     val generator = new FreeTypeFontGenerator(Gdx.files.internal(Const.CurrFont))
     val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
     parameter.size = 48
+//    parameter.shadowOffsetY = 3
+//    parameter.shadowColor = Color.valueOf(BlockConst.DarkBlue)
     val lblFont = generator.generateFont(parameter)
     val labelStyle = new Label.LabelStyle(lblFont, Color.valueOf(BlockConst.DarkBlue))
+//    val labelStyle = new Label.LabelStyle(lblFont, Color.WHITE)
 
     scoreLbl = new Label("0", labelStyle)
 //    fpsLbl = new Label("00", labelStyle)
 
     parameter.size = 32
+//    parameter.shadowColor = Color.valueOf(BlockConst.Red)
     val lvlFnt = generator.generateFont(parameter)
     val lvlStyle = new LabelStyle(lvlFnt, Color.valueOf(BlockConst.Red))
+//    val lvlStyle = new LabelStyle(lvlFnt, Color.WHITE)
     generator.dispose()
 
     levelLbl = new Label("Level 0", lvlStyle)
@@ -97,11 +102,11 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
       parallel(
         rotateTo(if (isUp) 0 else -180, Const.TransitTime),
         sequence(
-          scaleTo(Const.DownScale, Const.DownScale, Const.TransitTime / 2),
-          scaleTo(Const.UpScale, Const.UpScale, Const.TransitTime / 2)),
+          scaleTo(Const.DownScale, Const.DownScale, Const.TransitTime * .5f),
+          scaleTo(Const.UpScale, Const.UpScale, Const.TransitTime * .5f)),
         sequence(
-          Actions.color(Color.LIGHT_GRAY, Const.TransitTime / 2),
-          Actions.color(Color.WHITE, Const.TransitTime / 2)
+          Actions.color(Color.LIGHT_GRAY, Const.TransitTime * .5f),
+          Actions.color(Color.WHITE, Const.TransitTime * .5f)
         )
       )
     )
@@ -123,7 +128,7 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
         run(runnable(f))
       )
     )
-    enableTouchable(false, pauseImg, pauseImg)
+    enableTouchable(false, pauseImg)
   }
 
   override def show(): Unit = {

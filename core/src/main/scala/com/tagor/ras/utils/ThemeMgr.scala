@@ -9,7 +9,7 @@ object ThemeMgr {
 
   private var _currentTheme = 0
   private var _currentColorSet = 0
-  private val MAX_COLORSET_PLAYS = 2
+  private val MAX_COLORSET_PLAYS = 1
   private var currentColorSetPlays = 0
   private var currentColorThemePlays = 0
 

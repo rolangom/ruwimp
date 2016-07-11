@@ -52,12 +52,15 @@ object BlockConst {
 
   // BG0, BG1, BG2, CLOUDS
   val BG0_COLOR_INDEX = 0
-  val BLOCK_UP_INDEX = 1
-  val BLOCK_DOWN_INDEX = 2
+  val BG1_COLOR_INDEX = 1
+  val BGCLOUD_COLOR_INDEX = 2
+  val BLOCK_UP_INDEX = 3
+  val BLOCK_DOWN_INDEX = 4
 
   val BLOCK_INDEX = 0
   val JOINT_INDEX = 1
   val BG1_INDEX = 2
+  val CLOUD_INDEX = 3
 
   val THEME_CITY = 0
   val THEME_MOUNT = 1
@@ -65,39 +68,65 @@ object BlockConst {
 
   val THEMES = Array(THEME_CITY, THEME_MOUNT, THEME_SEA)
 
-  val BLOCK_PATH = "imgs/brick_v2.png" // "imgs/block.png"
-  val PLAT_PATH = "imgs/plat_v2.png"
-  val WOOD_PATH = "imgs/tree_v2.png" // "imgs/trunk.png"
+  val BLOCK_PATH = "brick_long"//  "imgs/brick_v2.png" // "imgs/block.png"
+  val PLAT_PATH = "plat_long" //"imgs/plat_v2.png"
+  val WOOD_PATH = "tree_long" //"imgs/tree_v2.png" // "imgs/trunk.png"
   val CHAIN_PATH = "imgs/chain.png"
 
-  val CITY_BG2 = "imgs/city1.png"
-  val MOUNTS_BG2 = "imgs/mountains1.png"
-  val SEA_BG = "imgs/sea_bg.png"
+  val CITY_BG2 = "cities1" //imgs/city1.png"
+  val MOUNTS_BG2 = "monts1"// "imgs/mountains1.png"
+  val HILLS_BG2 = "hills1" //"imgs/sea_bg.png"
 
-  val CITY_IMGS = Array[String](BLOCK_PATH, CHAIN_PATH, CITY_BG2)
-  val MOUNTS_IMGS = Array[String](WOOD_PATH, CHAIN_PATH, MOUNTS_BG2)
-  val SEA_IMGS = Array[String](PLAT_PATH, CHAIN_PATH, SEA_BG)
+  val CLOUD1_REG = "clouds1"
+  val CLOUD2_REG = "clouds2"
 
-  val THEMES_IMGS = Array[Array[String]](CITY_IMGS, MOUNTS_IMGS, SEA_IMGS)
+//  val CITY_REGIONS = Array[String]("cities1", CLOUD2_REG)
+//  val MONTS_REGIONS = Array[String]("monts1", CLOUD2_REG)
+//  val HILLS_REGIONS = Array[String]("hills1", "clouds1")
+
+  val CITY_IMGS = Array[String](PLAT_PATH, CHAIN_PATH, CITY_BG2, CLOUD2_REG)
+  val MOUNTS_IMGS = Array[String](BLOCK_PATH, CHAIN_PATH, MOUNTS_BG2, CLOUD1_REG)
+  val HILLS_IMGS = Array[String](WOOD_PATH, CHAIN_PATH, HILLS_BG2, CLOUD2_REG)
+
+  val THEMES_IMGS = Array[Array[String]](CITY_IMGS, MOUNTS_IMGS, HILLS_IMGS)
+//  val THEMES_REGION = Array[Array[String]](CITY_REGIONS, MONTS_REGIONS, HILLS_REGIONS)
 
   val Red = "a02c2cff" // "f07342" // orage
+  val RedStrong = "F03146"
+  val BrownDark = "61413C"
   val DarkBlue = "374548ff"
   val Gray = "66a5a6" // "374845ff"
   val Blue = "007673"// "216778ff"
+  val BlueStrong = "0080D8"
   val BlueLight = "216778ff"
   val Green = "00a258ff"// "217821ff"
+  val GreenStrong = "00BB7F"//
   val Brown = "986639ff" //"784421ff"
+  val BrownStrong = "4E3531" //
 
-  val COLOR_SET_BLUE = Array[String]("e6f4f4ff", Red, Blue)
-  val COLOR_SET_GRAY = Array[String]("ecf0f1ff", Red, Blue)
-  val COLOR_SET_GREEN = Array[String]("ecf4ecff", Green, Brown)
-  val COLOR_SET_YELLOW = Array[String]("f4f4e7ff", Green, Brown)
-  val COLOR_SET_BLUE_LIGHT = Array[String]("e6e6f4ff", Gray, Blue)
-  val COLOR_SET_GRAY2 = Array[String]("ecf0f1ff", Gray, Blue)
+//  val COLOR_SET_BLUE = Array[String]("e6f4f4ff", Red, Blue)
+//  val COLOR_SET_GRAY = Array[String]("ecf0f1ff", Red, Blue)
+//  val COLOR_SET_GREEN = Array[String]("ecf4ecff", Green, Brown)
+//  val COLOR_SET_YELLOW = Array[String]("f4f4e7ff", Green, Brown)
+//  val COLOR_SET_BLUE_LIGHT = Array[String]("e6e6f4ff", Red, Blue)
+//  val COLOR_SET_GRAY2 = Array[String]("ecf0f1ff", Red, Blue)
 
-  val COLOR_SET_CITY = Array[Array[String]](COLOR_SET_BLUE, COLOR_SET_GRAY)
-  val COLOR_SET_MOUNT = Array[Array[String]](COLOR_SET_GREEN, COLOR_SET_YELLOW)
-  val COLOR_SET_SEA = Array[Array[String]](COLOR_SET_BLUE_LIGHT, COLOR_SET_GRAY2)
-  val COLOR_THEME_SET = Array[Array[Array[String]]](COLOR_SET_CITY, COLOR_SET_MOUNT, COLOR_SET_SEA)
+  val COLOR_SET_BLUEL = Array[String]("ffede1ff", "fffaf5ff", "ffffffff", RedStrong, BlueStrong) // "afdde9ff", "b9e1edff", "c1e4efff"
+  val COLOR_SET_BLUELL = Array[String]("e1feffff", "f5ffffff", "ffffffff", RedStrong, BlueStrong) // "85f7f7ff", "6cf7f6ff", "a0f9f9ff"
+  val COLOR_SET_BLUEGREENL = Array[String]("f2f1eeff", "fbfaf9ff", "ffffffff", RedStrong, BlueStrong) // "b9eff2ff", "c6f6f8ff", "d4fcfdff"
+
+  val COLOR_SET_BROWNL = Array[String]("fff5e1ff", "fffdf5ff", "ffffffff", Red, Blue) // "cfb391ff", "dcbe9aff", "e4c9a7ff"
+  val COLOR_SET_BLUEGREENS = Array[String]("e1fff8ff", "f5fffdff", "ffffffff", Red, Blue) // "82d23aff", "a7e237ff", "bae41bff"
+  val COLOR_SET_YELLOW = Array[String]("f0ffe1ff", "fbfff5ff", "ffffffff", Red, Blue) // "eaddaaff", "f8e9b3ff", "fff1baff"
+
+  val COLOR_SET_BROWND = Array[String]("e1fffaff", "f5ffffff", "ffffffff", Green, Brown)  // "8a664aff", "926d4fff", "987053ff"
+  val COLOR_SET_VIOLET = Array[String]("e1ffefff", "f5fffaff", "ffffffff", GreenStrong, BrownStrong) // "523770ff", "5b3a7cff", "603c83ff"
+  val COLOR_SET_GREEND = Array[String]("f0e1ffff", "faf5ffff", "ffffffff", Green, BrownDark) // "2ca089ff", "2dad96ff", "2eb6a1ff"
+
+  val COLOR_SET_CITY = Array[Array[String]](COLOR_SET_BLUELL, COLOR_SET_BLUEL, COLOR_SET_BLUEGREENL)
+  val COLOR_SET_MOUNT = Array[Array[String]](COLOR_SET_BLUEGREENS, COLOR_SET_BROWNL, COLOR_SET_YELLOW)
+  val COLOR_SET_HILL = Array[Array[String]](COLOR_SET_GREEND, COLOR_SET_BROWND, COLOR_SET_VIOLET)
+
+  val COLOR_THEME_SET = Array[Array[Array[String]]](COLOR_SET_CITY, COLOR_SET_MOUNT, COLOR_SET_HILL)
 
 }

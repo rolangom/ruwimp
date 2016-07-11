@@ -52,8 +52,13 @@
             <array>
                 <string>Icon</string>
                 <string>Icon-72</string>
+                <string>Icon-40@3x.png</string>
+                <string>Icon-76.png</string>
+                <string>Icon-76@2x</string>
             </array>
         </dict>
     </dict>
+    <key>UIRequiresFullScreen</key><true/>
+    <key>ITSAppUsesNonExemptEncryption</key><false/>
 </dict>
 </plist>

@@ -7,8 +7,7 @@ import com.badlogic.gdx.graphics.{Color, OrthographicCamera}
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.{Rectangle, Vector2}
 import com.badlogic.gdx.scenes.scene2d._
-import com.badlogic.gdx.utils.viewport.{ExtendViewport, FillViewport, FitViewport, StretchViewport}
-import com.tagor.ras.models.{RxPlayerConst, Showable}
+import com.badlogic.gdx.utils.viewport._
 import com.tagor.ras.models.tables._
 import com.tagor.ras.utils._
 import rx.lang.scala.Subscription
@@ -17,7 +16,7 @@ import rx.lang.scala.Subscription
   * Created by rolangom on 12/12/15.
   */
 class UiStage(batch: Batch)
-  extends Stage(new FitViewport(
+  extends Stage(new ExtendViewport(
     Const.Width, Const.Height,
     new OrthographicCamera), batch){
 
@@ -67,6 +66,10 @@ class UiStage(batch: Batch)
           (() => showInfoTable(), true, false)
         case Const.ExitFromInfoStr =>
           (() => hideInfoTable(), true, false)
+        case Const.StoreStr =>
+          (() => showStoreTable(), true, false)
+        case Const.ExitStoreStr =>
+          (() => hideStoreTable(), true, false)
         case _ => (() => (), false, true)
       }
       if (block)
@@ -76,28 +79,13 @@ class UiStage(batch: Batch)
     }
   }
 
-  private def clickEffect(f: () => Unit): Action = {
-    SoundMgr.playJump(1f, 1f, 0f)
-    parallel(
-      sequence(
-        color(Color.GRAY, .15f),
-        color(Color.WHITE, .15f)
-      ),
-      sequence(
-        scaleBy(-.15f, -.15f, .15f),
-        scaleTo(1f, 1f, .15f),
-//        delay(.15f),
-        run(runnable(f))
-      )
-    )
-  }
-
   private var _gtable: GameTable = _
   private var _stable: StartTable = _
   private var _dtable: DashboardTable = _
   private var _ptable: PausedTable = _
   private var _htable:  InstrTable = _
   private var _itable:  InfoTable = _
+  private var _storeTable: StoreTable = _
 
   private def gtable: GameTable = {
     if (_gtable == null)
@@ -129,6 +117,11 @@ class UiStage(batch: Batch)
       _itable = new InfoTable(clickListener)
     _itable
   }
+  private def storeTable: StoreTable = {
+    if (_storeTable == null)
+      _storeTable = new StoreTable(clickListener)
+    _storeTable
+  }
 
   private lazy val (screenSideR, screenSideL) = getScreenSideRects
 
@@ -152,6 +145,7 @@ class UiStage(batch: Batch)
   private def showStartTable(): Unit = {
     addActor(stable)
     stable.show()
+    RxMgr.setBannerVisible(false)
   }
 
   private def showHelpTable(from: AnyRef): Unit = {
@@ -187,6 +181,20 @@ class UiStage(batch: Batch)
     addActor(stable)
     _stable.show()
     RxMgr.setBannerVisible(false)
+  }
+
+  private def showStoreTable(): Unit = {
+    stable.hide()
+    addActor(storeTable)
+    _storeTable.show()
+  }
+
+  private def hideStoreTable(): Unit = {
+    storeTable.hideAndFunc(() => {
+      _storeTable = null
+    })
+    addActor(stable)
+    _stable.show()
   }
 
   private def openTwitter(personal: Boolean): Unit = {
@@ -330,10 +338,10 @@ class UiStage(batch: Batch)
 
   private def runningTouchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
     if (screenSideR.contains(screenX, screenY)) {
-      RxMgr.onPlayerAction.onNext(RxPlayerConst.Jump)
+      RxMgr.onPlayerAction.onNext(Const.Jump)
       return true
     } else if (screenSideL.contains(screenX, screenY)) {
-      RxMgr.onPlayerAction.onNext(RxPlayerConst.Toggle)
+      RxMgr.onPlayerAction.onNext(Const.Toggle)
       return true
     }
     super.touchDown(screenX, screenY, pointer, button)
@@ -341,7 +349,7 @@ class UiStage(batch: Batch)
 
   private def runningTouchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
     if (screenSideR.contains(screenX, screenY)) {
-      RxMgr.onPlayerAction.onNext(RxPlayerConst.JumpReleased)
+      RxMgr.onPlayerAction.onNext(Const.JumpReleased)
       return true
     }
     false

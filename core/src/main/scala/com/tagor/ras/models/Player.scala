@@ -1,37 +1,16 @@
 package com.tagor.ras.models
 
-import com.badlogic.gdx.{Audio, Input}
-import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode
-import com.badlogic.gdx.graphics.g2d.{Animation, Batch, TextureRegion}
+import com.badlogic.gdx.graphics.g2d._
 import com.badlogic.gdx.math.{MathUtils, Vector2}
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.utils.{Align, Disposable}
+import com.badlogic.gdx.utils.Align
 import com.tagor.ras.utils._
 import com.tagor.ras.utils.Const._
 
 /**
   * Created by rolangom on 12/11/15.
   */
-
-object RxPlayerConst {
-
-  val Jump = Input.Keys.SPACE
-  val JumpReleased = Input.Keys.SPACE - 100
-  val GoUp = Input.Keys.UP
-  val GoDown = Input.Keys.DOWN
-  val Toggle = Input.Keys.ENTER
-
-  val Running: Int = 0
-  val Jumping: Int = 1
-  val Falling: Int = 2
-
-  val MaxSpeed: Float = Const.RunnerLinearVelocity * 3f
-  val MaxJumpUpSpeed: Float = 10f
-  val MinJumpDownSpeed: Float = -2f
-  val MaxJumpDownSpeed: Float = -25f
-
-}
 
 class Player
   extends B2dActor(
@@ -51,9 +30,16 @@ class Player
   private var fallingAnim: Animation = _
   private var chAnim: () => TextureRegion = handleAnimOnAir
   private var cVelY: () => Float = () => velY
+  private var n = PrefMgr.currPlayer
 
   RxMgr.onPlayerAction
     .subscribe(i => handleInput(i))
+
+  RxMgr.playerRegionStream
+      .subscribe { i =>
+        n = i
+        initDisposables()
+      }
 
   def init(): Unit = {
     val bodyPos = body.getPosition
@@ -73,10 +59,10 @@ class Player
   }
 
   private def initDisposables(): Unit = {
-    val atlas = ResMgr.getAtlas("atlas/player_01_anims.txt")
-    runningAnim = new Animation(0.025f, atlas.findRegions("running"), PlayMode.LOOP)
-    jumpingAnim = new Animation(0.02f, atlas.findRegions("jumping"), PlayMode.NORMAL)
-    fallingAnim = new Animation(0.1f, atlas.findRegions("falling"), PlayMode.NORMAL)
+    val atlas = ResMgr.getAtlas(Const.BGS_PATH) // ("atlas/player_01_anims.txt")
+    runningAnim = new Animation(0.025f * 1.25f, atlas.findRegions(s"player_${n}_running"), PlayMode.LOOP)
+    jumpingAnim = new Animation(0.02f * 2, atlas.findRegions(s"player_${n}_jumping"), PlayMode.NORMAL)
+    fallingAnim = new Animation(0.1f, atlas.findRegions(s"player_${n}_falling"), PlayMode.NORMAL)
   }
 
   def hello() = {
@@ -86,17 +72,17 @@ class Player
   def velX = body.getLinearVelocity.x
 
   def goFaster(): Unit = {
-    if (currentSpeed < RxPlayerConst.MaxSpeed)
+    if (currentSpeed < Const.RunnerMaxSpeed)
       currentSpeed += .25f// .5f 2f
   }
 
   private def handleInput(input:Int): Unit = {
     input match {
-      case RxPlayerConst.GoUp => goUp()
-      case RxPlayerConst.GoDown => goDown()
-      case RxPlayerConst.Jump => jump()
-      case RxPlayerConst.Toggle => toggle()
-      case RxPlayerConst.JumpReleased => jumpReleased()
+      case Const.GoUp => goUp()
+      case Const.GoDown => goDown()
+      case Const.Jump => jump()
+      case Const.Toggle => toggle()
+      case Const.JumpReleased => jumpReleased()
       case _ => ()
     }
   }
@@ -111,7 +97,7 @@ class Player
       Const.RunnerX / PPM,
       Const.RunnerY / PPM, 0f)
     setPosition(Const.RunnerX, Const.RunnerY)
-    RxMgr.onPlayerAction.onNext(RxPlayerConst.GoUp)
+    RxMgr.onPlayerAction.onNext(Const.GoUp)
 //    goUp()
     handleAnimOnAir()
     body.setLinearVelocity(0f, 0f)
@@ -131,7 +117,7 @@ class Player
 
   def pause(): Unit = {
     onAir()
-    ResMgr.remove("atlas/player_01_anims.txt")
+//    ResMgr.remove("atlas/player_01_anims.txt")
   }
 
   def goUp(): Unit = {
@@ -157,11 +143,8 @@ class Player
     if (isOnGround || jumps < MaxJumps) {
       stateTime = 0
       body.setLinearVelocity(body.getLinearVelocity.x, 0f)
-      body.applyLinearImpulse(
-        Const.RunnerJumpingLinearImpulse,
-        body.getWorldCenter, true)
-      SoundMgr.playJump(
-        if (isDimenUp) Const.UpScale else Const.DownScale,
+      body.applyLinearImpulse(Const.RunnerJumpingLinearImpulse, body.getWorldCenter, true)
+      SoundMgr.playJump(if (isDimenUp) Const.UpScale else Const.DownScale,
         MathUtils.random(1, 1.2f), 0)
       jumps += 1
       if (!isOnGround)
@@ -176,8 +159,8 @@ class Player
 
   def toggle(): Unit = {
     RxMgr.onPlayerAction.onNext {
-      if (isDimenUp) RxPlayerConst.GoDown
-      else RxPlayerConst.GoUp
+      if (isDimenUp) Const.GoDown
+      else Const.GoUp
     }
   }
 
@@ -233,6 +216,7 @@ class Player
     remove() // Remove Actor from stage
     groundContacts = 0
     cVelY = () => velY
+    SoundMgr.stopFootStep()
   }
 
   def pauseGame(): Unit = {
@@ -257,11 +241,13 @@ class Player
   private def handleAnimOnAir(): TextureRegion =
     if (body.getLinearVelocity.y < 0)
       fallingAnim.getKeyFrame(stateTime)
-    else jumpingAnim.getKeyFrame(stateTime)
+    else
+      jumpingAnim.getKeyFrame(stateTime)
 
   override def draw(batch: Batch, parentAlpha: Float): Unit = {
     super.draw(batch, parentAlpha)
-    batch.draw(chAnim(), getX, getY, getOriginX, getOriginY, getWidth, getHeight,
+    val region = chAnim()
+    batch.draw(region, getX, getY, getOriginX, getOriginY, region.getRegionWidth, region.getRegionHeight,
       getScaleX, getScaleY, getRotation)
   }
 }

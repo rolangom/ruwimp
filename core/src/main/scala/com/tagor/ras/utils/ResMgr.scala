@@ -67,7 +67,6 @@ object ResMgr extends Disposable {
   def getThemeTextureRegion(key: Int): TextureRegion =
     getRegion(Const.BGS_PATH, getThemeTextureRegionStr(key))
 
-
   def getThemeTextureStr(key: Int): String =
     BlockConst.THEMES_IMGS(ThemeMgr.currentTheme)(key)
 

@@ -18,6 +18,7 @@ class GameScreen extends Screen {
   private val gameStage = new GameStage(batch)
   private val uiStage = new UiStage(batch)
   private var worldAct: Float => Unit = renderFixed
+  private var (r, g, b) = (1f, 1f, 1f)
 
   private var accumulator = 0f
   private val TIME_STEP = 0.01f// 1f / (if (Gdx.app.getType == ApplicationType.iOS) 60f else 300f)
@@ -27,6 +28,9 @@ class GameScreen extends Screen {
     .map(s => s == Const.GameStatePause || s == Const.GameStateOver)
     .subscribe(p => handleGameState(p))
 
+  RxMgr.newTheme
+      .subscribe(i => onNewTheme(i))
+
   override def show(): Unit = {
     gameStage.init()
     uiStage.init()
@@ -34,6 +38,9 @@ class GameScreen extends Screen {
     world.setContactListener(gameStage)
     Gdx.input.setInputProcessor(uiStage)
     SoundMgr.init()
+
+    onNewTheme(Const.ThemeColor)
+    onNewTheme(Const.ThemeImg)
   }
 
   override def hide(): Unit = {
@@ -55,7 +62,7 @@ class GameScreen extends Screen {
 
   override def render(delta: Float): Unit = {
     val gl = Gdx.gl
-    gl.glClearColor(1, 1, 1, 1f)
+    gl.glClearColor(r, g, b, 1f)
     gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
     worldAct(delta)
@@ -80,6 +87,16 @@ class GameScreen extends Screen {
   private def handleGameState(isPaused: Boolean): Unit = {
     println(s"RGT -> GameScreen handleGameState (isPaused= $isPaused)")
     worldAct = if (isPaused) emptyAct else renderFixed
+  }
+
+  private def onNewTheme(themeItem: Int): Unit = {
+    if (themeItem == Const.ThemeColor) {
+      val bgColor = ThemeMgr.getBgColor(BlockConst.BG1_COLOR_INDEX)
+      r = bgColor.r
+      g = bgColor.g
+      b = bgColor.b
+    }
+    gameStage.onNewTheme(themeItem)
   }
 
   override def pause(): Unit = {

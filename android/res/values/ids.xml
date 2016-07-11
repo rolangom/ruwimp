@@ -2,5 +2,18 @@
 <resources>
     <string name="app_id">238539140731</string>
     <string name="leaderboard_main_score">CgkI-9yp0PgGEAIQAA</string>
+    <string name="leaderboard_up_blocks_scored">CgkI-9yp0PgGEAIQDQ</string>
+    <string name="leaderboard_down_blocks_scored">CgkI-9yp0PgGEAIQDg</string>
+
+    <string name="achievement_50_overall_score">CgkI-9yp0PgGEAIQBA</string>
+    <string name="achievement_100_overall_score">CgkI-9yp0PgGEAIQBQ</string>
+    <string name="achievement_150_overall_score">CgkI-9yp0PgGEAIQBg</string>
+    <string name="achievement_25_up_score">CgkI-9yp0PgGEAIQBw</string>
+    <string name="achievement_50_up_score">CgkI-9yp0PgGEAIQCA</string>
+    <string name="achievement_75_up_score">CgkI-9yp0PgGEAIQCQ</string>
+    <string name="achievement_25_down_score">CgkI-9yp0PgGEAIQCg</string>
+    <string name="achievement_50_down_score">CgkI-9yp0PgGEAIQCw</string>
+    <string name="achievement_75_down_score">CgkI-9yp0PgGEAIQDA</string>
+
     <string name="event_plays_count">CgkI-9yp0PgGEAIQAQ</string>
 </resources>

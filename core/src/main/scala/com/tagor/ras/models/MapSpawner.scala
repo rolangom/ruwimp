@@ -3,12 +3,10 @@ package com.tagor.ras.models
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.MathUtils
 import com.tagor.ras.utils
-import com.tagor.ras.utils.{ScoreMgr, _}
-import rx.lang.scala.Subscription
+import com.tagor.ras.utils.{ScoreMgr, BlockPooler, WorldParser, RxMgr, BlockConst}
 import rx.lang.scala.schedulers.ComputationScheduler
-import rx.lang.scala.subscriptions.CompositeSubscription
 
-import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -45,7 +43,7 @@ class MapSpawner(camera: OrthographicCamera) {
   def pause(): Unit = {
     vblocks.foreach(_.pause())
     pblocks.foreach(_.pause())
-    Block.pause()
+//    ResMgr.removeThemeTextureStr(BlockConst.BLOCK_INDEX)
   }
 
   def start(): Unit = {
@@ -71,7 +69,7 @@ class MapSpawner(camera: OrthographicCamera) {
 //    clear()
   }
 
-  private def clear(): Unit = {
+  def clear(): Unit = {
     def reset(blocks: ListBuffer[Block]): Unit = {
       blocks.foreach(b => pooler.free(b))
       blocks.clear()
@@ -81,7 +79,7 @@ class MapSpawner(camera: OrthographicCamera) {
   }
 
   private def initBlock(iti: ItemToInst): Unit = {
-    println(s"block inited $iti")
+//    println(s"block inited $iti")
     pblocks += pooler.get(iti).init(iti)
     pooler.free(iti)
   }
@@ -94,7 +92,7 @@ class MapSpawner(camera: OrthographicCamera) {
 
   private def spawn(x: Float, y: Float, pblock: Block): Unit = {
     Future {
-      println(s"lets spawn; x= $x")
+//      println(s"lets spawn; x= $x")
       generate(x, y, pblock)
     }
   }

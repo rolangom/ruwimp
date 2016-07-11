@@ -1,0 +1,13 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	precomposeunicode = true
+[remote "bitbucket"]
+	url = https://rolangom@bitbucket.org/rolangom/runandswitch.git
+	fetch = +refs/heads/*:refs/remotes/bitbucket/*
+[branch "master"]
+	remote = bitbucket
+	merge = refs/heads/master
