@@ -106,6 +106,7 @@ class GameScreen extends Screen {
     gameStage.pause()
     uiStage.pause()
     SoundMgr.pause()
+    ScoreMgr.pause()
 
     if (RxMgr.isGmRunning)
       handleGameState(true)

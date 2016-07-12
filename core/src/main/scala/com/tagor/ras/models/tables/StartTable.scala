@@ -1,9 +1,12 @@
 package com.tagor.ras.models.tables
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions._
-import com.badlogic.gdx.scenes.scene2d.ui.{Image, Table}
+import com.badlogic.gdx.scenes.scene2d.ui.{Image, Label, Table}
 import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, TextureRegionDrawable}
 import com.badlogic.gdx.utils.Align
 import com.tagor.ras.models.Showable
@@ -26,12 +29,21 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
   private var twitterImg: Image = _
   private var infoImg: Image = _
   private var storeImg: Image = _
+  private var statsLbl: Label = _
 
-  def init(): Unit = {
+  private def init(): Unit = {
     reset()
 
     setFillParent(true)
     align(Align.center)
+
+    val generator = new FreeTypeFontGenerator(Gdx.files.internal(Const.CurrFont))
+    val parameter = new FreeTypeFontGenerator.FreeTypeFontParameter()
+    parameter.size = 21
+    val lblFont = generator.generateFont(parameter)
+    val labelStyle = new Label.LabelStyle(lblFont, Color.valueOf(BlockConst.DarkBlue))
+    statsLbl = new Label(ScoreMgr.statStr, labelStyle)
+    generator.dispose()
 
     val logoImg = new Image(ResMgr.getRegion(Const.BGS_PATH, "logo"))
     logoImg.setOrigin(Align.center)
@@ -102,22 +114,30 @@ class StartTable(clickListener: ClickListener) extends Table with Showable {
     storeImg.addListener(clickListener)
     storeImg.setTouchable(Touchable.enabled)
 
+    add(statsLbl).colspan(7).left()
+    row()
     add(helpImg).pad(6).bottom()
-    add(logoImg).colspan(6).spaceTop(64)
+    add(logoImg).colspan(5).spaceTop(64)
     add(infoImg).pad(6).bottom()
     row()
     add(lBoardBtnImg).pad(6).center()
     add(achivsBtnImg).pad(6).center()
     add(shareBtnImg).pad(6).center()
-    add(playBtnImg).pad(6).size(80f).center()
+    add(playBtnImg).pad(6).center()
     add(rateBtnImg).pad(6).center()
     add(twitterImg).pad(6).center()
-    add(storeImg).pad(6).center()
     add(soundBtnImg).pad(6).center()
-//    add(noAdsBtnImg).pad(12).center()
+    row()
+    add(storeImg).pad(6).center()
+    //    add(noAdsBtnImg).pad(6).center()
+
     setVisible(false)
   }
   init()
+
+  def updateStatLbl(): Unit = {
+    statsLbl.setText(ScoreMgr.statStr)
+  }
 
   def toggleSound(): Unit = {
     SoundMgr.toggle()

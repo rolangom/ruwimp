@@ -36,7 +36,7 @@ class GameTable(clickListener: ClickListener) extends Table with Showable {
     .filter(_ > 0)
     .subscribe(l => showLevel(l))
 
-  def init(): Unit = {
+  private def init(): Unit = {
     reset()
 
     setFillParent(true)

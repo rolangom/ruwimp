@@ -145,6 +145,7 @@ class UiStage(batch: Batch)
   private def showStartTable(): Unit = {
     addActor(stable)
     stable.show()
+    _stable.updateStatLbl()
     RxMgr.setBannerVisible(false)
   }
 

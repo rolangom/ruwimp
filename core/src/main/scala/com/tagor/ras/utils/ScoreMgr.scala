@@ -12,7 +12,7 @@ object ScoreMgr {
 
   val initLevel = 0
 
-  private var _plays: Int = 1
+  private var _plays: Int = PrefMgr.playsCount
   private var _score: Int = 0
   private var _scoreUp: Int = 0
   private var _scoreDown: Int = 0
@@ -24,9 +24,10 @@ object ScoreMgr {
 
   def score = _score
   def level = _level
-  def bestScore = PrefMgr.prefs.getInteger("score", 0)
+  def bestScore: Int = PrefMgr.score
   def fullScoreStr: String = s"${_score};${_scoreUp};${_scoreDown}"
   def plays = _plays
+  def statStr: String = s"Plays: ${_plays}; Best Score: $bestScore"
 
   def increase(b: Block): Unit = {
     _score += 1
@@ -96,10 +97,12 @@ object ScoreMgr {
     val currBestScore = bestScore
     if (_score > currBestScore) {
       _isNewBestScore = true
-      val prefs = PrefMgr.prefs
-      prefs.putInteger("score", _score)
-      prefs.flush()
+      PrefMgr.score = _score
     }
+  }
+
+  def pause(): Unit = {
+    PrefMgr.playsCount = _plays
   }
 
   def isInterstitialToShow: Boolean = _plays % 4 == 0

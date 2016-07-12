@@ -112,7 +112,7 @@ object BlockConst {
 //  val COLOR_SET_GRAY2 = Array[String]("ecf0f1ff", Red, Blue)
 
   val COLOR_SET_BLUEL = Array[String]("ffede1ff", "fffaf5ff", "ffffffff", RedStrong, BlueStrong) // "afdde9ff", "b9e1edff", "c1e4efff"
-  val COLOR_SET_BLUELL = Array[String]("e1feffff", "f5ffffff", "ffffffff", RedStrong, BlueStrong) // "85f7f7ff", "6cf7f6ff", "a0f9f9ff"
+  val COLOR_SET_BLUELL = Array[String]("eaf6f6ff", "f8fcfcff", "ffffffff", RedStrong, BlueStrong) // "85f7f7ff", "6cf7f6ff", "a0f9f9ff"
   val COLOR_SET_BLUEGREENL = Array[String]("f2f1eeff", "fbfaf9ff", "ffffffff", RedStrong, BlueStrong) // "b9eff2ff", "c6f6f8ff", "d4fcfdff"
 
   val COLOR_SET_BROWNL = Array[String]("fff5e1ff", "fffdf5ff", "ffffffff", Red, Blue) // "cfb391ff", "dcbe9aff", "e4c9a7ff"

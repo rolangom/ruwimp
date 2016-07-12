@@ -139,10 +139,9 @@ class Background(camera: Camera) extends Actor {
   private def checkBounds(): Unit = {
     val camX = camera.position.x
 
-    if (topBg1x + topBgRegion.getRegionWidth < camX - camHalfWidth) {
-      println("topBg1x <= camX - (camHalfWidth - topBgRegion.getRegionWidth) true")
+    if (topBg1x + topBgRegion.getRegionWidth < camX - camHalfWidth)
       topBg1x = topBg2x + topBgRegion.getRegionWidth
-    } else if (topBg2x + topBgRegion.getRegionWidth < camX - camHalfWidth)
+    else if (topBg2x + topBgRegion.getRegionWidth < camX - camHalfWidth)
       topBg2x = topBg1x + topBgRegion.getRegionWidth
 
     if (cloud1x + cloudRegion.getRegionWidth < camX - camHalfWidth)
